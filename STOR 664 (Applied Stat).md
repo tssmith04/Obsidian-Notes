@@ -379,3 +379,61 @@ Thus, define the event $c(y):=\left\{  \Phi^{-1}\left( \frac{\alpha}{2} \right)\
 Plugging in our definition of $Z$ above we get $$
 \Phi^{-1}\left( \frac{\alpha}{2} \right)\sqrt{ \sigma^{2}\gamma^{T}(X^{T}X)^{-1}\gamma }-\gamma^{T}\hat{\beta}\leq-\gamma^{T}\beta\leq\Phi^{-1}\left( 1-\frac{\alpha}{2} \right)\sqrt{ \sigma^{2}\gamma^{T}(X^{T}X)^{-1}\gamma }-\gamma^{T}\hat{\beta}
 $$
+#### Notes from Homework 2 (Still to fill out)
+- $$
+P_{X}=Q\begin{bmatrix} I_{p} & 0_{p\times(n-p)} \\ 0_{(n-p)\times p} & 0_{(n-p)\times(n-p)} \end{bmatrix}Q^{T}=Q_{1}Q_{1}^{T}
+$$ when we have QR decomposition of $X$
+- $$
+P_{X}^{\perp}=I_{n}-P_{X}=Q\begin{bmatrix} 0_{p\times p} & 0_{p\times(n-p)} \\ 0_{(n-p)\times p} & I_{n-p} \end{bmatrix}Q^{T}=Q_{2}Q_{2}^{T}
+$$
+
+9/16
+#### Inference Continued
+$$
+Z=\frac{\gamma^{T}\hat{\beta}-\gamma^{T}\beta}{\sqrt{ \sigma^{2}\gamma^{T}(X^{T}X)^{-1}\gamma }}\sim N(0,1)
+$$
+Define event $$
+C(y)=\left\{  \Phi^{-1}\left( \frac{\alpha}{2} \right)\leq Z\leq\Phi^{-1}\left( 1-\frac{\alpha}{2} \right)  \right\}
+$$
+$\mathbb{P}(C(y))=1-\alpha$
+We are thinking about $y$ as random vector.
+We are thinking about repeatedly realizing $\epsilon$'s and running this experiment over and over again. Because $Z$'s randomness comes through $\hat{\beta}$ whose randomness comes through $y$ whose randomness comes through $\epsilon$.
+We will shorthand $N_{\frac{\alpha}{2}}:=\Phi^{-1}\left( \frac{\alpha}{2} \right)=-N_{1-\frac{\alpha}{2}}$
+We can now rewrite $C(y)=\left\{  N_{\frac{\alpha}{2}}\leq Z\leq-N_{\frac{\alpha}{2}}  \right\}=\left\{  -N_{\frac{\alpha}{2}}\geq-Z  \geq N_{\frac{\alpha}{2}}\right\}=\left\{  -N_{\frac{\alpha}{2}}\geq \frac{\gamma^{T}\hat{\beta}-\gamma^{T}\beta}{\sqrt{ \sigma^{2}\gamma^{T}(X^{T}X)^{-1}\gamma }}\geq N_{\frac{\alpha}{2}} \right\}$
+$=\left\{  -N_{\frac{\alpha}{2}}\sqrt{ \sigma^{2}\gamma^{T}(X^{T}X)^{-1}\gamma }+\gamma^{T}\hat{\beta}\geq\gamma^{T}\beta\geq N_{\frac{\alpha}{2}}\sqrt{ \sigma^{2}\gamma^{T}(X^{T}X)^{-1}\gamma }+\gamma^{T}\hat{\beta}  \right\}=1-\alpha$
+We can rewrite this compactly as $\mathbb{P}(\{\gamma^{T}\beta\in\{\gamma^{T}\hat{\beta}\pm N_{\frac{\alpha}{2}}\sqrt{ \sigma^{2}\gamma^{T}(X^{T}X)^{-1}\gamma }\}\})=1-\alpha$
+So we now have a confidence interval as the set $CI(y)=\{\gamma^{T}\hat{\beta}\pm N_{\frac{\alpha}{2}}\sqrt{ \sigma^{2}\gamma^{T}(X^{T}X)^{-1}\gamma }\}$
+
+##### Testing
+$H_{0}:\gamma^{T}\beta=b$
+Construct $Z(b)=\frac{\gamma^{T}\hat{\beta}-b}{\sqrt{ \sigma^{2} \gamma^{T}(X^{T}X)^{-1}\gamma}}$
+Under $H_{0}$ we have $\gamma^{T}\beta=b$ which gives us the same original statement as above by plugging in $b$.
+Thus, $Z(b)\sim N(0,1)$.
+$\mathbb{E}_{H_{0}}[\delta_{\alpha}(y)]=\alpha$ (probability of rejection is $\alpha$, thus arriving at size $\alpha$ test).
+
+#### Inference with Unknown Variance
+In $Z$ above the only thing we really don't know is $\sigma^{2}$ (unless given/known), so what do we do if we don't have it?
+Estimate it!
+
+**Primitives**
+Suppose $W_{i}\overset{\text{iid}}{\sim}N(0,1)$ for $i=1,\dots,d$ then $\sum_{i=1}^{d}W_{i}^{2}\sim \chi^{2}_{d}$
+Let $Z\sim N(0,1)$ and $V\sim \chi_{d}$ with $Z$ independent of $V$. Then $\frac{Z}{\sqrt{ \frac{V}{d} }}\sim t_{d}$ (t distribution with $d$ d.o.f.).
+
+Now back to estimation of variance:
+$$s^{2}=\frac{\sum_{i=1}^{n}(y_{i}-\hat{y}_{i})^{2}}{(n-p)}$$
+Note that we have $n-p$ because we have $p$ parameters/covariates.
+Claim: $$\frac{\gamma^{T}\hat{\beta}-\gamma^{T}\beta}{s\sqrt{\gamma^{T}(X^{T}X)^{-1}\gamma }}\sim t_{n-p}$$
+We will do the following steps to prove it
+1. Rewrite as $\frac{Z}{\sqrt{ \frac{V}{d} }}$
+2. Show $Z\sim N(0,1)$
+3. Show $V\sim \chi_{d}^{2}$ (arguably hardest)
+4. Show $Z\perp\!\!\!\perp V$ (need to be careful here as obvious way won't work)
+
+**Step 1** (Rewriting):
+$\frac{\gamma^{T}\hat{\beta}-\gamma^{T}\beta}{s\sqrt{ \sigma^{2}\gamma^{T}(X^{T}X)^{-1}\gamma }} \frac{\sigma}{\sigma}$ then we have the same $Z$ as before thus we can factor this into $\frac{Z\sigma}{s}$
+Now examining $s$, recall we have $s^{2}=\frac{\sum_{i=1}^{n}(y_{i}-\hat{y}_{i})^{2}}{(n-p)}$ so $\frac{\sigma}{s}=\frac{\sigma}{\sqrt{ \frac{\sum_{i=1}^{n}(y_{i}-\hat{y}_{i})^{2}}{(n-p)} }}$. From here we take $n-p=d$ and $\frac{\sigma}{\sum_{i=1}^{n}(y_{i}-\hat{y}_{i})^{2}}=\frac{1}{V}$
+Now checking $$\frac{Z}{\sqrt{ \frac{V}{d} }}=\frac{\gamma^{T}\hat{\beta}-\gamma^{T}\beta}{\sqrt{ \sigma^{2}\gamma^{T}(X^{T}X)^{-1}\gamma }} \frac{1}{\sqrt{ \frac{\frac{1}{\sigma}\sum(\hat{y}_{i}-y_{i})^{2}}{n-p} }}$$
+Note that $\frac{1}{\sigma}\sum(\hat{y}_{i}-y_{i})^{2}=\frac{1}{\sigma}||\hat{\epsilon}||_{2}^{2}$. Recall $\hat{\epsilon}=(I-P_{X})y=P_{X}^{\perp}y=Q_{2}Q_{2}^{T}y$ (from QR decomposition as $Q_{2}$ gives us a basis for orthogonal complement of $X$).
+So $\frac{1}{\sigma}||\hat{\epsilon}||_{2}^{2}=\frac{1}{\sigma}||Q_{2}Q_{2}^{T}y||_{2}^{2}$. Note that $\hat{\epsilon}\sim N(Q_{2}Q_{2}^{T}X\beta,\sigma^{2}Q_{2}Q_{2}^{T}Q_{2}^{T}Q_{2})$
+
+
