@@ -379,13 +379,69 @@ Thus, define the event $c(y):=\left\{  \Phi^{-1}\left( \frac{\alpha}{2} \right)\
 Plugging in our definition of $Z$ above we get $$
 \Phi^{-1}\left( \frac{\alpha}{2} \right)\sqrt{ \sigma^{2}\gamma^{T}(X^{T}X)^{-1}\gamma }-\gamma^{T}\hat{\beta}\leq-\gamma^{T}\beta\leq\Phi^{-1}\left( 1-\frac{\alpha}{2} \right)\sqrt{ \sigma^{2}\gamma^{T}(X^{T}X)^{-1}\gamma }-\gamma^{T}\hat{\beta}
 $$
-#### Notes from Homework 2 (Still to fill out)
-- $$
+## Homework 2 Takeaways
+
+### Constraints on Fitted Values and Residuals
+Setup: $X\in \mathbb{R}^{n\times p}$ with $rank(X)=p$, $1\leq p<n$, $\gamma\in \mathbb{R}^{n}$ fixed and nonzero, $\hat{y}=P_{X}y$, $\hat{\epsilon}=P_{X}^{\perp}y$.
+
+**Lemma:** $v^{T}y=0\;\forall y\in \mathbb{R}^{n}\iff v=0_{n}$ (take $y=e_{i}$ for each $i$). Since projection matrices are symmetric, $\gamma^{T}P_{X}y=(P_{X}\gamma)^{T}y$, so a condition "for every $y$" reduces to a condition on $P_{X}\gamma$ or $P_{X}^{\perp}\gamma$.
+
+**Fitted values:**
+$$
+\gamma^{T}\hat{y}=0\;\;\forall y\iff X^{T}\gamma=0_{p}\iff \gamma\in Col(X)^{\perp}
+$$
+- $(\Rightarrow)$ The lemma gives $P_{X}\gamma=0_{n}$. Multiply on the left by $X^{T}$: $X^{T}X(X^{T}X)^{-1}X^{T}\gamma=X^{T}\gamma=0_{p}$.
+- $(\Leftarrow)$ $X^{T}\gamma=0_{p}\implies P_{X}\gamma=X(X^{T}X)^{-1}X^{T}\gamma=0_{n}\implies \gamma^{T}\hat{y}=(P_{X}\gamma)^{T}y=0$.
+- **Recipe:** Choose $k$ with $\gamma_{k}\neq 0$. Since $p\leq n-1$, choose distinct indices $j_{1},\dots,j_{p}\neq k$ and set
+$$
+x_{i}=\gamma_{k}e_{j_{i}}-\gamma_{j_{i}}e_{k},\qquad X=\begin{bmatrix} x_{1} & \cdots & x_{p}\end{bmatrix}
+$$
+  Check: $\gamma^{T}x_{i}=\gamma_{k}\gamma_{j_{i}}-\gamma_{j_{i}}\gamma_{k}=0$, and coordinate $j_{i}$ is nonzero only in $x_{i}$, so $rank(X)=p$.
+
+**Residuals:**
+$$
+\gamma^{T}\hat{\epsilon}=0\;\;\forall y\iff \gamma\in Col(X)
+$$
+- $(\Rightarrow)$ The lemma gives $P_{X}^{\perp}\gamma=0_{n}$. **Decomposition trick:**
+$$
+\gamma=P_{X}\gamma+P_{X}^{\perp}\gamma=P_{X}\gamma\in Col(P_{X})=Col(X)
+$$
+- $(\Leftarrow)$ If $\gamma=Xa$, then $P_{X}^{\perp}\gamma=(I_{n}-P_{X})Xa=Xa-Xa=0_{n}$.
+- **Recipe:** Choose $k$ with $\gamma_{k}\neq 0$ and distinct indices $j_{1},\dots,j_{p-1}\neq k$. Set
+$$
+X=\begin{bmatrix} \gamma & e_{j_{1}} & \cdots & e_{j_{p-1}}\end{bmatrix}
+$$
+  Check: coordinate $k$ is nonzero only in $\gamma$, so the columns are independent and $rank(X)=p$. The constraint holds because $\gamma$ is a column.
+
+>Note: The fitted-value case forces all $p$ columns to be orthogonal to $\gamma$, which needs $p\leq n-1$. The residual case forces only one direction into $Col(X)$.
+
+### QR: $\hat{\beta}$, $\|\hat{y}\|_{2}^{2}$, and RSS
+Full QR: $X=QR$, $Q=[Q_{1}|Q_{2}]$ with $Q_{1}\in \mathbb{R}^{n\times p}$, $Q_{2}\in \mathbb{R}^{n\times(n-p)}$. Split after the first $p$ entries:
+$$
+Q^{T}y=\begin{bmatrix} z \\ d \end{bmatrix},\qquad z=Q_{1}^{T}y\in \mathbb{R}^{p},\quad d=Q_{2}^{T}y\in \mathbb{R}^{n-p}
+$$
+**Coefficients** (solve by back substitution):
+$$
+R_{1}\hat{\beta}=Q_{1}^{T}y=z
+$$
+**Projections:**
+$$
 P_{X}=Q\begin{bmatrix} I_{p} & 0_{p\times(n-p)} \\ 0_{(n-p)\times p} & 0_{(n-p)\times(n-p)} \end{bmatrix}Q^{T}=Q_{1}Q_{1}^{T}
-$$ when we have QR decomposition of $X$
-- $$
+$$
+$$
 P_{X}^{\perp}=I_{n}-P_{X}=Q\begin{bmatrix} 0_{p\times p} & 0_{p\times(n-p)} \\ 0_{(n-p)\times p} & I_{n-p} \end{bmatrix}Q^{T}=Q_{2}Q_{2}^{T}
 $$
+**Norms:** $Q$ is orthogonal, so it preserves norms: $\|Q^{T}v\|_{2}^{2}=v^{T}QQ^{T}v=v^{T}v$. Apply this to $\hat{y}=P_{X}y$ and use $Q^{T}Q=I_{n}$:
+$$
+\|\hat{y}\|_{2}^{2}=\|Q^{T}\hat{y}\|_{2}^{2}=\left\|\begin{bmatrix} I_{p} & 0 \\ 0 & 0 \end{bmatrix}Q^{T}y\right\|_{2}^{2}=\left\|\begin{bmatrix} z \\ 0_{n-p} \end{bmatrix}\right\|_{2}^{2}=\|z\|_{2}^{2}
+$$
+The same argument with $P_{X}^{\perp}$ gives $$ RSS=\|\hat{\epsilon}\|_{2}^{2}=\left\|\begin{bmatrix} 0_{p} \\ d \end{bmatrix}\right\|_{2}^{2}=\|d\|_{2}^{2} $$
+Takeaway: One Householder pass (computing $Q^{T}y$ without ever forming $Q$) gives both $\hat{\beta}$ (back substitute on $z$) and the RSS (from $d$). $R_{1}$ is not needed for the RSS. Always check $p$ before splitting $Q^{T}y$.
+
+#### Covariance
+$\mathrm{\mathrm{Var}}(aX+bY+cZ)=a^{2}\mathrm{Var}(X)+b^{2}\mathrm{Var}(Y)+c^{2}\mathrm{Var}(Z)+2ab\mathrm{Cov}(X,Y)+2ac\mathrm{Cov}(X,Z)+2bc\mathrm{Cov}(Y,Z)$ which can be seen more generally as $\mathrm{Var}(a^{T}U)=a^{T}\Sigma a=\sum_{i} \sum_{j} a_{i}a_{j}\Sigma_{ij}$ where $\Sigma$ is the covariance matrix of the random variables in random vector $U$.
+
+
 
 9/16
 #### Inference Continued

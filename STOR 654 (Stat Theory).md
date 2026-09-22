@@ -652,3 +652,113 @@ In principle since $\eta\in \mathcal{H}^{o}$ there is an open ball $B_{\delta}(\
 Use this to build your $\theta(x)$ (to use previous theorem) to prove this Lemma.
 
 **Theorem**: Let $\eta\in \mathcal{H^{o}}$ then $$\frac{\partial}{\partial \eta_{i}}A(\eta)=\mathbb{E}_{\eta}T_{i}(x)$$ and $$\frac{\partial^{2}}{\partial \eta_{i}\partial \eta_{k}}A(\eta)=\mathrm{Cov}_{\eta}(T_{i}(x),T_{j}(x))$$.
+
+### Useful Facts from Homework 4
+### Scaled Beta Integral
+**Rule**: For $a,b>0$ and $L>0$,
+$$
+\int_{0}^{L} u^{a-1}(L-u)^{b-1}du = L^{a+b-1}B(a,b) = L^{a+b-1} \frac{\Gamma(a)\Gamma(b)}{\Gamma(a+b)}
+$$
+Proof: Substitute $u=Lt$ (the unique linear map sending $(0,L)\to(0,1)$), so $du=L\,dt$, $u^{a-1}=L^{a-1}t^{a-1}$, and $L-u=L(1-t)$. Then
+$$
+\int_{0}^{L}u^{a-1}(L-u)^{b-1}du = L^{a-1}L^{b-1}L\int_{0}^{1}t^{a-1}(1-t)^{b-1}dt = L^{a+b-1}B(a,b)
+$$
+
+>**When to reach for it**: any integral where a parameter appears *both* as the upper limit and inside the integrand in a way that scales with the variable of integration. The integrand $u^{a-1}(L-u)^{b-1}$ is homogeneous, so rescaling to the unit interval pulls all the $L$'s out front and leaves the standard Beta kernel. This is the same strategy as completing the square in the $N(0,1)$ MGF derivation (9/1): force the integral into a shape whose value is already known.
+
+>**Typical use**: marginalizing a nuisance variable out of a joint order-statistic density. After a change of variables the surviving slice is often $(0,L)$ with $L$ a function of the variable you're keeping, and this rule collapses the integral in one step.
+
+
+**1. Probability Integral Transform makes continuous order statistics distribution-free.** If $F$ is continuous, $F(X_{(r)})=U_{(r)}$, the $r$th order statistic of $n$ iid $U(0,1)$, since $F$ is nondecreasing and preserves order. Any quantity built only from $F(X_{(i)})$'s therefore does not depend on $F$. Key consequence (uniform spacings):
+$$U_{(s)}-U_{(r)}\sim \text{Beta}(s-r,\ n-(s-r)+1)$$
+which depends only on the gap $s-r$ and on $n$.
+
+**2. Density of a function of dependent variables needs the joint.** Marginals never determine the distribution of $V-U$ (or $V/U$, etc.) without independence. Method: Jacobian to $(\text{nuisance},\ \text{target})$, then integrate out the nuisance. Write the new support $B=G(A)$ purely in the new coordinates (e.g. $v<1$ becomes $u+w<1$); the slice of $B$ at fixed target value gives the integration limits.
+
+**3. See scaled beta integral above**
+
+**4. Condition to buy independence (mixtures).** Indicators sharing a random quantity (e.g. a random interval) are NOT independent: $P(I_{j}=1,I_{l}=1)=\mathbb{E}[W^{2}]>(\mathbb{E}W)^{2}$, so they are positively correlated. Conditioning on the shared quantity freezes it, making them independent; then average back:
+$$N\mid W\sim \text{Bin}(m,W),\ W\sim\text{Beta}(a,b)\implies P(N=k)=\binom{m}{k}\frac{B(k+a,\ m-k+b)}{B(a,b)}$$
+(Beta-Binomial). Law of total variance shows the overdispersion: $\mathrm{Var}(N)=\mathbb{E}[mW(1-W)]+\mathrm{Var}(mW)$.
+
+**5. Tower property mechanics.** Tower is about expectations, so convert first: $P(A\cap B)=\mathbb{E}[\mathbb{I}_{A}\mathbb{I}_{B}]$ (product of indicators = indicator of intersection). Freezing lemma: if $Y\perp Z$ then $\mathbb{E}[g(Y,Z)\mid Z=z]=\mathbb{E}[g(Y,z)]$. 
+
+**6. Jensen on a restricted domain.** Convexity only needs to hold where the RV lives: $g(w)=w^{m}$ is strictly convex on $(0,1)$ for all $m\geq2$ (parity irrelevant). With strict convexity and a non-degenerate RV (e.g. has a density), $\mathbb{E}[W^{m}]>(\mathbb{E}W)^{m}$ strictly.
+
+**7. Discrete order statistics / ties: count with the original $X_{i}$.** Don't condition on order statistics; describe the event directly. $\{M=x,K=k\}=\{$exactly $k$ equal $x$, other $n-k$ exceed $x\}$, a trinomial with the "below $x$" count forced to $0$:
+$$P(M=x,K=k)=\binom{n}{k}P(X=x)^{k}P(X>x)^{n-k}$$
+Fixed-$x$ slices sum to $P(M=x)$, not $1$. Geometric: $P(X>x)=(1-p)^{x}$, $M\sim\text{Geom}(1-(1-p)^{n})$, $K\sim\text{Bin}(n,p)$ conditioned on $K\geq1$, and $M\perp K$.
+
+**8. Independence via factorization.** Joint $=g(x)h(k)$ implies independence only if the support is a product set. The factors are the marginals only up to constants; true marginals are $g(x)\sum_{k}h(k)$ and $h(k)\sum_{x}g(x)$.
+
+**9. Exponential order statistics.** Min of $n$ iid $\text{Exp}(\lambda)$ is $\text{Exp}(n\lambda)$ (rate adds). Joint of the first $r$ of $n$ (integrate out the top $n-r$):
+$$f(t_{1},\dots,t_{r})=\frac{n!}{(n-r)!}\prod_{i=1}^{r}f(t_{i})\,(1-F(t_{r}))^{n-r}\,\mathbb{I}\{t_{1}<\dots<t_{r}\}$$
+Normalized spacings $D_{j}=(n-j+1)(T_{j}-T_{j-1})$ are iid $\text{Exp}(\lambda)$, and total time on test $S=\sum_{j}T_{j}+(n-r)T_{r}=\sum_{j}D_{j}\sim\text{Gamma}(r,\lambda)$. Memorylessness says the *spacing* $X_{(2)}-X_{(1)}$ is independent of $X_{(1)}$, NOT that $X_{(2)}$ is.
+
+**10. Natural parameter space done correctly.** $\mathcal{H}=\{\eta:0<G(\eta)<\infty\}$, a condition on $G$, not $A$ ($A=\log G$ can be negative). A closed form for $G$ is only valid where the integral converges, so never solve inequalities on the formula over all $\mathbb{R}$. Procedure: evaluate the integral, recording where each step is valid; for the divergent side use a bound (e.g. $e^{\eta Q}\geq1$ gives $G\geq\int h=\infty$). $h$ carries the support indicator; $A$ must be written in $\eta$.
+
+>**Bonus (Gamma-Beta)**: $U\sim\text{Gamma}(a,\lambda)\perp D\sim\text{Gamma}(b,\lambda)\implies \frac{D}{U+D}\sim\text{Beta}(b,a)$, independent of $U+D\sim\text{Gamma}(a+b,\lambda)$. Scale-invariant statistics (ratios) have distributions free of the scale parameter; preview of Basu's theorem.
+
+9/22
+Recall that if we have an exponential family in the form $f(x|\eta)=h(x)\exp(<\eta,T(x)>-A(\eta))$ which is the density with respect to some measure $\mu$.
+We often call $T(x)$ the natural sufficient statistic and will see why soon.
+It is clear that $h(x),T(x)$ determines the distribution
+Surprisingly though, $A(\eta)$ also determines the distribution of $T(x)$.
+
+**Theorem**:
+Let $h\in \mathcal{H}^{o}$, then
+1. $\nabla A(\eta)=\mathbb{E}_{\eta}T(x)^{T}$
+2. $\frac{\partial^{2}}{\partial \eta_{i}\partial \eta_{j}}A(\eta)=\mathrm{Cov}(T_{i}(x),T_{j}(x))$ for $1\leq i,j\leq k$ (Hessian of $A(\eta)$)
+3. $M_{T(x)}(s)=\mathbb{E}_{\eta}\exp(<s,T(x)>)=\exp(A(\eta+s)-A(\eta))$ with $s\in \mathbb{R}^{k}$
+
+>Note: Moment generating function for $(T_{1},\dots,T_{k})$ is $M_{T}(s_{1},\dots,s_{k})=\mathbb{E}_{\theta}e^{\sum_{i=1}^{k}s_{i}T_{i}}$. The MGF exists if it is finite on some neighborhood of 0 (this is why we need $\eta$ in the interior of $\mathcal{H}$ above since we know a neighborhood exists that lies within $\mathcal{H}$ as an interior point).
+
+Proof of (3) in Theorem:
+$M_{T(x)}(s)=\int \exp(<s,T(x)>)h(x)\exp(<\eta,T(x)>-A(\eta))dx$ (expected value expanded to value * density) $=\exp(-A(\eta))\int \exp(<s+\eta,T(x)>)h(x)dx$. As long as $s+\eta\in \mathcal{H}$ (in natural parameter space) then the integral above is finite and equal to $\exp(A(s+\eta))$ (which can be seen by $\pm A(\eta+s)$ in the exponential making the integral evaluate to 1 by taking out the $\exp(A(\eta+s))$).
+
+Proof of (1) and (2) in Theorem:
+Recall cumulant generating function of $T(x)$ is $K_{T(x)}(s)=\log M_{T(x)}(s)=A(s+\eta)-A(\eta)$. And we already showed that $\nabla K$ is the mean of the RV and $\nabla^{2}K$ is the covariance matrix (remember taking with respect to $s$ so the $A(\eta)$ term drops). Lastly combined with calculus fact that $\nabla_{s}(A(\eta+s)-A(\eta))|_{s=0}=\nabla_{\eta}A(\eta)$.
+
+#### Location & Scale Families
+We say that $\{ f(x|\theta) \}$ is a
+1. Location family if $f(x|\theta)=f(x-\theta)$ for some $f$ and $\theta\in \mathbb{R}^{n}$. I.e. we are just shifting our distribution in some direction
+2. Scale family if $f(x|\sigma)=\frac{1}{\sigma}f\left( \frac{x}{\sigma} \right)$ for $\sigma>0$.
+3. Location-Scale family if $f(x|\theta)=\frac{1}{\sigma}f\left( \frac{x-\theta}{\sigma} \right)$
+
+
+
+Examples:
+$X\sim U(\theta,\theta+1)$ is location family because $f(x|\theta)=\mathbb{I}_{(\theta,\theta+1)}(x)=\mathbb{I}_{(0,1)}(x-\theta)$ (location of $U(0,1)$)
+$X\sim Exp(\lambda)$ is scale family because $f(x|\theta)=\lambda e^{-\lambda x}\mathbb{I}_{(0,\infty)}(x)$ for $\lambda>0$ and we choose $\sigma=\frac{1}{\lambda}$ (scale of $Exp(1)$)
+$X\sim N(\mu,\sigma^{2})$ is location-scale family
+
+>Notice that if $X\sim f(x)$ then $X+\theta$ is location family and $\sigma X$ is scale family and $\sigma X+\theta$ is location-scale.
+
+### Sufficiency
+#### Sufficient Statistics
+We have our random vector data $X=(X_{1},\dots,X_{n})$ with some sort of model $\{ f(x|\theta) \}$.
+$T(x)$: a function of our data is called a statistic
+Main question: When does $T(x)$ carry the the same information about $\eta$ as $X$? Think that if $T(x)$ is much smaller dimension than $X$ (like mean/sum of $X_{i}$'s) we cannot recreate $X$ from our sum, but it is possible that the information about our parameter $\eta$ has been preserved.
+
+**Definition**: $T(X)$ is a sufficient statistic (for $\{ f(x|\theta) \}$) if $X|T(X)=t$ does not depend on $\theta$ for all $t$. (i.e. the distribution of $X$ given the sufficient statistic does not depend on the parameter; aka all the information about the parameter is carried within $T(X)$)
+
+Example: Take $X_{1},\dots,X_{n}$ iid $f(x|\theta)$ with respect to Lebesgue measure $\lambda$. Let $T(x)=(X_{(1)},\dots,X_{(n)})$ (the order statistic). Claim: $T(x)$ is sufficient.
+$X|T(X)=t$ is a random permutation of $X$ each equally likely since $X$ iid. Not depend on $\theta$ since it doesn't even depend on $f(x|\theta)$.
+
+**Theorem (Factorization Theorem)**:
+Let $X\sim f(x|\theta),\theta\in\Theta$ with respect to measure $\mu$.
+Then $T(X)$ is sufficient iff $$
+f(x|\theta)=g(T(x),\theta)h(x)
+$$
+
+>Note: since exponential families follows $f(x|\theta)h(x)\exp(<\alpha(\theta),T(x)>-A(\theta))$, $T(x)$ is sufficient. Hence why we called it the natural sufficient statistic at beginning of lecture.
+
+Example:
+$X_{1},\dots,X_{n}\overset{\text{iid}}{\sim}Bernoulli(p)$ then $f(x|p)=\prod_{i=1}^{n}p^{x_{i}}(1-p)^{1-x_{i}}\mathbb{I}_{\{ 0,1 \}}(x_{i})=p^{\sum x_{i}}(1-p)^{n-\sum x_{i}}\prod_{i=1}^{n}\mathbb{I}_{\{ 0,1 \}}(x_{i})$
+Thus, $T(x)=\sum x_{i}$ is sufficient.
+
+Example:
+$X_{1},\dots,X_{n}\overset{\text{iid}}{\sim}N(\mu,\sigma^{2})$
+$f(x|\mu,\sigma^{2})=\prod_{i=1}^{n}\frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right)=\frac{1}{(2\pi\sigma^{2})^{n/2}}\exp\left( -\frac{1}{2\sigma^{2}}\sum x_{i}^{2}+\frac{\mu}{\sigma^{2}}\sum x_{i}-\frac{n}{2} \frac{\mu^{2}}{\sigma^{2}} \right)$
+Thus $T(x)=\left( \sum x_{i},\sum x_{i}^{2} \right)$ is sufficient.
+
