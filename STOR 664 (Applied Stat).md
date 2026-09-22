@@ -294,6 +294,7 @@ $\mathbb{E}[AU]=A\mathbb{E}[U]$ (by linearity)
 $\mathrm{Var}(AU)=A\mathrm{Var}(U)A^{T}$
 Proof: $\mathrm{Cov}(AU,AU)=\mathbb{E}[AUU^{T}A^{T}]-\mathbb{E}[AU]\mathbb{E}[U^{T}A^{T}]=A\mathbb{E}[U^{T}U]A^{T}-A\mathbb{E}[U]\mathbb{E}[U^{T}]A^{T}$
 $=A(\mathbb{E}[UU^{T}]-\mathbb{E}U\mathbb{E}U^{T})A^{T}=A\mathrm{Var}(U)A^{T}$.
+$\mathrm{Cov}(AU,BU)=A\mathrm{Var}(U)B^{T}$
 
 **Variance with fixed vector**
 $\mathrm{Var}(U+t)=\mathrm{Var}(U)$
@@ -441,10 +442,112 @@ Takeaway: One Householder pass (computing $Q^{T}y$ without ever forming $Q$) giv
 #### Covariance
 $\mathrm{\mathrm{Var}}(aX+bY+cZ)=a^{2}\mathrm{Var}(X)+b^{2}\mathrm{Var}(Y)+c^{2}\mathrm{Var}(Z)+2ab\mathrm{Cov}(X,Y)+2ac\mathrm{Cov}(X,Z)+2bc\mathrm{Cov}(Y,Z)$ which can be seen more generally as $\mathrm{Var}(a^{T}U)=a^{T}\Sigma a=\sum_{i} \sum_{j} a_{i}a_{j}\Sigma_{ij}$ where $\Sigma$ is the covariance matrix of the random variables in random vector $U$.
 
+### Sampling Distributions in the Normal Linear Model
+Setup: $y=X\beta+\epsilon$, $\epsilon \sim N_{n}(0_{n},\sigma^{2}I_{n})$, $X\in \mathbb{R}^{n\times p}$ fixed with $rank(X)=p<n$, $P=X(X^{T}X)^{-1}X^{T}$.
 
+$$
+y\sim N_{n}(X\beta,\;\sigma^{2}I_{n})
+$$
+$$
+\hat{\beta}\sim N_{p}(\beta,\;\sigma^{2}(X^{T}X)^{-1})
+$$
+$$
+\hat{y}\sim N_{n}(X\beta,\;\sigma^{2}P)
+$$
+$$
+\hat{\epsilon}\sim N_{n}(0_{n},\;\sigma^{2}(I_{n}-P))
+$$
+All four are fixed linear maps of $y$, so normality transfers; means use $\mathbb{E}[Ay]=A\mathbb{E}[y]$ and covariances use $\mathrm{Var}(Ay)=A\mathrm{Var}(y)A^{T}$ (9/9), together with $PX=X$ and the symmetry/idempotence of $P$ and $I_{n}-P$.
+
+### Covariance Rank and Support
+**Principle:** For a random vector $V$ with mean $\mu$ and covariance $\Sigma$,
+$$
+\mathbb{P}(V-\mu\in Col(\Sigma))=1
+$$
+and $Col(\Sigma)$ is the smallest such subspace, so $rank(\Sigma)$ is the number of directions in which $V$ genuinely varies.
+- Why: $\gamma\in \mathcal{N}(\Sigma)\implies \mathrm{Var}(\gamma^{T}V)=\gamma^{T}\Sigma\gamma=0\implies \gamma^{T}V=\gamma^{T}\mu$ a.s. Since $\Sigma$ is symmetric, $\mathcal{N}(\Sigma)=Col(\Sigma)^{\perp}$, so ranging over a basis of $\mathcal{N}(\Sigma)$ gives $V-\mu\in Col(\Sigma)$.
+- $\Sigma$ invertible $\iff$ no constrained directions $\iff$ a density exists on the full ambient space.
+
+| Vector | $rank$ | Invertible? | Lives in |
+|---|---|---|---|
+| $y$ | $n$ | Yes | $\mathbb{R}^{n}$ |
+| $\hat{\beta}$ | $p$ | Yes | $\mathbb{R}^{p}$ |
+| $\hat{y}$ | $p$ | No | $Col(X)$ |
+| $\hat{\epsilon}$ | $n-p$ | No | $Col(X)^{\perp}$ |
+
+>Ties back to Problem 1: $\mathrm{Var}(\gamma^{T}\hat{y})=\sigma^{2}\|P\gamma\|_{2}^{2}$ and $\mathrm{Var}(\gamma^{T}\hat{\epsilon})=\sigma^{2}\|P^{\perp}\gamma\|_{2}^{2}$, so these vanish exactly for $\gamma\in Col(X)^{\perp}$ and $\gamma\in Col(X)$ respectively. Problem 1 gives the directions that are zero identically in $y$; here they are the directions that are zero with probability 1.
+
+### Orthogonality and Independence
+Covariance of two linear maps of the same vector (note which matrix gets transposed):
+$$
+\mathrm{Cov}(Ay,By)=A\,\mathrm{Var}(y)\,B^{T},\qquad \mathrm{Cov}(By,Ay)=\left(A\,\mathrm{Var}(y)\,B^{T}\right)^{T}
+$$
+$$
+\mathrm{Cov}(\hat{y},\hat{\epsilon})=\sigma^{2}P(I_{n}-P)^{T}=\sigma^{2}(P-P^{2})=0_{n\times n}
+$$
+$$
+\mathrm{Cov}(\hat{\beta},\hat{\epsilon})=\sigma^{2}(X^{T}X)^{-1}X^{T}(I_{n}-P)=0_{p\times n}\quad \text{since } X^{T}(I_{n}-P)=0_{p\times n}
+$$
+**Zero covariance alone gives only uncorrelatedness.** Independence needs the pair to be *jointly* normal, which is stronger than each being marginally normal. Verify it by stacking the maps:
+$$
+\begin{bmatrix} \hat{y} \\ \hat{\epsilon} \end{bmatrix}=\begin{bmatrix} P \\ I_{n}-P \end{bmatrix}y=Cy\implies Cy\sim N_{2n}\left(\begin{bmatrix} X\beta \\ 0_{n} \end{bmatrix},\;\sigma^{2}\begin{bmatrix} P & 0 \\ 0 & I_{n}-P \end{bmatrix}\right)
+$$
+Zero off-diagonal blocks plus joint normality gives $\hat{y}\perp\!\!\!\perp\hat{\epsilon}$; the same stacking with $C=\begin{bmatrix} (X^{T}X)^{-1}X^{T} \\ I_{n}-P \end{bmatrix}$ gives $\hat{\beta}\perp\!\!\!\perp\hat{\epsilon}$.
+
+>Write-up template: (1) cross-covariance is $0$, (2) the *pair* is jointly normal as a single fixed linear map of $y$, (3) cite the fact. Step (2) is the one that is usually skipped.
+
+### Dropping Normality
+If only $\mathbb{E}[\epsilon]=0_{n}$ and $\mathrm{Var}(\epsilon)=\sigma^{2}I_{n}$ hold:
+- **Survives:** all means and covariances, since the 9/9 rules are distribution-free; all ranks and support statements; $\mathrm{Cov}(\hat{y},\hat{\epsilon})=0$ and $\mathrm{Cov}(\hat{\beta},\hat{\epsilon})=0$, i.e. uncorrelatedness.
+- **Does not follow:** the $N$ (normal) labels themselves (only the first two moments are known), and the independence conclusions, since joint normality was the hypothesis.
+- Consequence: exact pivots and confidence intervals (9/14) are lost; you fall back on CLT approximations.
+
+>General rule: anything derived from $\mathbb{E}[\epsilon]$ and $\mathrm{Var}(\epsilon)$ survives; anything needing the full distribution of $\epsilon$ does not.
+
+### Collinearity and the Geometry of $\mathrm{Var}(\hat{\beta})$
+Setup: two designs with the same $\beta$, $\sigma$, and $n$, built from orthonormal $u,v\in \mathbb{R}^{n}$ with $s^{2}=1-\rho^{2}$:
+$$
+X_{orth}=\begin{bmatrix} u & v \end{bmatrix},\qquad X_{col}=\begin{bmatrix} \dfrac{u}{s} & \dfrac{\rho u}{s}+v \end{bmatrix}
+$$
+The columns of $X_{col}$ have equal norms $1/s$ and cosine angle exactly $\rho$, so $\rho$ is the correlation between the columns.
+
+**Core tool** (9/9): $\mathrm{Var}(\hat{\beta})=\sigma^{2}(X^{T}X)^{-1}$, and for fixed $\gamma$,
+$$
+\mathrm{Var}(\gamma^{T}\hat{\beta})=\gamma^{T}\mathrm{Var}(\hat{\beta})\gamma=\sigma^{2}\gamma^{T}(X^{T}X)^{-1}\gamma
+$$
+The two Gram matrices and their inverses ($\sigma^{2}=1$):
+$$
+X_{orth}^{T}X_{orth}=I_{2}\implies \mathrm{Var}(\hat{\beta})=I_{2}
+$$
+$$
+X_{col}^{T}X_{col}=\frac{1}{s^{2}}\begin{bmatrix} 1 & \rho \\ \rho & 1 \end{bmatrix}\implies \mathrm{Var}(\hat{\beta})=\begin{bmatrix} 1 & -\rho \\ -\rho & 1 \end{bmatrix}
+$$
+>The $1/s$ scaling is chosen so $s^{2}=1-\rho^{2}$ cancels in the inverse. This makes the *marginal* variances identical across designs; the designs differ only in the off-diagonal.
+
+**Takeaway 1: collinearity does not destroy precision, it redistributes it.** Individual variances are $1$ in both designs, but the joint structure differs entirely. With $\gamma=(1,1)^{T}$ and $\gamma=(1,-1)^{T}$ in the collinear design:
+$$
+\mathrm{Var}(\hat{\beta}_{1}+\hat{\beta}_{2})=2(1-\rho),\qquad \mathrm{Var}(\hat{\beta}_{1}-\hat{\beta}_{2})=2(1+\rho)
+$$
+At $\rho=0.9$ these are $0.2$ and $3.8$, versus $2$ for both under orthogonality. Some directions become far better determined, others far worse. There is no single scalar summary of "how bad" collinearity is; precision is a property of the direction $\gamma$, not of the design alone.
+
+**Takeaway 2: marginal distributions can hide everything.** Histograms of $\hat{\beta}_{1}$ and $\hat{\beta}_{2}$ alone are indistinguishable between the two designs here. Only the scatterplot (or the covariance matrix) reveals the difference. Always inspect the joint object $\mathrm{Var}(\hat{\beta})$, not just its diagonal.
+
+**Takeaway 3: the sign of the covariance drives the sum.** From Problem 4(a) with $a=(1,1)^{T}$:
+$$
+\mathrm{Var}(\hat{\beta}_{1}+\hat{\beta}_{2})=\mathrm{Var}(\hat{\beta}_{1})+\mathrm{Var}(\hat{\beta}_{2})+2\mathrm{Cov}(\hat{\beta}_{1},\hat{\beta}_{2})
+$$
+Positively correlated columns give $\mathrm{Cor}(\hat{\beta}_{1},\hat{\beta}_{2})=-\rho<0$, so the cross term *subtracts*. Correlation alone is not enough to shrink the sum; the negative sign is what causes the cancellation.
+
+**Takeaway 4: the geometric picture.** Nearly parallel columns mean the data cannot attribute the fit to one column versus the other: overshooting on $\hat{\beta}_{1}$ is compensated by undershooting on $\hat{\beta}_{2}$, yielding nearly the same $\hat{y}$. The sampling cloud is a narrow ridge whose long axis is $(1,-1)$ (the ill-determined direction) and whose short axis is $(1,1)$ (the well-determined one). Movement along the ridge barely changes the sum.
+$$
+\text{ill-determined direction}=\text{eigenvector of }\mathrm{Var}(\hat{\beta})\text{ with the largest eigenvalue}
+$$
+Here the eigenvectors are $(1,-1)/\sqrt{2}$ and $(1,1)/\sqrt{2}$ with eigenvalues $1+\rho$ and $1-\rho$.
+
+**Takeaway 5: unbiasedness is untouched.** Both designs are full rank, so $\mathbb{E}[\hat{\beta}]=\beta$ regardless of collinearity. Both clouds center at the true $\beta$. Collinearity is a variance phenomenon, not a bias one. Relatedly, $P_{X}$ and hence $\hat{y}$ depend only on $Col(X)$, which is identical for both designs — what collinearity destabilizes is the *decomposition* of a well-determined $\hat{y}$ into per-column contributions.
 
 9/16
-#### Inference Continued
+## Inference Continued
 $$
 Z=\frac{\gamma^{T}\hat{\beta}-\gamma^{T}\beta}{\sqrt{ \sigma^{2}\gamma^{T}(X^{T}X)^{-1}\gamma }}\sim N(0,1)
 $$
