@@ -576,7 +576,7 @@ Estimate it!
 
 **Primitives**
 Suppose $W_{i}\overset{\text{iid}}{\sim}N(0,1)$ for $i=1,\dots,d$ then $\sum_{i=1}^{d}W_{i}^{2}\sim \chi^{2}_{d}$
-Let $Z\sim N(0,1)$ and $V\sim \chi_{d}$ with $Z$ independent of $V$. Then $\frac{Z}{\sqrt{ \frac{V}{d} }}\sim t_{d}$ (t distribution with $d$ d.o.f.).
+Let $Z\sim N(0,1)$ and $V\sim \chi_{d}^{2}$ with $Z$ independent of $V$. Then $\frac{Z}{\sqrt{ \frac{V}{d} }}\sim t_{d}$ (t distribution with $d$ d.o.f.).
 
 Now back to estimation of variance:
 $$s^{2}=\frac{\sum_{i=1}^{n}(y_{i}-\hat{y}_{i})^{2}}{(n-p)}$$
@@ -589,10 +589,64 @@ We will do the following steps to prove it
 4. Show $Z\perp\!\!\!\perp V$ (need to be careful here as obvious way won't work)
 
 **Step 1** (Rewriting):
-$\frac{\gamma^{T}\hat{\beta}-\gamma^{T}\beta}{s\sqrt{ \sigma^{2}\gamma^{T}(X^{T}X)^{-1}\gamma }} \frac{\sigma}{\sigma}$ then we have the same $Z$ as before thus we can factor this into $\frac{Z\sigma}{s}$
-Now examining $s$, recall we have $s^{2}=\frac{\sum_{i=1}^{n}(y_{i}-\hat{y}_{i})^{2}}{(n-p)}$ so $\frac{\sigma}{s}=\frac{\sigma}{\sqrt{ \frac{\sum_{i=1}^{n}(y_{i}-\hat{y}_{i})^{2}}{(n-p)} }}$. From here we take $n-p=d$ and $\frac{\sigma}{\sum_{i=1}^{n}(y_{i}-\hat{y}_{i})^{2}}=\frac{1}{V}$
-Now checking $$\frac{Z}{\sqrt{ \frac{V}{d} }}=\frac{\gamma^{T}\hat{\beta}-\gamma^{T}\beta}{\sqrt{ \sigma^{2}\gamma^{T}(X^{T}X)^{-1}\gamma }} \frac{1}{\sqrt{ \frac{\frac{1}{\sigma}\sum(\hat{y}_{i}-y_{i})^{2}}{n-p} }}$$
+$\frac{\gamma^{T}\hat{\beta}-\gamma^{T}\beta}{s\sqrt{ \gamma^{T}(X^{T}X)^{-1}\gamma }} \frac{\sigma}{\sigma}$ then we have the same $Z$ as before thus we can factor this into $\frac{Z\sigma}{s}$
+Now examining $s$, recall we have $s^{2}=\frac{\sum_{i=1}^{n}(y_{i}-\hat{y}_{i})^{2}}{(n-p)}$ so $\frac{\sigma}{s}=\frac{\sigma}{\sqrt{ \frac{\sum_{i=1}^{n}(y_{i}-\hat{y}_{i})^{2}}{(n-p)} }}$. From here we take $n-p=d$ and $\frac{\sigma^{2}}{\sum_{i=1}^{n}(y_{i}-\hat{y}_{i})^{2}}=\frac{1}{V}$
+Now checking $$\frac{Z}{\sqrt{ \frac{V}{d} }}=\frac{\gamma^{T}\hat{\beta}-\gamma^{T}\beta}{\sqrt{ \sigma^{2}\gamma^{T}(X^{T}X)^{-1}\gamma }} \frac{1}{\sqrt{ \frac{\frac{1}{\sigma^{2}}\sum(\hat{y}_{i}-y_{i})^{2}}{n-p} }}$$
 Note that $\frac{1}{\sigma}\sum(\hat{y}_{i}-y_{i})^{2}=\frac{1}{\sigma}||\hat{\epsilon}||_{2}^{2}$. Recall $\hat{\epsilon}=(I-P_{X})y=P_{X}^{\perp}y=Q_{2}Q_{2}^{T}y$ (from QR decomposition as $Q_{2}$ gives us a basis for orthogonal complement of $X$).
 So $\frac{1}{\sigma}||\hat{\epsilon}||_{2}^{2}=\frac{1}{\sigma}||Q_{2}Q_{2}^{T}y||_{2}^{2}$. Note that $\hat{\epsilon}\sim N(Q_{2}Q_{2}^{T}X\beta,\sigma^{2}Q_{2}Q_{2}^{T}Q_{2}^{T}Q_{2})$
 
 
+9/23
+Recall again that $y=X\beta+\epsilon,X\in \mathbb{R}^{nxp},rank(X)=p,\epsilon \sim N_{n}(0_{n},\sigma^{2}I_{n})$.
+We want to show that for any $\gamma\in \mathbb{R}^{p}$ that $\frac{\gamma^{T}\hat{\beta}-\gamma^{T}\beta}{s\sqrt{ \gamma^{T}(X^{T}X)^{-1}\gamma }}=T\sim t_{n-p}$ where $s^{2}=\frac{\sum(y_{i}-\hat{y_{i}})^{2}}{n-p}$
+We will follow the 4 steps above to do this.
+Recall also that (step 1 above) $$
+Z=\frac{\gamma^{T}\hat{\beta}-\gamma^{T}\beta}{\sqrt{ \sigma^{2}\gamma^{T}(X^{T}X)^{-1}\gamma }}
+$$
+$$
+V=\frac{(n-p)s^{2}}{\sigma^{2}},\;d=n-p
+$$
+Step 2: 
+Recall that $\hat{\beta}\sim N_{p}(\beta,\sigma^{2}(X^{T}X)^{-1})$ thus $\gamma^{T}\hat{\beta}\sim N_{1}(\gamma^{T}\beta,\sigma^{2}\gamma^{T}(X^{T}X)^{-1}\gamma)$
+Thus, $\gamma^{T}\hat{\beta}-\gamma^{T}\beta \sim N_{1}(0,\sigma^{2}\gamma^{T}(X^{T}X)^{-1}\gamma)$
+Finally then, $Z=\frac{\gamma^{T}\hat{\beta}-\gamma^{T}\beta}{\sqrt{ \sigma^{2}\gamma^{T}(X^{T}X)^{-1}\gamma }}\sim N_{1}(0,1)$.
+
+Step 3:
+WTS $V\sim\chi_{d}^{2}\overset{d}{=}\chi_{n-p}^{2}$
+$$V=\frac{(n-p)s^{2}}{\sigma^{2}}=\frac{(n-p)\sum(y_{i}-\hat{y}_{i})^{2}}{(n-p)\sigma^{2}}=\frac{\sum(y_{i}-\hat{y}_{i})^{2}}{\sigma^{2}}$$
+Note that $$
+\sum(y_{i}-\hat{y}_{i})^{2}=||y-\hat{y}||_{2}^{2}=||\hat{\epsilon}||_{2}^{2}=||P_{X}^{\perp}y||_{2}^{2}=||Q_{2}Q_{2}^{T}y||_{2}^{2}=y^{T}Q_{2}Q_{2}^{T}Q_{2}Q_{2}^{T}y=y^{T}Q_{2}I_{n-p}Q_{2}^{T}y
+$$$$
+=||Q_{2}^{T}y||_{2}^{2}
+$$
+Recall that the QR decomposition gives use $Q=[Q_{1}\;Q_{2}]$ where $Col(Q_{1})=Col(X)$ and $Col(Q_{2})=Col^{\perp}(X)$. Also recall that $P_{X}^{\perp}=Q_{2}Q_{2}^{T}$ (in general can create projection matrix from an orthonormal basis, in this case $Q_{2}$).
+Now we know that $y\sim N(X\beta,\sigma^{2}I_{n})\implies Q_{2}^{T}y\sim N_{n-p}(Q_{2}^{T}X\beta,\sigma^{2}Q_{2}^{T}Q_{2})=N_{n-p}(Q_{2}^{T}X\beta,\sigma^{2}I_{n-p})=N_{n-p}(0,\sigma^{2}I_{n-p})$ where the last equality comes from the fact that $X\beta\in Col(X)$ and $Q_{2}$ spans $Col^{\perp}(X)$ thus $Q_{2}^{T}X\beta=0$.
+Finally, $$
+V=\frac{||Q_{2}^{T}y||_{2}^{2}}{\sigma^{2}}=\frac{y^{T}Q_{2}}{\sigma} \frac{Q_{2}^{T}y}{\sigma}\overset{d}{=}\sum w_{i}^{2}\sim \chi_{n-p}^{2}
+$$
+Because $\frac{Q_{2}^{T}y}{\sigma}\sim N_{n-p}(0_{n-p},I_{n-p})\implies \frac{Q_{2}^{T}y}{\sigma}=[w_{i}]_{i=1,\dots,n-p}$ where $w_{i}\overset{\text{iid}}{\sim} N(0,1)$.
+
+Step 4:
+Consider QR decomposition: $X=QR$.
+Then $U=Q^{T}y=[Q_{1}^{T}y\;Q_{2}^{T}y]$ stacked. And note that all of the randomness of $V$ comes from $Q_{2}^{T}y$ and similarly the randomness of $Z$ comes from $\hat{\beta}$ which comes from $Q_{1}^{T}y$.
+So $Z$ is a function of $Q_{1}^{T}y$, $V$ is a function of $Q_{2}^{T}y$ and $Q_{1}^{T}y,Q_{2}^{T}y$ are both multivariate normal, so now we can check if their covariance is 0 $\implies \perp\!\!\!\perp$.
+$$
+\mathrm{Cov}(Q_{1}^{T}y,Q_{2}^{T}y)=Q_{1}^{T}\mathrm{Cov}(y,y)Q_{2}=Q_{1}^{T}\sigma^{2}I_{n}Q_{2}=\sigma^{2}Q_{1}^{T}Q_{2}=0_{p\times(n-p)}
+$$
+Last equality comes from the fact that $Q_{1}$ spans $Col(X)$ and $Q_{2}$ spans $Col(X)^{\perp}$.
+Thus, $Q_{1}^{T}y\perp\!\!\!\perp Q_{2}^{T}y$ and functions preserve independence $\implies Z\perp\!\!\!\perp V$.
+
+Now we have a t-distribution and our t statistics $$
+\frac{\gamma^{T}\hat{\beta}-\gamma^{T}\beta}{\sqrt{ s^{2}\gamma^{T}(X^{T}X)^{-1}\gamma }}\sim t_{n-p}
+$$
+So construct a confidence interval where $T\sim t_{n-p}$ and we have $$
+\mathbb{P}\left(\left\{  t_{n-p}^{-1}\left( \frac{\alpha}{2} \right)\leq T\leq t_{n-p}^{-1}\left( 1-\frac{\alpha}{2} \right)  \right\}\right)=1-\alpha
+$$$$
+\implies\gamma^{T}\beta\in\gamma^{T}\hat{\beta}\pm t_{n-p}^{-1}\left( \frac{\alpha}{2} \right)s\sqrt{ \gamma^{T}(X^{T}X)^{-1}\gamma }
+$$
+Which gives us a confidence interval when we don't know the variance. We can see this is very similar to when we do know variance except $\sigma\to s,\Phi^{-1}\to t_{n-p}^{-1}$ which is the "price we paid".
+
+##### Testing at Size $\alpha$
+Two sided test is check if $T(y)\geq t_{n-p}^{-1}\left( 1-\frac{\alpha}{2} \right)$ or $T(y)\leq t_{n-p}^{-1}\left( \frac{\alpha}{2} \right)$.
+If we have null $H_{0}:\beta=\beta_{0}$ then under the null these probabilities would be of size $\alpha$, but if $\beta\neq\beta_{0}$ then things can go wrong and the probability would not equal $\alpha$.
+Can also get p-value from this as the smallest $\alpha$ at which you reject.
