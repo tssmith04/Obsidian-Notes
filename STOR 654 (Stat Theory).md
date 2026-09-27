@@ -762,3 +762,55 @@ $X_{1},\dots,X_{n}\overset{\text{iid}}{\sim}N(\mu,\sigma^{2})$
 $f(x|\mu,\sigma^{2})=\prod_{i=1}^{n}\frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right)=\frac{1}{(2\pi\sigma^{2})^{n/2}}\exp\left( -\frac{1}{2\sigma^{2}}\sum x_{i}^{2}+\frac{\mu}{\sigma^{2}}\sum x_{i}-\frac{n}{2} \frac{\mu^{2}}{\sigma^{2}} \right)$
 Thus $T(x)=\left( \sum x_{i},\sum x_{i}^{2} \right)$ is sufficient.
 
+9/24
+Hardest proof of class today
+
+### Sufficient Statistic
+$X=(X_{1},\dots,X_{n})$ follows $f(X|\theta)$ where $\theta\in\Theta$ with respect to measure $\mu$ (sigma finite)
+
+**Definition**: $T(X)$ is sufficient if the distribution of $X|T(X)=t$ does not depend on $\theta$
+
+**Theorem**: $T(X)$ is sufficient iff $f(X|\theta)=g(T(X),\theta)h(X)$
+Proof: $\mu$ is $\sigma$-finite and $X\in \mathcal{X}$ Polish space
+
+Primitives for proof:
+Regular conditional probability can sometimes be called a Markov Kernel: $Q(A,x)=Q(A,\cdot)$ is a measurable function for all $A\in \mathcal{B}$ and $Q(\cdot,x)$ is a probability measure
+Markov Kernel $Q(A,x)$ is the $Y|X=x$ if $\mathbb{P}(Y\in A,X\in B)=\int_{B}Q(A,x)dP_{X}(x)$
+Usually if you are on a Polish space you are just proving that this conditional probability exists.
+Read more in section 6.2 if want to understand better or wait until STOR 634.
+If I have two measures $\mu,\nu$ then $\mu\ll \nu$ (absolutely continuous with respect to $\nu$) if $\nu(A)=0\implies \mu(A)=0$. This is useful for Radon-Nikodym Derivative: if $\mu\ll \nu$ there exists $\frac{d\mu}{d\nu}=f$ so that $\int_{A}d\mu=\int_{A}fd\nu$.
+Lastly, $\mu \sim \nu$ (are equivalent) if $\mu\ll \nu$ and $\nu\ll \mu$.
+
+Let $P_{\theta}:=f(X|\theta)d\mu$. WLOG assume that $\mu \sim \{ P_{\theta} \}$ which means that $\mu(A)=0\iff P_{\theta}(A)=0\;\forall\theta$
+	Consider $P_{\theta}\sim Exp(\theta)$ then $f(X|\theta)=\theta e^{-\theta x}\mathbb{I}_{(0,\infty)}$ with respect to $\lambda$ (Lebesgue measure). You can absorb the indicator into the measure to make a measure $\mu \sim \{ P_{\theta} \}$.
+WLOG assume that $\mu$ is a probability measure.
+Lastly notations:
+$\mathbb{E}_{\theta},\mathbb{P}_{\theta}$ come from $f(x|\theta)d\mu$. For example, $\mathbb{E}_{\theta}g(X)=\int g(x)f(x|\theta)d\mu(x)$.
+$\mathbb{E}^{*},\mathbb{P}^{*}$ come from $d\mu$. For example, $\mathbb{E}^{*}g(X)=\int g(x)d\mu(x)$.
+$G_{\theta}(t),G^{*}(t)$ are on the distribution $T(X)$ (on range of $T(X)$).
+
+Proof (<= direction):
+$\mathbb{E}_{\theta}l(T(X))=\int l(T(x))g(T(x),\theta)h(x)dP^{*}(x)=\mathbb{E}^{*}l(T(X))g(T(X),\theta)h(X)$
+$Q^{*}(A,t)\sim X|T=t$ under $X\sim P^{*}$
+Which means we can rewrite the above expectation as $\mathbb{E}^{*}l(T(X))g(T(X),\theta)h(X)=\mathbb{E}^{*}[\mathbb{E}^{*}[\dots, \dots|T]]$
+$=\int\int l(t)g(t,\theta)h(x)Q^{*}(dx,t)G^{*}(dt)$ where $\int l(t)g(t,\theta)h(x)Q(dx,t)$ is the expectation of $X|T=t$.
+Now pull out the functions not dependent on x: $=\int l(t)g(t,\theta)\int h(x)Q^{*}(dx,t)G^{*}(dt)$ and we define $\int h(x)Q^{*}(dx,t)=:w(t)$.
+So $=\int l(t)g(t,\theta)w(t)G^{*}(dt)=\mathbb{E}_{\theta}l(T)$ (from beginning), thus $g(t,\theta)w(t)$ is $\frac{dG_{\theta}}{dG^{*}}$ (the density?)
+I am going to define $Q(A,t)=\int_{A} \frac{h(x)}{w(t)}Q^{*}(dx,t)$. We will show that $Q$ is $X|T=t$ under $P_{\theta}$ for all $\theta$.
+$\mathbb{E}_{\theta}l(X,T(X))=\mathbb{E}^{*}l(X,T)g(T,\theta)h(X)=\int \int l(x,t)g(t,\theta)h(x)Q^{*}(dx,t)G^{*}(dt)$
+$=\int \int l(x,t) \frac{h(x)}{w(t)} Q^{*}(dx,t) g(t,\theta)w(t)G^{*}(dt)=\int l(x,t)Q(dx,t)G_{\theta}(dt)$ because $g(t,\theta)w(t)G^{*}(dt)$ is density with respect to $G^{*}$ and we defined $Q(A,t)$ above so that it can replace $\frac{h(x)}{w(t)} Q^{*}(dx,t)$. This means that $Q$ is $X|T=t$.
+$Q(dx,t)$ behaves as for every fixed $t$, it is a measure $dx$.
+
+Proof ($\implies$ direction):
+There exists $Q(A,t)\sim X|T(x)=t$ under $P_{\theta}$ for all $\theta$.
+Let $N$ be so that $G^{*}(N)=0\iff P^{*}(T^{-1}(N))=P^{*}(T\in N)=0$. So $G_{\theta}(N)=P_{\theta}(T\in N)=\int_{T^{-1}(N)}f(x|\theta)P^{*}(dx)=0$
+So we know that $G_{\theta}\ll G^{*}$ and $g(t,\theta)=\frac{dG_{\theta}}{dG^{*}}$.
+$\mathbb{P}_{\theta}(X\in B)=\mathbb{E}_{\theta}\mathbb{P}_{\theta}[X\in B|T]=\mathbb{E}_{\theta}Q(B,T)=\int Q(B,t)g(t,\theta)G^{*}(dt)=\int \int \mathbb{I}_{B}(x)Q(dx,t)g(t,\theta)G^{*}(dt)$
+$=\int \int \mathbb{I}_{B}(x)g(T(x),\theta)Q(dx,t)G^{*}(dt)=\int \mathbb{I}_{B}(x)g(T(x),\theta)\hat{P}(dx)$ where $\hat{P}(A)$ is the mixture measure $\hat{P}(A)=\int Q(A,t)G^{*}(dt)$. So this yields $=\int_{B}g(T(x),\theta)\hat{P}(dx)$.
+Last step we will show $\hat{P}\ll P^{*}=\mu$. Which will let us show that $h(x)= \frac{d\hat{P}}{dP^{*}}$.
+Thus, $P_{\theta}(X\in B)=\int_{B}g(T(x),\theta)h(x)\mu(dx)$ and thus we have $f(x|\theta)=g(T(x),\theta)h(x)$.
+Take $N$ so that $\mu(N)=P^{*}(n)=0$. Thus, $P_{\theta}(N)=0$ for all $\theta$.
+$P_{\theta}(N)=\int Q(N,t)G_{\theta}(dt)$. Thus $\tilde{N}=\{ t:Q(N,t)>0 \}$ has measure zero i.e. $G_{\theta}(\tilde{N})=0$ which is true for all $\theta$.
+This implies that $G^{*}(\tilde{N})=0$.
+Since $P^{*}(N)=0$ we know that $0=\hat{P}(N)=\int Q(N,t)G^{*}(dt)$. Thus, $\hat{P}<\mu$.
+$(2-c)\theta=(c-4)\theta^{2}\implies2-c=c\theta-4\theta\implies \frac{2+4\theta}{\theta+1}$

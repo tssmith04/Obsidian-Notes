@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "STOR 664 (Applied Stat).md",
+                "file": "STOR 654 (Stat Theory).md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "STOR 664 (Applied Stat)"
+              "title": "STOR 654 (Stat Theory)"
             }
           },
           {
@@ -216,8 +216,8 @@
   },
   "active": "4ba475b6dfb5d945",
   "lastOpenFiles": [
-    "STOR 654 (Stat Theory).md",
     "STOR 664 (Applied Stat).md",
+    "STOR 654 (Stat Theory).md",
     "Stochastic Modeling/STOR 642.md",
     "STOR 612.md",
     "README.md",
