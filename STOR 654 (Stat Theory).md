@@ -921,8 +921,9 @@ So $f_{X_{(n)}}(s)=\frac{\partial}{\partial s}F_{\theta}(s)= \frac{ns^{n-1}}{\th
 Thus, $0=\mathbb{E}_{\theta}g(T)=\frac{n}{\theta^{n}}\int_{0}^{\theta}g(s)s^{n-1}ds$ for all $\theta>0$. If this is true then we know that $\frac{d}{d\theta}\mathbb{E}_{\theta}g(T)=0$.
 Thus, $-\frac{n^{2}}{\theta^{n+1}}\int_{0}^{\theta}g(s)s^{n-1}ds+\frac{n}{\theta^{n}}g(\theta)\theta^{n-1}=0$ and we know that the integral is equal to zero from the expectation fact before taking derivative. Thus, $\frac{n}{\theta^{n}}g(\theta)\theta^{n-1}=0\implies g(\theta)=0$ for all $\theta>0$ (since $\frac{n}{\theta^{n}}>0,\theta^{n-1}>0$). So $\mathbb{P}_{\theta}(g(T)=0)=1$.
 
-**Theorem**: Any statistic that is sufficient and complete is minimal sufficient.
+**Theorem (Bahadur)**: Any statistic that is sufficient and complete is minimal sufficient.
 >Note: Minimal sufficient is weaker than sufficient and complete
+>This is useful when $T$ sufficient then $T\text{ not minimal}\implies T\text{ not complete}$ by contrapositive.
 
 Proof: Take $S$ sufficient complete and $M$ some other minimal sufficient.
 $\mathbb{E}_{\theta}[S-\mathbb{E}_{\theta}[S|M]]=\mathbb{E}_{\theta}S-\mathbb{E}_{\theta}S=0$ (by tower property).
@@ -930,3 +931,15 @@ Additionally, $\mathbb{E}_{\theta}[S|M]$ does not depend on the parameter becaus
 
 **Theorem (Basu)**: If $T(X)$ is sufficient complete and $A(X)$ is ancillary then $T(X)\perp\!\!\!\perp A(X)$.
 Proof: $\mathbb{E}_{\theta}[\mathbb{E}(g(A)|T)]=\mathbb{E}_{\theta}g(A)=\mathbb{E}g(A)$. So call $\psi(T)=\mathbb{E}(g(A)|T)$ then $\mathbb{E}_{\theta}[\psi(T)-\mathbb{E}g(A)]=0$ because $T$ is complete and $\mathbb{E}g(A)$ is just a constant we know that $\psi(T)-\mathbb{E}g(A)$ is some function of $T$ so the expectation is 0. Thus, $\psi(T)=\mathbb{E}(g(A)|T)=\mathbb{E}g(A)\implies A\perp\!\!\!\perp T$.
+
+## Homework 6 Notes
+- Discrete Transformations have no Jacobian. Substitute directly e.g. $\mathbb{P}(X=x,T=t)=\mathbb{P}(X=x,Y=t-x)$
+- Given $X\perp\!\!\!\perp Y$, $f_{X},f_{Y}$ try to identify the distribution of $X$ and $Y$ then use their MGFs for finding distributions of sufficient statistics (when sum).
+- Suppose $T$ is minimal sufficient. If $S=g(T)$ where $g$ is some function, then $S$ satisfies condition 2 of minimal sufficiency. Thus, we just need to prove that $S$ is sufficient to prove $S$ is minimal sufficient.
+- $T$ sufficient and $T=g(S)\implies S$ sufficient.
+- The above two bullets together imply a $1-1$ **function of a minimal statistic is a minimal statistic.**
+- To prove $W$ not sufficient (given a minimal $T$), suppose $W$ is sufficient for contradiction, then find two points $x,x'$ such that $W(x)=W(x')$ but $T(x)\neq T(x')$. (because then there does not exist a function $g$ such that $T=g(W)$ which contradicts $T$'s minimality)
+- For exponential families (assuming minimal representation i.e. group all terms maximally):
+	- $T(x)$ is always sufficient by definition
+	- $T(x)$ is minimal sufficient if $w_{i}(\eta)$'s cannot be linearly combined (there does not exist  some $c\in \mathbb{R}^{k},d\in \mathbb{R}$ such that $c^{T}w(\eta)= d$)
+- 
