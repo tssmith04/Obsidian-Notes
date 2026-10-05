@@ -650,3 +650,137 @@ Which gives us a confidence interval when we don't know the variance. We can see
 Two sided test is check if $T(y)\geq t_{n-p}^{-1}\left( 1-\frac{\alpha}{2} \right)$ or $T(y)\leq t_{n-p}^{-1}\left( \frac{\alpha}{2} \right)$.
 If we have null $H_{0}:\beta=\beta_{0}$ then under the null these probabilities would be of size $\alpha$, but if $\beta\neq\beta_{0}$ then things can go wrong and the probability would not equal $\alpha$.
 Can also get p-value from this as the smallest $\alpha$ at which you reject.
+
+
+## Homework 3 Takeaways
+
+### Linear Models and Design
+- **"Linear" means linear in $\beta$**, not in the covariate. The hinge model $\mu(M)=\beta_{1}+\beta_{2}\frac{M}{60}+\beta_{3}\left(\frac{M}{60}-1\right)_{+}$ is a linear model because each column of $X$ is a fixed, known function of $M$:
+$$
+X[i,:]=\begin{bmatrix} 1 & \dfrac{M_{i}}{60} & \left(\dfrac{M_{i}}{60}-1\right)_{+} \end{bmatrix}
+$$
+This requires the knot to be known. An estimated knot $\kappa$ in $\left(\frac{M}{60}-\kappa\right)_{+}$ makes the model nonlinear in its parameters.
+- **Hinge function:** $\mu$ is continuous at the knot and differentiable there iff $\beta_{3}=0$. $\beta_{3}$ is the *change in slope* (right slope minus left slope), not the slope after the knot, which is $\beta_{2}+\beta_{3}$.
+- **Identifiability:** if all $M_{i}\leq 60$, the third column of $X$ is $0_{n}$, so $e_{3}\in\mathcal{N}(X)$ and $\beta_{3}$ cannot be estimated.
+- **The null hypothesis must match the scientific question.** "No change between 60 and 120 minutes" is $H_{0}:\beta_{2}+\beta_{3}=0$, not $H_{0}:\beta_{3}=0$ (no bend) or $H_{0}:\beta_{2}=\beta_{3}=0$ (no effect anywhere, a two-constraint hypothesis).
+- **Degrees of freedom:** if $n=p$ then $\hat{y}=y$, $RSS=0$, and $s^{2}=\frac{0}{0}$. Estimating $\sigma^{2}$ requires $n-p\geq 1$
+
+### Standard Errors and Contrasts
+- **The standard error is the standard deviation of an estimator** (the square root of its variance), not the variance itself. It measures how much the estimate varies across repeated datasets, while $\sigma$ measures how much individual observations vary. With $v_{\gamma}=\gamma^{T}(X^{T}X)^{-1}\gamma$:
+$$
+SE(\gamma^{T}\hat{\beta})=\sigma\sqrt{ v_{\gamma} },\qquad \widehat{SE}(\gamma^{T}\hat{\beta})=s\sqrt{ v_{\gamma} }
+$$
+- **Covariances between coefficients enter through $v_{\gamma}$:**
+$$
+\mathrm{Var}(\hat{\beta}_{2}+\hat{\beta}_{3})=\mathrm{Var}(\hat{\beta}_{2})+\mathrm{Var}(\hat{\beta}_{3})+2\mathrm{Cov}(\hat{\beta}_{2},\hat{\beta}_{3})
+$$
+Negative covariance shrinks the variance of a sum and inflates the variance of a difference.
+- **Saturated designs:** with as many distinct covariate values as parameters, the fit passes through the group means. Here $\hat{\theta}=\bar{y}_{120}-\bar{y}_{60}$.
+
+### Confidence Intervals and Tests
+- **CI via a pivot.** The pivot below holds at the **true** $\beta$, with no null hypothesis involved:
+$$
+T=\frac{\gamma^{T}\hat{\beta}-\gamma^{T}\beta}{s\sqrt{ v_{\gamma} }}\sim t_{n-p}
+$$
+Rearranging $\mathbb{P}(|T|\leq t_{n-p,1-\alpha/2})=1-\alpha$ gives the CI:
+$$
+\gamma^{T}\hat{\beta}\pm t_{n-p,1-\alpha/2}\,s\sqrt{ v_{\gamma} }
+$$
+- **Any split of $\alpha$ between the tails gives valid coverage.** Equal tails gives the shortest two-sided interval. One-sided bounds correspond to one-sided alternatives, and the direction must be chosen before looking at the data.
+- **Test–CI duality:** reject $H_{0}:\theta=b$ at level $\alpha$ iff $b$ is outside the $100(1-\alpha)\%$ CI. The CI is the set of null values that are not rejected. The proof uses $|x|\leq c\iff -c\leq x\leq c$.
+- **Two-sided p-value.** "Extreme" means far from what $H_{0}$ predicts, in either direction:
+$$
+p=\mathbb{P}_{H_{0}}\left(|T|\geq|t_{obs}|\right)=2F_{n-p}(-|t_{obs}|)
+$$
+- **Interpretation.** 95% confidence means that about 95% of intervals from repeated experiments cover the fixed $\theta$. The interval is random and $\theta$ is fixed. A p-value is computed *assuming* $H_{0}$. It is not the probability that $H_{0}$ is true.
+
+### Distribution Theory via QR
+- With full QR $X=[Q_{1}|Q_{2}]\begin{bmatrix} R_{1} \\ 0 \end{bmatrix}$, we have $Q_{2}^{T}X=0$ and $Q_{2}^{T}Q_{2}=I_{n-p}$, so
+$$
+U=Q_{2}^{T}y\sim N_{n-p}(0_{n-p},\sigma^{2}I_{n-p}),\qquad RSS=||Q_{2}Q_{2}^{T}y||_{2}^{2}=||U||_{2}^{2}
+$$
+- **Residuals are not $n$ independent errors.** $\hat{\epsilon}\sim N_{n}(0_{n},\sigma^{2}(I-P))$: the residuals are correlated, have smaller variances than $\sigma^{2}$, and have a singular covariance of rank $n-p$ (they satisfy $X^{T}\hat{\epsilon}=0_{p}$). The QR rotation converts them into $n-p$ independent coordinates with the same sum of squares.
+- **Distribution of RSS and bias of $RSS/n$:**
+$$
+\frac{RSS}{\sigma^{2}}\sim\chi^{2}_{n-p}\implies \mathbb{E}[s^{2}]=\sigma^{2},\qquad \mathbb{E}\left[ \frac{RSS}{n} \right]=\frac{n-p}{n}\sigma^{2}
+$$
+$RSS/n$ is the MLE and is biased downward.
+- **The $t$ result:** $T=\frac{Z}{\sqrt{ V/d }}$ with $Z=\frac{\gamma^{T}\hat{\beta}-\gamma^{T}\beta}{\sigma\sqrt{ v_{\gamma} }}\sim N(0,1)$, $V=\frac{RSS}{\sigma^{2}}\sim\chi^{2}_{d}$, and $d=n-p$. The unknown $\sigma$ cancels.
+- **Independence of $Z$ and $V$.** $Q_{1}^{T}y$ and $Q_{2}^{T}y$ are **jointly normal** with zero cross-covariance, so they are independent. $Z$ and $V$ are functions of them, so $Z\perp\!\!\!\perp V$. Showing $\mathrm{Cov}(Z,V)=0$ is **not enough**: $(Z,V)$ is not jointly normal, and covariance only detects linear dependence (e.g. $\mathrm{Cov}(W,W^{2})=\mathbb{E}[W^{3}]=0$ for $W\sim N(0,1)$).
+- **Without normality** (keeping $\mathbb{E}[\epsilon]=0_{n}$ and $\mathrm{Var}(\epsilon)=\sigma^{2}I_{n}$), first- and second-moment results survive and distributional results do not. The trace trick shows $s^{2}$ is still unbiased:
+$$
+\mathbb{E}[y^{T}Ay]=tr(A\,\mathbb{E}[yy^{T}])=\sigma^{2}tr(A)+\mathbb{E}[y]^{T}A\,\mathbb{E}[y]
+$$
+But $Z$ need not be normal, $V$ need not be $\chi^{2}$, and independence is no longer established, so the exact $t$ result is lost. It still holds approximately for large $n$.
+
+### Simulation Lessons
+- **Algebraic identities vs. distributional claims.** Identities such as $RSS=||U||_{2}^{2}$ and the two constructions of $T$ agree to machine precision in every dataset. Distributional claims agree only up to Monte Carlo error, about $1/\sqrt{ B }$.
+- **What simulation can and can't show.** A simulation can show a lack of *correlation* and no visible dependence. It cannot prove *independence*, which requires $\mathrm{Cov}(f(Z),g(V))=0$ for all functions $f,g$. That needs the joint-normality argument.
+- **$t_{n-p}$ vs. $N(0,1)$.** The $t_{n-p}$ distribution has heavier tails than $N(0,1)$, because the random $s$ is sometimes small, and $\mathrm{Var}(T)=\frac{d}{d-2}$.
+- **Coverage of the three intervals.** For each interval, coverage is $\mathbb{P}(|\text{pivot}|\leq\text{cutoff})$. The denominator ($\sigma$ or $s$) determines the pivot's distribution, and the quantile determines the cutoff:
+$$
+A:\;2\Phi(z_{0.975})-1=0.95,\qquad B:\;2F_{n-p}(z_{0.975})-1<0.95,\qquad C:\;2F_{n-p}(t_{n-p,0.975})-1=0.95
+$$
+B undercovers (about 0.90 when $n-p=6$), and the gap closes as $n-p\to\infty$.
+- **Width.** C is wider than A iff $\frac{s}{\sigma}>\frac{z_{0.975}}{t_{n-p,0.975}}$. This is random, so it doesn't hold in every dataset. On average, C is wider:
+$$
+\frac{\mathbb{E}[\text{width of }C]}{\text{width of }A}=\frac{t_{n-p,0.975}}{z_{0.975}}\cdot\frac{\mathbb{E}[s]}{\sigma}
+$$
+where $\mathbb{E}[s]<\sigma$ by Jensen's inequality. The extra width is the cost of estimating $\sigma$, and it shrinks as the degrees of freedom grow.
+- **Calibration vs. precision.** Coverage measures calibration and width measures precision. Even with true coverage exactly $0.95$, the empirical coverage has standard error about $\sqrt{ 0.95(0.05)/B }$, so it won't be exactly $0.95$.
+
+9/28
+## Inference for Vector Targets
+**Definition**: F-Distribution
+Let $V_{1}\sim\chi_{d_{1}}^{2},V_{2}\sim\chi_{d_{2}}^{2}$ with $V_{1}\perp\!\!\!\perp V_{2}$. Then $\frac{\frac{V_{1}}{d_{1}}}{\frac{V_{2}}{d_{2}}}\sim F_{d_{1},d_{2}}$.
+
+We want to test null hypothesis $H_{0}:\beta=0_{p}$ (all zero's).
+Claim: Under $H_{0}$, $\frac{\frac{\frac{||\hat{y}||_{2}^{2}}{p}}{||\hat{\epsilon}||_{2}^{2}}}{n-p}\sim F_{p,n-p}$.
+Proof: Let $V_{1}=||\hat{y}||_{2}^{2},d_{1}=p,d_{2}=n-p,V_{2}=||\hat{\epsilon}||_{2}^{2}$. But then things won't work out so we need to add division by $\sigma^{2}$ to make it work for chi-squared distributions, and this will work since they will cancel. I.e. $V_{1}=\frac{||\hat{y}||_{2}^{2}}{\sigma^{2}},V_{2}=\frac{||\hat{\epsilon}||_{2}^{2}}{\sigma^{2}}$.
+Now show $V_{2}\sim\chi_{n-p}^{2}$. $||\hat{\epsilon}||_{2}^{2}=||Q_{2}Q_{2}^{T}y||_{2}^{2}=||Q_{2}^{T}y||_{2}^{2}\implies\left( \frac{Q_{2}^{T}y}{\sigma} \right)^{T}\left( \frac{Q_{2}^{T}y}{\sigma} \right)\sim \chi_{n-p}^{2}$.
+Now show $V_{1}\sim \chi_{p}^{2}$. $||\hat{y}||_{2}^{2}=||Q_{1}Q_{1}^{T}y||_{2}^{2}=||Q_{1}^{T}y||_{2}^{2}=(Q_{1}^{T}y)^{T}(Q_{1}^{T}y)$. Note that $Q_{1}^{T}y\sim N_{p}(Q_{1}^{T}X\beta,\sigma^{2}I_{p})=N_{p}(0_{p},\sigma^{2}I_{p})$ under $H_{0}$ because $\beta=0_{p}$. Thus, $\frac{(Q_{1}^{T}y)^{T}}{\sigma} \frac{Q_{1}^{T}y}{\sigma}\sim\chi_{p}^{2}$.
+$V_{1}$ is a function of $\hat{y}$, $V_{2}$ is a function of $\hat{\epsilon}$ and we can show that $\mathrm{Cov}(\hat{y},\hat{\epsilon})=0_{n\times n}\implies V_{1}\perp\!\!\!\perp V_{2}$ since covariance is 0 between joint normal.
+
+Now to test our null we check if $F\geq$ to the $1-\alpha$ quantile of $F_{p,n-p}$. If so, reject. 
+
+Note that this is a one-sided test, but we can't really think of $H_{0}:\beta=0_{p}$ as a "two-sided" hypothesis anymore because after 1D we lose this ordered sense of sidedness. For example, in 2D $H_{0}:\beta_{1}=\beta_{2}=0$, both could be positive, or both negative, or one positive and one negative so there is nice sense of sidedness now like in 1D.
+
+Note we can easily go from $t_{n-p}$ distribution to $t_{n-p}^{2}\overset{d}{=}F_{1,n-p}$ distribution.
+
+
+Suppose we have an intercept and design matrix $\tilde{X}=[1_{n}\;X]$ and model $y=\tilde{X}\tilde{\beta}+\epsilon$ where $\tilde{\beta}=[\delta\;\beta]^{T}$. Thus, $y=\delta 1_{n}+X\beta+\epsilon$. I.e. we can split up the model with and without an intercept.
+Then we have null $H_{0}:\beta=0_{p-1}$ which is just seeing if any of our actual predictors are nonzero, but we don't care about the intercept.
+Claim: Under $H_{0}$ we can construct quadratic form, $$\frac{\frac{y^{T}(P_{\tilde{X}}-P_{1_{n}})y}{(p-1)}} {\frac{y^{T}P_{\tilde{X}}^{\perp}y}{n-p}}\sim F_{p-1,n-p}$$We will now check whether $P_{\tilde{X}}-P_{1_{n}}$ is a projection matrix.$$
+(P_{\tilde{X}}-P_{1_{n}})^{2}=P_{\tilde{X}}^{2}-P_{\tilde{X}}P_{1_{n}}-P_{1_{n}}P_{\tilde{X}}+P_{1_{n}}^{2}=P_{\tilde{X}}-P_{1_{n}}-P_{1_{n}}+P_{1_{n}}=P_{\tilde{X}}-P_{1_{n}}
+$$
+Where the second to last equality comes from the fact that $Col(1_{n})\subseteq Col(\tilde{X})$ and note that nested projections project you into the smallest space (which is $1_{n}$ in this case).
+
+9/30
+Continuing F-statistic above.
+Task: Suppose $U,V$ both subspaces of $\mathbb{R}^{n}$ and they satisfy $V\subset U$ ($V$ is strict subset of $U$). Which of the following are projection matrices?
+For each of the following, is it a projection matrix? What space does it project onto?
+1. $P_{U}P_{V}$ - Yes, because $P_{U}P_{V}=P_{V}$ since $V\subset U$ (see note above). Projects onto $V$ 
+2. $P_{V}P_{U}$ - Yes, $P_{V}P_{U}=P_{V}$ so projects onto $V$
+3. $P_{U}-P_{V}$ - Yes, follows same argument as above for idempotence and projects onto $U \cap V^{\perp}$.
+4. $P_{V}-P_{U}$ - No, it is not idempotent: $(P_{V}-P_{U})^{2}=P_{U}-P_{V}$
+
+To show these more rigorously we can choose any orthonormal basis for $V$ as $Q_{V}$ and build an orthonormal basis for $U$ where the first columns are $Q_{V}$: $Q_{U}=[Q_{V}\;\tilde{Q}_{U}]$. Thus we have $P_{U}=Q_{U}Q_{U}^{T}$ and $P_{V}=Q_{V}Q_{V}^{T}$ so $P_{U}P_{V}=Q_{U}Q_{U}^{T}Q_{V}Q_{V}^{T}=Q_{V}Q_{V}^{T}$. Note that $\tilde{Q}_{U}$ is an orthonormal basis for $U \cap V^{\perp}$.
+
+Note that $\lim_{ k \to \infty }(P_{U}P_{V})^{k}=0$ for two subspaces that aren't nested. Intuitively, we bounce back and forth between the two spaces slowly compressing and getting closer to 0 with every iteration.
+
+
+For null $H_{0}:\beta_{M}=0$ where $M$ is an index set its the same idea: $$
+\frac{\frac{y^{T}(P_{X}-P_{X_{-M}})y}{|M|}} {\frac{y^{T}P_{X}^{\perp}y}{n-p}}\sim F_{|M|,n-p}
+$$Where $P_{X_{-M}}$ is the projection onto the $X$ with the $M$ columns removed.
+>Note: $P_{X}-P_{X_{_{-M}}}$ is not the same as $P_{X_{M}}$ because they live in different spaces, but if we have an orthogonal design they would be the same. The first lives in $Col(X)\cap X_{-M}^{\perp}$. We can think about the difference between $P_{X}-P_{X_{_{-M}}}$ and $P_{X_{M}}$ as the first is describing the effect of the $M$ columns after accounting for the other columns whereas $P_{X_{M}}$ is just directly the effect of the $M$ columns without taking other columns into consideration.
+
+Generalizing further, $H_{0}:C\beta=0_{q}$ for $C\in \mathbb{R}^{q\times p}$
+Consider a medical study where participants get one of four distinct drugs, or placebo, and also are assigned to exercise $W$ minutes per day, and we measure blood pressure. Goal: test if **any** drugs influence blood pressure.
+Look at pic on phone for matrix: $X=[1_{n}\;\mathbb{I}\{ A \}\;\mathbb{I}\{ B \}\;\mathbb{I}\{ C \}\;\mathbb{I}\{ D \}\;W_{i}]$ where $\mathbb{I}\{ \cdot \}$ is an indicator for if that patient received that drug. Thus, $X\in \mathbb{R}^{n\times6}$
+So our $C$ matrix should be $C=[0_{4}\;I_{4}\;0_{4}]$ because then $C\beta=[\beta_{2}\;\beta_{3}\;\beta_{4}\;\beta_{5}]$.
+We can also have a design matrix $X$ where the intercept column can be an indicator of if people got placebo. Then our $C$ must be different: $C=[1_{4}\;-I_{4}]$ because now we are doing getting $\beta_{1}-\beta_{2},\beta_{1}-\beta_{3}$,etc. because now our $\beta_{i}$'s measure the mean response of each drug group (including placebo) at 0 minutes of exercise. So to test if any drugs influence blood pressure we need to check the difference between baseline ($\beta_{1}$) and any drug group ($\beta_{i},i=2,3,4,5$).
+
+Think of this as saying drugs A and $B$ are in drug class 1 and $C$ and $D$ are in drug class 2. So we want to test if drug class 1 is equivalent to drug class 2.
+The $C$'s for this can bake in different assumptions. For example a $C$ with pairwise differences between drugs in class 1 and 2 essentially just tests if all the drugs are equivalent.
+
+When we have a null hypothesis $H_{0}:C\beta=0$ this is the same as asking if $\beta\in \mathcal{N}(C)$.

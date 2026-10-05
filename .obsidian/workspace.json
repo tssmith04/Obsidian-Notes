@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "STOR 654 (Stat Theory).md",
+                "file": "STOR 664 (Applied Stat).md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "STOR 654 (Stat Theory)"
+              "title": "STOR 664 (Applied Stat)"
             }
           },
           {
@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "STOR 612.md",
+                "file": "STOR 654 (Stat Theory).md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "STOR 612"
+              "title": "STOR 654 (Stat Theory)"
             }
           },
           {
@@ -49,7 +49,8 @@
               "title": "snippet"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -214,14 +215,14 @@
       "bases:Create new base": false
     }
   },
-  "active": "4ba475b6dfb5d945",
+  "active": "575f496a9be9c7c7",
   "lastOpenFiles": [
-    "STOR 664 (Applied Stat).md",
-    "STOR 654 (Stat Theory).md",
-    "Stochastic Modeling/STOR 642.md",
-    "STOR 612.md",
-    "README.md",
     "snippet.md",
+    "STOR 654 (Stat Theory).md",
+    "STOR 664 (Applied Stat).md",
+    "STOR 612.md",
+    "Stochastic Modeling/STOR 642.md",
+    "README.md",
     "Untitled.canvas",
     "Welcome.md",
     "Probability/STOR 634 Condensed Facts.md",

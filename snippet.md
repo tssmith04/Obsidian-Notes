@@ -38,7 +38,7 @@
 	{trigger: "Var", replacement: "\\mathrm{Var}", options: "mA"},
 	{trigger: "Cov", replacement: "\\mathrm{Cov}", options: "mA"},
 	{trigger: "Corr", replacement: "\\mathrm{Corr}", options: "mA"},
-	{trigger: "PP", replacement: "\\mathbb{P}($0)$1", options: "mA"},
+	{trigger: "PP", replacement: "\\mathbb{P}", options: "mA"},
 	{trigger: "FF", replacement: "\\mathbb{F}", options: "mA", description: "Family notation"},
 	{trigger: "@X", replacement: "\\mathcal{X}", options: "mA", description: "Data representation for stat theory"},
 	{trigger: "mcal", replacement: "\\mathcal{$0}$1", options: "mA"},

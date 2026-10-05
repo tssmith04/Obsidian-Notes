@@ -814,3 +814,119 @@ $P_{\theta}(N)=\int Q(N,t)G_{\theta}(dt)$. Thus $\tilde{N}=\{ t:Q(N,t)>0 \}$ has
 This implies that $G^{*}(\tilde{N})=0$.
 Since $P^{*}(N)=0$ we know that $0=\hat{P}(N)=\int Q(N,t)G^{*}(dt)$. Thus, $\hat{P}<\mu$.
 $(2-c)\theta=(c-4)\theta^{2}\implies2-c=c\theta-4\theta\implies \frac{2+4\theta}{\theta+1}$
+
+9/29
+### Sufficient Statistics
+Recall that if $X\sim \{ f(x|\theta) \}_{\theta\in\Theta}$ then $T(X)$ is sufficient if $X|T(X)=t$ does not depend on $\theta$.
+**Theorem**: $T(X)$ is sufficient iff $f(x|\theta)=g(T(X),\theta)h(X)$
+
+### Minimal Sufficiency
+Example: $X_{1},\dots,X_{n}$ iid $N(10, \sigma^{2})$. We know that $(X_{(1)},\dots,X_{(n)})$ are sufficient (order statistics)
+Note that $T(X)=\left( \sum x_{i},\sum x_{i}^{2} \right)$ is also sufficient. So the natural question is, is this the best we can do or can we reduce it further?
+
+**Definition (Minimal Sufficient)**: Assume $X\sim \{ f(x|\theta) \}_{\theta\in\Theta}$. We say that $T(X)$ is a minimal sufficient statistic if
+1. $T(X)$ is sufficient
+2. Given any other sufficient statistic $\tilde{T}(X)$, there exists a function $g$ such that $T(X)=g(\tilde{T}(X))$.
+
+>Note: The minimal sufficient statistic is not necessarily unique. Consider when $g(\cdot)$ is invertible.
+
+**Theorem**: Let $X\sim \{ f(x|\theta) \}_{\theta\in\Theta}$ and if $T(X)$ is a statistic that satisfies $$
+f(x|\theta)=h(x,y)f(y|\theta)\iff T(X)=T(Y)
+$$Then, $T(X)$ is minimal sufficient.
+
+>Think about factorization theorem as primary one for proving sufficiency and this one as primary for proving minimality.
+
+Can have cheat sheet for midterm along with extra printed sheet of distributional facts/distributions.
+
+Proof: Drawing where we have map from $X$ to $T(X)$ and denote $A_{t}$ as the set of $X$ that produce $T(X)=t$. Thus, if $x,y\in A_{t}\implies T(x)=T(y)=t$. We choose $x_t\in A_{t}$ as a representative. Also WLOG assume that $f(x|\theta)>0$ for all $x\in \mathcal{X},\theta\in\Theta$ (not necessary, just simplifies things).
+Notice that $T(x)=T(x_{T(x)})$ that is to say that if we choose a representative $x_{T(x)}$ then take $T(\cdot)$ again we end up back at $T(x)$.
+Next we will show the reverse direction in iff statement above implies sufficiency.
+So, $T(x)=T(x_{T(x)})\implies f(x|\theta)=h(x,x_{T(x)})f(x_{T(x)}|\theta)$. now notice that $h(x,x_{T(x)})=\tilde{h}(x)$ (is just a function of $x$) and $f(x_{T(x)}|\theta)=g(T(x),\theta)$ (function of $T(x)$). Thus, $T(x)$ is sufficient.
+Finally, we will show the forward direction in iff statement above implies minimality.
+We know that $T$ is sufficient. Let $S$ be another sufficient statistic.
+Then $f(x|\theta)=\tilde{g}(S(x),\theta)\tilde{h}(x)$. Consider $x,y$ so that $S(x)=S(y)$.
+$\frac{f(x|\theta)}{f(y|\theta)}=\frac{\tilde{g}(S(x),\theta)}{\tilde{g}(S(y),\theta)} \frac{h(x)}{h(y)}=\frac{h(x)}{h(y)}=h(x,y)$. This implies that $T(X)=T(Y)$ by forward direction hypothesis.
+Thus, whenever $S(x)=S(y)\implies T(x)=T(y)$. This implies that $T(x)=g(S(x))$.
+
+Examples:
+$X_{1},\dots,X_{n}\overset{\text{iid}}{\sim}N(\mu,\sigma^{2})$
+We know that $$\frac{f(x|\mu,\sigma^{2})}{f(y|\mu,\sigma^{2})}= \frac{\exp\left( -\frac{1}{2\sigma}\sum x_{i}^{2}+\frac{\mu}{\sigma}\sum x_{i}- \frac{n\mu^{2}}{2\sigma^{2}} \right)}{\exp\left( -\frac{1}{2\sigma}\sum y_{i}^{2}+\frac{\mu}{\sigma}\sum y_{i}- \frac{n\mu^{2}}{2\sigma^{2}} \right)}=\exp\left( -\frac{1}{2\sigma^{2}}\sum (x_{i}^{2}-y_{i}^{2})+\frac{\mu}{\sigma^{2}}\sum (x_{i}-y_{i}) \right)$$
+Call this (i)
+So consider $T=\left( \sum x_{i},\sum x_{i}^{2} \right)$. 
+If $T(x)=T(y)\implies$ (i) = 1.
+If $T(x)\neq T(y)\implies$ (i) is a nontrivial (nonconstant) function of $(\mu,\sigma^{2})$.
+This proves that $T(x)$ is minimal sufficient.
+
+$X_{1},\dots,X_{n}\overset{\text{iid}}{\sim}N(10,\sigma^{2})$ (known mean)
+We now have that $\frac{f(x|\sigma^{2})}{f(y|\sigma^{2})}=\exp\left( -\frac{1}{2\sigma^{2}}\sum (x_{i}^{2}-y_{i}^{2})+\frac{10}{\sigma^{2}}\sum (x_{i}-y_{i}) \right)$
+Now if $\sum(x_{i}^{2}-y_{i}^{2})=20$ and $\sum(x_{i}-y_{i})=1$ then it does not depend on $\sigma$, but $T(x)\neq T(y)$. In fact, $\sum(x_{i}-10)^{2}$ is minimal sufficient.
+Constants above are definitely wrong, but hopefully get the idea. Have AI clean it up.
+
+>Comment: If $T(x)$ is minimal sufficient and $S(x)$ is so that $T(x)=g(S(x))$ and $S(x)=\tilde{g}(T(x))$ then $S(x)$ is also minimal sufficient.
+
+### Ancillary Statistic
+We have model $X\sim \{ f(x|\theta) \}_{\theta\in\Theta}$
+**Definition**: A statistic $A(X)$ is ancillary if the distribution of $A(X)$ does not depend on parameters $\theta$
+
+Example: $X_{1},\dots,X_{n}\overset{\text{iid}}{\sim}N(\mu,1)$
+We know that $\bar{X}_{n}\sim N\left( \mu, \frac{1}{n} \right)$. We can show that $R=(X_{1}-\bar{X}_{n},\dots,X_{n}-\bar{X}_{n})\sim N_{n}\left( 0,I_{n}-\frac{1}{n}1_{n}1^{T}_{n} \right)$ which does not depend on the parameters. Thus, $R$ are ancillary.
+This comes from the fact that $\bar{X}_{n}=1_{n}\left( \frac{1}{n}1^{T}_{n}X \right)\implies(X-1_{n}\bar{X}_{n})=\left( I-\frac{1}{n}1_{n}1_{n}^{T} \right)X$.
+Note that the studentized residuals are also ancillary: $(\frac{X_{i}-\bar{X}}{S_{n}})_{i=1,\dots,n}$ 
+
+Ancillary statistics are useful for checking the quality of the model. You can see how the model behaves without any effect from the parameter.
+
+Sometimes if $T$ is sufficient and $A$ ancillary we have $T\perp\!\!\!\perp A$. If this is the case then $A$ is only needed for model checking, but if $T\not\perp\!\!\!\perp A$ it is often useful to base inference on $T|A$ because it lowers the variance of your estimator.
+
+10/1
+Example
+suppose $X_{1},\dots,X_{n}\overset{\text{iid}}{\sim}U(\theta,\theta+1)$ for $\theta\in \mathbb{R}$
+What's the sufficient statistic?
+$f(x|\theta)=\prod_{i=1}^{n}\mathbb{I}_{(\theta,\theta+1)}(X_{i})=\mathbb{I}_{(\theta,\infty)}(X_{(1)})\mathbb{I}_{(-\infty,\theta+1)}(X_{(n)})=g(X_{(1)},X_{(n)},\theta)$
+So $(X_{(1)},X_{(n)})$ is sufficient
+Is it minimal sufficient?
+Is $f(x|\theta)=h(x,y)f(y|\theta)\iff X_{(1)}=Y_{(1)}$ and $X_{(n)}=Y_{(n)}$?
+$f(x|\theta)=\mathbb{I}\{ \theta<X_{(1)}<X_{(n)}<\theta+1 \}=\mathbb{I}\{ X_{(n)}-1<\theta <X_{(1)}\}$
+This proves the forward direction. If either $X_{(1)}\neq Y_{(1)}$ or $X_{(n)}\neq Y_{(n)}$ there will be an interval in which one function is 1 and the other is 0. Thus they cannot be fixed by a constant, $h(x,y)$. So we've proved the forward direction by contrapositive. **To be honest I don't get it. Ask AI.** There is picture on phone that may help. I believe it is that there is an interval between $X_{(1)}$ and $Y_{(1)}$ (if $X_{(1)}\neq Y_{(1)}$) and in this interval our $f(x|\theta)$ takes on a different value that depends on $\theta$ so we cannot have a function $h(x,y)$ constant fix it.
+
+Thus, we have shown $(X_{(1)},X_{(n)})$ is minimal sufficient. (Since we already know it is sufficient, we just had to prove forward direction for minimality).
+
+Next calculate $M=\frac{X_{(1)}+X_{(n)}}{2}$ and $R=X_{(n)}-X_{(1)}$ as midrange and range. Since this is 1-1, $(M,R)$ is also minimal sufficient.
+
+Recall that $R\sim Beta(n-1,2)$ and $M|R=r \sim U\left( \theta+\frac{r}{2},\theta+1-\frac{r}{2} \right)$ (calculated before with Jacobian method). 
+Note that $M$ by itself is not sufficient, but $R$ is ancillary (and also not sufficient). 
+That is to say that together they are minimal sufficient, but one of the variables ($R$) contains no information about $\theta$, yet we can't drop it.
+
+### Complete Statistic
+$X\sim \{ f(x|\theta) \}_{\theta\in\Theta}$, we say that $T(X)$ is complete if $\mathbb{E}_{\theta}g(T(x))=0$ for all $\theta\in\Theta$ then $\mathbb{P}_{\theta}(g(T(x))=0)=1$ for all $\theta\in\Theta$ where $g(\cdot)$ is any function.
+
+Example
+$X_{1},\dots,X_{n}\overset{\text{iid}}{\sim}Bernoulli(p)$ for $0<p<1$.
+We will prove that $T(X)=\sum_{i=1}^{n}X_{i}$ is complete.
+Consider $g$ so that $\mathbb{E}_{p}[g(T)]=0$ for all $p$. That is $0=\sum_{t=0}^{n}g(t)p^{t}(1-p)^{n-t} \binom{n}{t}=(1-p)^{n}\sum_{t=0}^{n}g(t)\binom{n}{t} (\frac{p}{1-p})^{t}$ which is a polynomial of degree $n$ in $\theta=\frac{p}{1-p}$ and the polynomial $=0$ for all $\theta>0$ (what we assume to prove probability). Thus $g(0)=g(1)=\dots=g(n)=0$ because $\theta^{t}>0,(1-p)^{n}>0,\binom{n}{t}>0$. Thus, $\mathbb{P}_{p}(g(T)=0)=1$. Thus, $T$ is complete. Note $T$ is also sufficient.
+
+Example
+$X_{1},\dots,X_{n}\overset{\text{iid}}{\sim}U(0,\theta)$ for $\theta>0$
+Will show that $X_{(n)}$ (maximum) is complete sufficient.
+$f(x|\theta)=\prod_{i=1}^{n} \frac{1}{\theta}\mathbb{I}_{(0,\theta)}(x_{i})=\mathbb{I}_{(0,\infty)}(x_{(1)}) \frac{1}{\theta^{n}} \mathbb{I}_{(0,\theta)}(x_{(n)})$ thus $X_{(n)}$ is sufficient.
+We need to investigate the expected value of $g(X_{(n)})$ i.e. see when $\mathbb{E}_{\theta}g(X_{(n)})=0$ for $\theta>0$.
+$$
+\mathbb{P}_{\theta}(X_{(n)}\leq s)=
+\begin{cases}
+0 & s\leq0 \\
+1 & s\geq\theta \\
+\prod_{i=1}^{n} \mathbb{P}(X_{i}\leq s)=\left( \frac{s}{\theta} \right)^{n} & 0<s<\theta
+\end{cases}
+$$
+So $f_{X_{(n)}}(s)=\frac{\partial}{\partial s}F_{\theta}(s)= \frac{ns^{n-1}}{\theta^{n}}\mathbb{I}_{(0,\theta)}(s)$
+Thus, $0=\mathbb{E}_{\theta}g(T)=\frac{n}{\theta^{n}}\int_{0}^{\theta}g(s)s^{n-1}ds$ for all $\theta>0$. If this is true then we know that $\frac{d}{d\theta}\mathbb{E}_{\theta}g(T)=0$.
+Thus, $-\frac{n^{2}}{\theta^{n+1}}\int_{0}^{\theta}g(s)s^{n-1}ds+\frac{n}{\theta^{n}}g(\theta)\theta^{n-1}=0$ and we know that the integral is equal to zero from the expectation fact before taking derivative. Thus, $\frac{n}{\theta^{n}}g(\theta)\theta^{n-1}=0\implies g(\theta)=0$ for all $\theta>0$ (since $\frac{n}{\theta^{n}}>0,\theta^{n-1}>0$). So $\mathbb{P}_{\theta}(g(T)=0)=1$.
+
+**Theorem**: Any statistic that is sufficient and complete is minimal sufficient.
+>Note: Minimal sufficient is weaker than sufficient and complete
+
+Proof: Take $S$ sufficient complete and $M$ some other minimal sufficient.
+$\mathbb{E}_{\theta}[S-\mathbb{E}_{\theta}[S|M]]=\mathbb{E}_{\theta}S-\mathbb{E}_{\theta}S=0$ (by tower property).
+Additionally, $\mathbb{E}_{\theta}[S|M]$ does not depend on the parameter because $M$ is minimal sufficient. So denote $\mathbb{E}_{\theta}[S|M]=\psi(M)=\psi(\phi(S))$. But since $S$ is complete we know that $\mathbb{P}_{\theta}(S-\mathbb{E}_{\theta}[S|M]=0)=\mathbb{P}_{\theta}(S=\mathbb{E}_{\theta}[S|M])=1\implies S=\psi(M)\implies S$ minimal sufficient.
+
+**Theorem (Basu)**: If $T(X)$ is sufficient complete and $A(X)$ is ancillary then $T(X)\perp\!\!\!\perp A(X)$.
+Proof: $\mathbb{E}_{\theta}[\mathbb{E}(g(A)|T)]=\mathbb{E}_{\theta}g(A)=\mathbb{E}g(A)$. So call $\psi(T)=\mathbb{E}(g(A)|T)$ then $\mathbb{E}_{\theta}[\psi(T)-\mathbb{E}g(A)]=0$ because $T$ is complete and $\mathbb{E}g(A)$ is just a constant we know that $\psi(T)-\mathbb{E}g(A)$ is some function of $T$ so the expectation is 0. Thus, $\psi(T)=\mathbb{E}(g(A)|T)=\mathbb{E}g(A)\implies A\perp\!\!\!\perp T$.
