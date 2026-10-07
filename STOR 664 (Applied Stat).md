@@ -784,3 +784,39 @@ Think of this as saying drugs A and $B$ are in drug class 1 and $C$ and $D$ are 
 The $C$'s for this can bake in different assumptions. For example a $C$ with pairwise differences between drugs in class 1 and 2 essentially just tests if all the drugs are equivalent.
 
 When we have a null hypothesis $H_{0}:C\beta=0$ this is the same as asking if $\beta\in \mathcal{N}(C)$.
+
+10/5
+Missed beginning of class; going over quiz 3
+**Review 3b (which best describes relationship between $||W||_{2}^{2}$ and $V$?) as it will show back up on midterm**
+
+### Inference for Vector Targets (continued)
+Usual model $y=X\beta+\epsilon$ with $\epsilon \sim N_{n}(0_{n},\sigma^{2}I_{n})$
+Testing null hypothesis $H_{0}:C\beta=0_{q}\equiv\beta \in \mathcal{N}(C)\subseteq \mathbb{R}^{p}$ (note that $C\in \mathbb{R}^{q\times p},\beta\in \mathbb{R}^{p\times1}$)
+Recall that $\mathbb{E}y\in Col(X)$ (since $y\sim N_{n}(X\beta,\sigma^{2}I_{n})$)
+So take $K$ to be a matrix satisfying $Col(K)=\mathcal{N}(C)$ and $K^{T}K=I$. I.e. $K$ gives us an orthonormal basis for the null-space of $C$. Note $K\in \mathbb{R}^{p\times r}$.
+Suppose $dim(\mathcal{N}(C))=r$. Under $H_{0}$ any "legal" $\beta$ must be in $\mathcal{N}(C)$ which can be written as $\beta=K\gamma$ for some $\gamma\in \mathbb{R}^{r}$.
+Replace $X$ by $XK\implies \tilde{X}=XK$.
+We can construct the $F$ statistic $$
+\frac{\frac{y^{T}(P_{X}-P_{XK})y}{p-r}}{\frac{y^{T}(I-P_{X})y}{n-p}}
+$$
+	Examining $P_{XK}$, note that $K:\mathbb{R}^{r}\to \mathbb{R}^{p}$ (maps from r subspace to p subspace) and $X:\mathbb{R}^{p}\to \mathbb{R}^{n}$. Thus, $\mathrm{Im}(K)=Col(K)$ and $\mathrm{Im}(X)=Col(X)$. So we are composing $X$ and $K$ meaning $XK:\mathbb{R}^{r}\to \mathbb{R}^{n}$. ($XR\in \mathbb{R}^{n\times r}$). Look at picture on phone 10/5 11:54 for drawing of this mapping. Recall image is all points that the domain maps too e.g. $f(x)=x^{2}\implies \mathrm{Im}(f)=[0,\infty)$.
+
+Getting back to the point "Replace $X$ by $XK\implies \tilde{X}=XK$.", any legal $\beta$ has a corresponding $\gamma\in \mathbb{R}^{r}$ such that $\beta=K\gamma$. This effectively restricts $\beta$ from $p$ points to $r$ points. Hence, the idea is that we are working in $\mathbb{R}^{r}$ without any restrictions by using $XK$ since having the $K$ bakes in this restriction to $\mathbb{R}^{r}$ from $\mathbb{R}^{p}$.
+Recall that $C\in \mathbb{R}^{q\times p}$ and $dim(\mathcal{N}(C))=r$. Assume $C$ has full row rank ($rank(C)=q$). Thus, $rank(C)+dim(\mathcal{N}(C))=q+r=p\implies q=p-r$ so in the formula above we can use $q$ or $p-r$ as degrees of freedom (denominator in numerator of $F$ statistic above).
+So under $H_{0}:\beta\in Col(K)$ we have that $F\sim F_{q,n-p}$.
+
+#### Slightly More General
+Suppose $H_{0}:C\beta=d$ for $C\in \mathbb{R}^{q\times p},\beta\in \mathbb{R}^{p\times1},d\in \mathbb{R}^{q\times1}$ so we have an affine constraint now instead of linear.
+Find a $\beta_{0}$ satisfying $C\beta_{0}=d$. Then shift $y$ as $\tilde{y}=y-X\beta_{0}$. Then proceed as though $H_{0}:C\beta=0_{q}$ but using $\tilde{y}$ instead of $y$.
+The upshot is that we will arrive at a form for our $F$ statistic: $$
+\frac{\frac{\frac{\tilde{y}^{T}(P_{X}-P_{XK})\tilde{y}}{q}}{y^{T}(I-P_{X})y}}{n-p}
+$$So under $H_{0}:C\beta=d$ and $F\sim F_{q,n-p}$.
+Note that we keep $y$ in the denominator because we still want accurate estimation of variance. And the variance does still potentially change (even though we are just shifting) because each data point is shifting by a potentially different amount ($X\beta$ instead of some constant $\lambda1_{n}$).
+
+**Activity**
+Consider $\beta_{0}$ satisfying $C\beta_{0}=d$ and a different $\beta_{0}'$ also satisfying $C\beta_{0}'=d$.
+1. Does $\tilde{y}$ change?
+	In general yes, $\tilde{y}$ can change because just because $C\beta_{0}=d=C\beta_{0}'$ does not mean that $X\beta_{0}=X\beta_{0}'$.
+2. Does $F$ change?
+	No. Think about the set $\{ b:Cb=d \}$. Suppose $\beta_{0}$ satisfies $C\beta_{0}=d$. Consider $\beta_{0}'=\beta_{0}+\gamma$ where $\gamma \in \mathcal{N}(C)\implies C\beta_{0}'=C\beta_{0}+C\gamma=C\beta_{0}=d$. If one thinks through it, we can could see that all $\beta_{0}$'s can be related through shifts in the $\mathcal{N}(C)$. Additionally, we can explain it through the projection matrix in the numerator ($P_{X}-P_{XK}$) (which is a projection matrix since $Col(XK)\subseteq Col(X)$). This projection matrix projects onto $Col(X)\cap Col(XK)^{\perp}$. And as we just said, $\beta_{0}$'s vary only through shifts in $\mathcal{N}(C)$ and $Col(K)=\mathcal{N}(C)$. Hence, if $\tilde{y}=X\beta_{0}'=X\beta_{0}+X\gamma$ then the $X\gamma$ portion gets killed by the projection since we are projecting onto $Col(XK)^{\perp}$ (since $X\gamma$ lives in $Col(XK)$).
+	

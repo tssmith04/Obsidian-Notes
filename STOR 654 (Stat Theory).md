@@ -427,7 +427,7 @@ $$
 >Note: For symmetric (about its mean) random variables the sample mean and sample variance are uncorrelated (because $\mu_{3}=0$ so $\mathrm{Cov}(\bar{X}_{n},S_{n}^{2}=0)$). So if our random variable is skewed then the sample mean and variance are correlated.
 
 **Theorem**: Suppose $X_{1},\dots,X_{n}$ are iid $N(\mu,\sigma^{2})$. Then
-1. $\bar{X}_{n}\sim N\left( \mu, \frac{\sigma^{2}}{2} \right)$
+1. $\bar{X}_{n}\sim N\left( \mu, \frac{\sigma^{2}}{n} \right)$
 2. $\bar{X}_{n}\perp\!\!\!\perp S_{n}^{2}$
 3. $\frac{(n-1)S_{n}^{2}}{\sigma^{2}}\sim \chi_{n-1}^{2}$ (Chi-squared with $n-1$ d.o.f.)
 
@@ -772,7 +772,7 @@ $X=(X_{1},\dots,X_{n})$ follows $f(X|\theta)$ where $\theta\in\Theta$ with respe
 
 **Theorem**: $T(X)$ is sufficient iff $f(X|\theta)=g(T(X),\theta)h(X)$
 Proof: $\mu$ is $\sigma$-finite and $X\in \mathcal{X}$ Polish space
-
+	
 Primitives for proof:
 Regular conditional probability can sometimes be called a Markov Kernel: $Q(A,x)=Q(A,\cdot)$ is a measurable function for all $A\in \mathcal{B}$ and $Q(\cdot,x)$ is a probability measure
 Markov Kernel $Q(A,x)$ is the $Y|X=x$ if $\mathbb{P}(Y\in A,X\in B)=\int_{B}Q(A,x)dP_{X}(x)$
@@ -942,4 +942,10 @@ Proof: $\mathbb{E}_{\theta}[\mathbb{E}(g(A)|T)]=\mathbb{E}_{\theta}g(A)=\mathbb{
 - For exponential families (assuming minimal representation i.e. group all terms maximally):
 	- $T(x)$ is always sufficient by definition
 	- $T(x)$ is minimal sufficient if $w_{i}(\eta)$'s cannot be linearly combined (there does not exist  some $c\in \mathbb{R}^{k},d\in \mathbb{R}$ such that $c^{T}w(\eta)= d$)
-- 
+- **Marginalizing a pmf.** Sum the joint over the other variables, respecting the support. For a vector statistic $A=(A_{1},\dots,A_{n})$, marginalize one pair ($\mathbb{P}(A_{i}=a_{i})=\sum_{b} \mathbb{P}(A_{i}=a_{i},B_{i}=b)$), then multiply across $i$ by independence. In a two-way table, a margin is ancillary iff its sums are free of $\theta$.
+- An open natural parameter set for an exponential family means that $T$ is complete.
+- A function of an ancillary statistic is ancillary. Thus, if we know $T=g(A,B)$ and $T$ depends on $\theta$ e.g. $T\sim Bin(n,\theta)$ then $(A,B)$ is not ancillary.
+- $A$ and $B$ each ancillary does not make $(A,B)$ ancillary: $\theta$ lives in their dependence
+- $T\perp\!\!\!\perp A$ and $T\perp\!\!\!\perp B$ does not imply $T\perp\!\!\!\perp(A,B)$ (pairwise $\neq$ joint independence).
+- Ancillaries are not closed under combining; Basu applies to each ancillary separately.
+
