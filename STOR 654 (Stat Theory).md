@@ -70,15 +70,15 @@ $\mathcal{X}=(X_{1},\dots,X_{n})\sim f(x)$ (random vector following $f(x)$) wher
 The goal is to find $G:\mathcal{X}\to Y$ that is find the distribution of $Y=G(\mathcal{X})$.
 Assumptions:
 - $A=\{ x:f(x)>0 \}$ is the support of $\mathcal{X}$
-- $A$ is partitioned into $A_{0}\cup A_{1}\cup\dots \cup A_{k}$ where $\mathbb{P}(\mathcal{X}\in A_{0})=0$ and for $l=1,\dots,k$ the map $G$ is 1-1 between $A_{l}$ and $B_{l}$ where $B_{l}$ is the range of $G(A_{l})$. Note that it is just 1-1 for each partition, so in the $X^{2}$ example above, even though it isn't 1-1 across the whole $\mathbb{R}$ it is when you partition it into $(-\infty,0)\cup \{ 0 \}\cup(0,\infty)$.
+- $A$ is partitioned into $A_{0}\cup A_{1}\cup\dots \cup A_{k}$ where $\mathbb{P}(\mathcal{X}\in A_{0})=0$ and for $l=1,\dots,k$ the map $G$ is 1-1 between $A_{l}$ and $B_{l}$ where $B_{l}$ is the range of $G(A_{l})$. Note that it is just 1-1 for each partition, so in the $X^{2}$ example above, even though it isn't 1-1 across the whole $\mathbb{R}$ it is when you partition it into $(-\infty,0)\cup \{ 0 \}\cup(0,\infty)$ ($A_{0}=\{ 0 \}$ here).
 - Let the $l$th inverse be $H_{l}:B_{l}\to A_{l}$
 - Jacobian: $J_{l}(y)=\det\left( \frac{\partial \mathcal{X}}{\partial Y} \right)=\det\left[ \frac{\partial(H_{l})_{i}(y)}{\partial y_{j}} \right]_{i,j=1}^{n}$ (look at pic on phone), basically taking partial of $i$th entry of vector $H_{l}(\cdot)$ with respect to $j$th entry of variable of $Y$
 Assuming $J_{l}\neq0$ on $B$ for all $l$ then $$
-f_{Y}(y)=\sum_{l=1}^{k} f_{\mathcal{X}}(H_{l}(y))|J_{l}(y)|I_{B}
+f_{Y}(y)=\sum_{l=1}^{k} f_{\mathcal{X}}(H_{l}(y))|J_{l}(y)|I_{B_{l}}
 $$
 Example: (Polar coordinates)
 Suppose vector $(X,Y)\sim f(x,y)$. Now to map to $(R,\theta)$ polar coordinates.
-For simplicity, assume support of $X,Y$ is $\mathbb{R}$. Thus, if $A=\mathbb{R}^{2}$ then note the edge cases are difficult such as origin because $R=0$ but any $\theta$ works and also on x-axis we have $\theta=0$ and $\theta=2\pi$ both being the same. To handle this we partition $A$ into $A_{0}=\{ (X,0):x\geq0 \}$, $A_{1}=A\backslash A_{0}$ and we have $B=(0,\infty)\times(0,2\pi)$. Now to find the joint density of $(R,\theta)^{T}$
+For simplicity, assume support of $X,Y$ is $\mathbb{R}$. Thus, if $A=\mathbb{R}^{2}$ then note the edge cases are difficult such as origin because $R=0$ but any $\theta$ works and also on x-axis we have $\theta=0$ and $\theta=2\pi$ both being the same. To handle this we partition $A$ into $A_{0}=\{ (x,0):x\geq0 \}$, $A_{1}=A\backslash A_{0}$ and we have $B=(0,\infty)\times(0,2\pi)$. Now to find the joint density of $(R,\theta)^{T}$
 $\mathbb{P}((X,i)\in A_{0})=0$ (assuming $i\neq0$) and the function $H(r,\theta)=(r\cos\theta,r\sin\theta)$
 So we have Jacobian $J=$ $\cos\theta\;,\sin\theta\;,-r\sin\theta\;,r\cos\theta$ as a matrix reading from top left to bottom right.
 If $(X,Y)\sim N(0,I)$ ($X,Y$ are iid $N(0,1)$) then we have standard joint density of multiplying two normal's together.
@@ -102,7 +102,7 @@ $$
 Consider a $u$ such that there exists a $s$ where $F(s)=u$ then this acts like a true inverse. Consider a $u$ that lies within a gap/jump, then the $s$ that satisfies this is the $s$ that makes this jump. The most interesting is picking a $u$ that lies on a flat piece (the function doesn't change in y value), in which case $F^{-}(u)$ gives the left most point $s$ of this flat portion.
 
 Observations from this:
-1. $x<F^{-}(u)\implies F(x)<F(F^{-}(u))$
+1. $x<F^{-}(u)\iff F(x)<u$
 2. $F^{-}(u)\leq x \iff u\leq F(x)$ (note that this is true because of (1) and the fact that CDF is right continuous).
 
 **Lemma**: Let $F$ be a CDF, then the random variable $X=F^{-}(U)$ where $U\sim U(0,1)$ has $F$ as its CDF.
@@ -186,7 +186,7 @@ b^{q} & w.p. \frac{1}{q}
 $$
 8/25
 Recall that if $g$ is convex and $\mathbb{P}(X\in \mathcal{D(g)})=1$ then $g(\mathbb{E}X)\leq \mathbb{E}g(X)$ provided that $\mathbb{E}X$ exists.
-Also recall Lemma above: $a,b>0$ and $0<p,q<\infty, \frac{1}{p}+\frac{1}{q}=1$ then $\frac{1}{p}a^{p}+\frac{1}{q}b^{q}\geq ab$ with equality iff $a^{p}=b^{q}$.
+Also recall Lemma above: $a,b>0$ and $1<p,q<\infty, \frac{1}{p}+\frac{1}{q}=1$ then $\frac{1}{p}a^{p}+\frac{1}{q}b^{q}\geq ab$ with equality iff $a^{p}=b^{q}$.
 
 **Definition**: For $X$ and $p\geq1$ we define $$
 ||X||_{p}=\;\sqrt[p]{\mathbb{E}|X|^{p}}
@@ -279,7 +279,7 @@ $$ has MGF $M_{S}(s)=\prod_{i=1}^{n}M_{Y_{i}}(s)$.
 Proof: $M_{S}(s)=\mathbb{E}e^{s(Y_{1}+\dots+Y_{n})}=\mathbb{E}(e^{sY_{1}}e^{sY_{2}}\dots e^{sY_{n}})=\mathbb{E}e^{sY_{1}}\mathbb{E}e^{sY_{2}}\dots \mathbb{E}e^{sY_{n}}$.
 
 #### (Back to) Chernoff's Bound
-Recall Chernoff's Bound: If $X$ has a MGF then $\mathbb{P}(X\geq t)\leq\inf\limits_{s>0}e^{st}M_{X}(s)$ with $t>0$
+Recall Chernoff's Bound: If $X$ has a MGF then $\mathbb{P}(X\geq t)\leq\inf\limits_{s>0}e^{-st}M_{X}(s)$ with $t>0$
 Examples
 If $X\sim Exp(\lambda)$. We know $\mathbb{P}(X>t)=\int_{t}^{\infty}\lambda e^{-\lambda x}dx=e^{-\lambda t}$. Lets see how close Chernoff's bound comes: $\inf\limits_{s>0} e^{-st} \frac{\lambda}{\lambda-s}$ for $s<\lambda$. Note $\frac{d}{ds} \left( e^{-st} \frac{\lambda}{\lambda-s} \right)=-te^{-st} \frac{\lambda}{\lambda-s}+e^{-st} \frac{\lambda}{(\lambda-s)^{2}}=\left( e^{-st} \frac{\lambda}{\lambda-s} \right)\left( \frac{1}{\lambda-s} -  t \right)=0\implies s=\lambda-\frac{1}{t}$ we need $t > \frac{1}{\lambda}$ (since $s>0$).
 Thus, $\inf\limits_{s>0} e^{-t(\lambda-1/t)} \frac{\lambda}{\lambda-\left( \lambda-\frac{1}{t} \right)}=e^{-\lambda t}(et\lambda)$ if $t > \frac{1}{\lambda}$. So we can see that the additional "price we pay" above the actual value ($e^{-\lambda t}$ is $et\lambda$).
@@ -297,7 +297,7 @@ $$
 K_{X}(s)=\log M_{X}(s)
 $$
 The derivatives of CGF are called cumulants: $\mathcal{K}_{k}=\frac{d^{k}}{ds^{k}}K_{X}(s)|_{s=0}$.
-Check for yourself that the first cumulant $\mathcal{K}_{1}=\mathbb{E}X$ and $\mathcal{K}_{2}=\mathrm{Var}(X)=\sigma^{2}$ and $\mathcal{K}_{3}=$ skewness.
+Check for yourself that the first cumulant $\mathcal{K}_{1}=\mathbb{E}X$ and $\mathcal{K}_{2}=\mathrm{Var}(X)=\sigma^{2}$ and $\mathcal{K}_{3}=\mathbb{E}(X-\mu)^{3}$ (third central moment) which gives skewness when divided by $\sigma^{3}$.
 
 #### Characteristic Function
 $$
@@ -335,7 +335,7 @@ Where $S_{n}=\sum_{i=1}^{n}X_{i}$.
 Proof: $\mathbb{P}(S_{n}-\mathbb{E}S_{n}\geq t)\leq \inf\limits_{s>0}e^{-st}\mathbb{E}e^{s\sum_{i=1}^{n}(X_{i}-\mathbb{E}X_{i})}=\inf\limits_{s>0}e^{-st}\prod_{i=1}^{n}\mathbb{E}e^{s(X_{i}-\mathbb{E}X_{i})}\leq \inf\limits_{s>0}e^{-st} \exp\left( \frac{s^{2}}{8} \sum_{i=1}^{n}(b_{i}-a_{i})^{2}\right)$. So if we take $s= \frac{4t}{\sum_{i=1}^{n}(b_{i}-a_{i})^{2}}$ we get $\mathbb{P}(S_{n}-\mathbb{E}S_{n}\geq t)\leq \exp\left( -\frac{4t^{2}}{\sum_{i=1}^{n}(b_{i}-a_{i})^{2}} \right) \exp\left( \frac{2t^{2}}{\sum_{i=1}^{n}(b_{i}-a_{i})^{2}} \right)=\exp\left( -\frac{2t^{2}}{\sum_{i=1}^{n}(b_{i}-a_{i})^{2}} \right)$.
 
 Note we can get the same bound in the reverse direction by applying to $-X_{i}$, but since we have $(b_{i}-a_{i})^{2}=(a_{i}-b_{i})^{2}$ we get the same bound: $$
-\mathbb{P}(S_{n}-\mathbb{E}S_{n}\leq t)\leq \exp\left( -\frac{2t^{2}}{\sum_{i=1}^{n} (b_{i}-a_{i})^{2}} \right)
+\mathbb{P}(S_{n}-\mathbb{E}S_{n}\leq -t)\leq \exp\left( -\frac{2t^{2}}{\sum_{i=1}^{n} (b_{i}-a_{i})^{2}} \right)
 $$
 Thus we have $$
 \mathbb{P}(|S_{n}-\mathbb{E}S_{n}|\geq t)\leq 2 \exp\left( -\frac{2t^{2}}{\sum_{i=1}^{n} (b_{i}-a_{i})^{2}} \right)
@@ -380,7 +380,7 @@ Then $\mathbb{P}\left( \frac{1}{n}\sum_{i=1}^{n}X_{i}-p\geq t \right)=\mathbb{P}
 
 9/8
 ### Sub-gaussian RVs
-Let $X$ be a random variable such that $\mathbb{P}(|X|\geq t)\leq ae^{-bt^{2}}$. This tells us that the tails of $X$ decay with rate $e^{-bt^{2}}$. This has a name: **Sub-Gaussian Random Variable**. We call $b$ a variance proxy (recall Gaussian decays at $e^{-\sigma^{2}t^{2}/2}$) so $b$ takes on form of $\frac{\sigma^{2}}{2}$ in a Normal RV.
+Let $X$ be a random variable such that $\mathbb{P}(|X|\geq t)\leq ae^{-bt^{2}}$. This tells us that the tails of $X$ decay with rate $e^{-bt^{2}}$. This has a name: **Sub-Gaussian Random Variable**. We call $b$ a variance proxy (recall Gaussian decays at $e^{-t^{2}/2\sigma^{2}}$) so $b$ takes on form of $\frac{1}{2\sigma^{2}}$ in a Normal RV.
 Then for $t>0$ $$\mathbb{E}|X|\leq \sqrt{ \frac{1+\log a}{b}}$$
 Proof: $\mathbb{E}|X|^{2}=\int_{0}^{\infty}\mathbb{P}(X^{2}\geq t)dt=\int_{0}^{s}\mathbb{P}(X^{2}\geq t)dt+\int_{s}^{\infty} \mathbb{P}(X^{2}\geq t)dt\leq s+ \int_{s}^{\infty} ae^{-bt}=s+\frac{-ae^{-bt}}{b}|_{t=s}^{\infty}=s+\frac{a}{b} e^{-bs}$. Now we pick the best $s$ which is $s=\frac{\log a}{b}$. Thus, we have $\mathbb{E}|X|^{2}\leq \frac{\log a}{b}+\frac{1}{b}$. And from Jensen's we know $(\mathbb{E}|X|)^{2}\leq \mathbb{E}X^{2}\implies \mathbb{E}|X|\leq \sqrt{ \frac{1+\log a}{b} }$.
 
@@ -706,7 +706,7 @@ It is clear that $h(x),T(x)$ determines the distribution
 Surprisingly though, $A(\eta)$ also determines the distribution of $T(x)$.
 
 **Theorem**:
-Let $h\in \mathcal{H}^{o}$, then
+Let $\eta\in \mathcal{H}^{o}$, then
 1. $\nabla A(\eta)=\mathbb{E}_{\eta}T(x)^{T}$
 2. $\frac{\partial^{2}}{\partial \eta_{i}\partial \eta_{j}}A(\eta)=\mathrm{Cov}(T_{i}(x),T_{j}(x))$ for $1\leq i,j\leq k$ (Hessian of $A(\eta)$)
 3. $M_{T(x)}(s)=\mathbb{E}_{\eta}\exp(<s,T(x)>)=\exp(A(\eta+s)-A(\eta))$ with $s\in \mathbb{R}^{k}$
@@ -822,7 +822,7 @@ Recall that if $X\sim \{ f(x|\theta) \}_{\theta\in\Theta}$ then $T(X)$ is suffic
 
 ### Minimal Sufficiency
 Example: $X_{1},\dots,X_{n}$ iid $N(10, \sigma^{2})$. We know that $(X_{(1)},\dots,X_{(n)})$ are sufficient (order statistics)
-Note that $T(X)=\left( \sum x_{i},\sum x_{i}^{2} \right)$ is also sufficient. So the natural question is, is this the best we can do or can we reduce it further?
+Note that $T(X)=\left( \sum x_{i},\sum x_{i}^{2} \right)$ is also sufficient (but not minimal). So the natural question is, is this the best we can do or can we reduce it further?
 
 **Definition (Minimal Sufficient)**: Assume $X\sim \{ f(x|\theta) \}_{\theta\in\Theta}$. We say that $T(X)$ is a minimal sufficient statistic if
 1. $T(X)$ is sufficient

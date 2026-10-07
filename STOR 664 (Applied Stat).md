@@ -819,4 +819,47 @@ Consider $\beta_{0}$ satisfying $C\beta_{0}=d$ and a different $\beta_{0}'$ also
 	In general yes, $\tilde{y}$ can change because just because $C\beta_{0}=d=C\beta_{0}'$ does not mean that $X\beta_{0}=X\beta_{0}'$.
 2. Does $F$ change?
 	No. Think about the set $\{ b:Cb=d \}$. Suppose $\beta_{0}$ satisfies $C\beta_{0}=d$. Consider $\beta_{0}'=\beta_{0}+\gamma$ where $\gamma \in \mathcal{N}(C)\implies C\beta_{0}'=C\beta_{0}+C\gamma=C\beta_{0}=d$. If one thinks through it, we can could see that all $\beta_{0}$'s can be related through shifts in the $\mathcal{N}(C)$. Additionally, we can explain it through the projection matrix in the numerator ($P_{X}-P_{XK}$) (which is a projection matrix since $Col(XK)\subseteq Col(X)$). This projection matrix projects onto $Col(X)\cap Col(XK)^{\perp}$. And as we just said, $\beta_{0}$'s vary only through shifts in $\mathcal{N}(C)$ and $Col(K)=\mathcal{N}(C)$. Hence, if $\tilde{y}=X\beta_{0}'=X\beta_{0}+X\gamma$ then the $X\gamma$ portion gets killed by the projection since we are projecting onto $Col(XK)^{\perp}$ (since $X\gamma$ lives in $Col(XK)$).
-	
+
+10/7
+Midterm will be more open ended (rather than style of quizzes)
+Can look at slides that go with today's lecture
+We will be looking at a Drug experiment where each patient gets randomized to placebo (PBO), drug A, $B$, or $C$.
+Recall another parameterization (than the one in slides) is to have first column be an indicator for PBO instead of an intercept.
+To answer the question on the slide "How could we use orthogonal_complement() to find a null-space basis?" For a matrix $C$ we use orthogonal_complement(t(C)) i.e. getting the complement of $C^{T}$ from the fact that $\mathcal{N}(C^{T})=Col(C)^{\perp}\implies \mathcal{N}(C)=Col(C^{T})^{\perp}$. **Make sure you fully understand this**
+All of the entries in covariance matrix are relative to the placebo group. I.e. if the intercept moved up (healthier patients) then the relative effect of all of the drugs will go down (hence negative covariance with intercept and positive covariance with each other).
+Q1: Is drug A effective? How effective is drug A?
+- Natural guess for how effective is just $\hat{\beta}_{A}$, but we want to do inference and determine what kind of effects are plausible.
+- For is drug A effective the confidence interval is more useful (i.e. is 0 in it).
+Can we test Q1 using an $F$ test?
+- $$F=\frac{ \frac{y^{T}(P_{X}-P_{X_{-2}})y}{1}}{\frac{y^{T}(I-P_{X})y}{n-p}}$$where $P_{X_{-2}}$ is projecting onto $X$ with the second column removed. Under null $H_{0}:F\sim F_{1,n-p}$.
+- In the slides note that $t^{2}=F$ that is if we square our t statistic it is equal to our $F$ statistic. So not every $F$ has a corresponding t, but if we have a t distribution/statistic we can always get an $F$ and that goes back to the fact that t = standard normal / sqrt(chi-squared  d.o.f). Thus, $t^{2}$=chi-squared 1 d.o.f. / chi-squared n d.o.f. = $F_{1,n}$.
+
+Q2: Are any of the drugs effective?
+- Our null is $H_{0}:\beta_{A}=\beta_{B}=\beta_{C}=0$
+- We cannot test with t test, but can with $F$ test $$
+F=\frac{ \frac{y^{T}(P_{X}-P_{1_{n}})y}{p-1}}{\frac{y^{T}(I-P_{X})y}{n-p}}
+$$
+- Think of $P_{X}-P_{1_{n}}$ is what you gain by releasing the null. That is the projection we are subtracting is the model under the null. So if we just had $P_{X}$ we would be evaluating under our full model, but by evaluating under $P_{X}-P_{1_{n}}$ we are testing the model with the null released. I.e. we are going from $P_{restricted}$ to $P_{X}=P_{full}$ and this gap is represented as $P_{full}-P_{restricted}$,. **Look into a little more with AI**. Note that by expanding it out we also get $y^{T}P_{full}y-y^{T}P_{restricted}y=SS_{full}-SS_{restricted}$ so we are evaluating how much $SS$ is accounted for by the full but not by our restricted/null model.
+
+Q3: How does Drug A compare to Drug $B$?
+- Want to look at target of inference $\beta_{A}-\beta_{B}$.
+- So lets look at $\gamma^{T}\beta$ with $\gamma=[0\;1\;-1\;0]$. Note that we could also use $\gamma=[0\;-1\;1\;0]$ to test if $\beta_{A}-\beta_{B}=0$, so the sign doesn't matter for equaling 0, but it does matter for constructing confidence intervals. For example, if our CI has a lot of positive values then it may indicate that one drug is much stronger than the other and which is stronger depends on the sign of $\gamma$.
+- $$
+t=\frac{\gamma^{T}\hat{\beta}}{\sqrt{ s^{2}\gamma^{T}(X^{T}X)^{-1}\gamma }}
+$$will give us our t statistic and if we wanted a pivot for a confidence interval we can use $$
+\frac{\gamma^{T}\hat{\beta}-\gamma^{T}\beta}{\sqrt{ s^{2}\gamma^{T}(X^{T}X)^{-1}\gamma }}
+$$
+- So for our CI we have $\gamma^{T}\hat{\beta}\pm t_{n-p}^{-1}\left( 1-\frac{\alpha}{2} \right)\sqrt{ s^{2}\gamma^{T}(X^{T}X)^{-1}\gamma }$.
+
+Q4: Are the drugs all equivalent?
+- $H_{0}:\beta_{A}=\beta_{B}=\beta_{C}$ (note this is different than Q2)
+- So to do this with $F$ test we first want to write $H_{0}:C\beta=0_{q}$ where $C\in \mathbb{R}^{q\times p}$. $C$ will represent the pairwise differences between drugs A,$B$, and $C$. Hence $C = [0\;-1\;1\;0;0\;1\;0\;-1]$ which tests if drug A = $B$ and drug A = drug $C$ (hence if drug $B$ = $C$ as well).
+- Thus, $H_{0}:C\beta=0_{q}\equiv\beta\in \mathcal{N}(C)$.
+- As we said above, we now create a basis for $\mathcal{N}(C)$ by orthogonal_complement(t(C)).
+- So let matrix $K$ have column space as null space of $C$: $Col(K)=\mathcal{N}(C)$. Thus, $XK$ is now our restricted $X$. Now we find $\hat{\phi}$ which is our coordinates (simplified betas i.e. $\beta_{B}-\beta_{A}$ and $\beta_{A}-\beta_{C}$) through standard normal equation $\hat{\phi}=(\tilde{X}^{T}\tilde{X})^{-1}\tilde{X}^{T}y$ where $\tilde{X}=XK$. Then to get the original $\hat{\beta}$ we unwrap $\hat{\phi}$ by $\hat{\beta}_{restricted}=K\hat{\phi}$. **Worth looking at more to solidify understanding**
+
+Q5: $B$ claims the same mean effect as A; $C$ claims ten units more than B
+- So we want to test $\beta_{A}=\beta_{B}$ and $\beta_{C}=\beta_{B}+10$.
+- Hence to get affine representation $C\beta=d$ we have $H_{0}:C\beta=d$ with $C=[0\;1\;-1\;0;\;0\;0\;-1\;1]$ and $d=[0;10]$.
+- Then the approach we can take is find a $\beta_{0}$ that satisfies the constraint $C\beta_{0}=d$ then shift y by $X\beta_{0}$.
+
