@@ -285,7 +285,7 @@ If $X\sim Exp(\lambda)$. We know $\mathbb{P}(X>t)=\int_{t}^{\infty}\lambda e^{-\
 Thus, $\inf\limits_{s>0} e^{-t(\lambda-1/t)} \frac{\lambda}{\lambda-\left( \lambda-\frac{1}{t} \right)}=e^{-\lambda t}(et\lambda)$ if $t > \frac{1}{\lambda}$. So we can see that the additional "price we pay" above the actual value ($e^{-\lambda t}$ is $et\lambda$).
 
 Example
-Suppose $Z\sim N(0,1)$. Fact (will prove in homework):$$
+Suppose $Z\sim N(0,1)$. Fact (Mill's Ratio Bound) (will prove in homework):$$
 \mathbb{P}(Z>t)\leq\frac{1}{\sqrt{ 2\pi t^{2} }} e^{-t^{2}/2},\;t>0
 $$
 For Chernoff's bound: $\mathbb{P}(Z>t)\leq \inf\limits_{s>0} e^{-st}M_{Z}(s)=\inf\limits_{s>0} e^{-st+s^{2}/2}=e^{-t^{2}/2}$ for $t>0$. We can see that the minimum is attained at $s=t$.
@@ -384,7 +384,7 @@ Let $X$ be a random variable such that $\mathbb{P}(|X|\geq t)\leq ae^{-bt^{2}}$.
 Then for $t>0$ $$\mathbb{E}|X|\leq \sqrt{ \frac{1+\log a}{b}}$$
 Proof: $\mathbb{E}|X|^{2}=\int_{0}^{\infty}\mathbb{P}(X^{2}\geq t)dt=\int_{0}^{s}\mathbb{P}(X^{2}\geq t)dt+\int_{s}^{\infty} \mathbb{P}(X^{2}\geq t)dt\leq s+ \int_{s}^{\infty} ae^{-bt}=s+\frac{-ae^{-bt}}{b}|_{t=s}^{\infty}=s+\frac{a}{b} e^{-bs}$. Now we pick the best $s$ which is $s=\frac{\log a}{b}$. Thus, we have $\mathbb{E}|X|^{2}\leq \frac{\log a}{b}+\frac{1}{b}$. And from Jensen's we know $(\mathbb{E}|X|)^{2}\leq \mathbb{E}X^{2}\implies \mathbb{E}|X|\leq \sqrt{ \frac{1+\log a}{b} }$.
 
-Tail integral: For RV $X>0$ we have $\mathbb{E}X=\int_{0}^{\infty} \mathbb{P}(X\geq t)dt$.
+Tail integral: For RV $X\geq0$ we have $\mathbb{E}X=\int_{0}^{\infty} \mathbb{P}(X\geq t)dt$.
 Proof: $\mathbb{E}X=\int_{0}^{\infty}xf(x)dx=\int_{0}^{\infty}\int_{0}^{x}dsf(x)dx=\int_{0}^{\infty}\int_{0}^{\infty} \mathbb{I}_{s<x}f(x)dsdx=\int_{0}^{\infty}\int_{s}^{\infty}f(x)dx ds=\int_{0}^{\infty}\mathbb{P}(X\geq s)ds$.
 
 ### Sample Mean & Sample Variance
@@ -475,16 +475,24 @@ Think about it as this will happen if we have $i-1$ observations before s, $j-i-
 Example:
 Let $X_{1},\dots,X_{n}$ be iid with some density $f(x)$.
 What is the joint distribution of $(M,R)$ which is the midrange and range respectively i.e. $R=X_{(n)}-X_{(1)},M= \frac{X_{(1)}+X_{(n)}}{2}$?
-First calculate $f_{X_{(1)},X_{(n)}}(u,v)=\frac{n!}{(n-2)!}(F(v)-F(u))^{n-2}f(s)f(v)\mathbb{I}_{\{ u<v \}}$ from formula above.
+First calculate $f_{X_{(1)},X_{(n)}}(u,v)=\frac{n!}{(n-2)!}(F(v)-F(u))^{n-2}f(u)f(v)\mathbb{I}_{\{ u<v \}}=n(n-1)(F(v)-F(u))^{n-2}f(u)f(v)\mathbb{I}_{\{ u<v \}}$ from formula above.
 Then we can just use Jacobian method for transformation to $R,M$.
-We have $X_{(1)}=M-\frac{R}{2}$ and $X_{(n)}=M+\frac{R}{2}$
-Thus our Jacobian is $$J=\det 
-\begin{pmatrix}
-1 & \frac{1}{2} \\
-1 & -\frac{1}{2}
-\end{pmatrix}=-1$$
-Thus we have $f_{M,R}(m,r)=f_{X_{(1)},X_{(n)}}\left( m-\frac{r}{2},m+\frac{r}{2} \right)|-1|=n(n-1)[]$ **fill out rest from phone**
-
+The map $(u,v)\mapsto(m,r)$ is 1-1 from $\{u<v\}$ onto $\mathbb{R}\times(0,\infty)$ with inverse $X_{(1)}=M-\frac{R}{2}$ and $X_{(n)}=M+\frac{R}{2}$.
+Thus our Jacobian is $$J=\det\begin{pmatrix}
+\frac{\partial x_{(1)}}{\partial m} & \frac{\partial x_{(1)}}{\partial r} \\
+\frac{\partial x_{(n)}}{\partial m} & \frac{\partial x_{(n)}}{\partial r}
+\end{pmatrix}=\det\begin{pmatrix}
+1 & -\frac{1}{2} \\
+1 & \frac{1}{2}
+\end{pmatrix}=\frac{1}{2}+\frac{1}{2}=1$$
+Note the constraint $u<v$ becomes $m-\frac{r}{2}<m+\frac{r}{2}\iff r>0$, and $m$ is unrestricted. Thus we have $$
+f_{M,R}(m,r)=f_{X_{(1)},X_{(n)}}\left( m-\frac{r}{2},m+\frac{r}{2} \right)|J|=n(n-1)\left[ F\left( m+\frac{r}{2} \right)-F\left( m-\frac{r}{2} \right) \right]^{n-2}f\left( m-\frac{r}{2} \right)f\left( m+\frac{r}{2} \right)\mathbb{I}_{(0,\infty)}(r)
+$$ for $m\in\mathbb{R}$. Any further restrictions on $(m,r)$ come from the support of $f$ through the two $f(\cdot)$ factors.
+The marginals follow by integrating out the other variable: $$
+f_{R}(r)=n(n-1)\mathbb{I}_{(0,\infty)}(r)\int_{-\infty}^{\infty}\left[ F\left( m+\frac{r}{2} \right)-F\left( m-\frac{r}{2} \right) \right]^{n-2}f\left( m-\frac{r}{2} \right)f\left( m+\frac{r}{2} \right)dm
+$$ $$
+f_{M}(m)=n(n-1)\int_{0}^{\infty}\left[ F\left( m+\frac{r}{2} \right)-F\left( m-\frac{r}{2} \right) \right]^{n-2}f\left( m-\frac{r}{2} \right)f\left( m+\frac{r}{2} \right)dr
+$$
 Now lets make the above example concrete by making them all be $U(0,1)$. Then $f(s)=\mathbb{I}_{(0,1)}(s)$
 and $F(s)=s$ for $0\leq s\leq1$. Then we have $$f_{M,R}(m,r)=n(n-1)\left[ m+\frac{r}{2}-\left( m-\frac{r}{2} \right) \right]^{n-2}\mathbb{I}_{(0,1)}\left( m+\frac{r}{2} \right)\mathbb{I}_{(0,1)}\left( m-\frac{r}{2} \right)\mathbb{I}_{\{ r>0 \}}$$
 $$
@@ -948,4 +956,67 @@ Proof: $\mathbb{E}_{\theta}[\mathbb{E}(g(A)|T)]=\mathbb{E}_{\theta}g(A)=\mathbb{
 - $A$ and $B$ each ancillary does not make $(A,B)$ ancillary: $\theta$ lives in their dependence
 - $T\perp\!\!\!\perp A$ and $T\perp\!\!\!\perp B$ does not imply $T\perp\!\!\!\perp(A,B)$ (pairwise $\neq$ joint independence).
 - Ancillaries are not closed under combining; Basu applies to each ancillary separately.
+
+10/8
+Recall Bahadur that a statistic $T(X)$ is complete if $\mathbb{E}_{\theta}g(T(X))=0\;\forall\theta\implies \mathbb{P}_{\theta}(g(T(X))=0)=1\;\forall\theta$.
+Any recall theorem that Any statistic that is sufficient and complete is also minimal sufficient.
+
+Example
+$X_{1},\dots,X_{n}\overset{\text{iid}}{\sim}U(\theta,\theta+1)$. Recall $(X_{(1)},X_{(n)})$ is minimal sufficient. Is it complete?
+Recall we showed $X_{(n)}-X_{(1)}\sim Beta(n-1,2)\implies \mathbb{E}_{\theta}(X_{(n)}-X_{(1)})=\frac{n-1}{n+1}$.
+So take $g(X_{(1)},X_{(n)})=X_{(n)}-X_{(1)}-\frac{n-1}{n+1}$. Here $\mathbb{E}_{\theta }g(X_{(1)},X_{(n)})=0$ but $\mathbb{P}_{\theta}(g(X_{(n)},X_{(1)})=0)=0$.
+Hence $(X_{(1)},X_{(n)})$ is not complete.
+
+Recall Basu's Theorem Let $T(X)$ be sufficient complete and $A(X)$ be ancillary. Then $T(X)\perp\!\!\!\perp A(X)$.
+
+# **This Theorem will be on the exam**
+**Theorem**: Let $X_{1},\dots,X_{n}$ be iid from an exponential family each with density $f(x|\theta)=h(x)\exp(<w(\theta),T(x)>-A(\theta))$. Then the statistic $T(X)=\left( \sum_{i=1}^{n}t_{i}(x_{i}),\dots,\sum_{i=1}^{n}t_{k}(x_{i}) \right)=\sum t(x_{i})$ is sufficient complete if the exponential family is full rank. Full rank means that it isn't a curved exponential family i.e. $\exists G\subset \mathcal{H}$ (open) such that $G\subset \mathcal{W}=\{ (w_{1}(\theta),\dots,w_{k}(\theta)) :\theta\in\Theta\}$.
+
+Proof: Not doing it in class, but intuitively it takes a point in $\mathcal{H}$ then expands around that point and shows that if some function is 0 on small open set then the whole set is 0 from theory of generative sums.
+
+Example
+$X_{1},\dots,X_{n}\overset{\text{iid}}{\sim}Exp(\lambda)$ meaning $f(x|\lambda)=\lambda e^{-\lambda x}\mathbb{I}_{(0,\infty)}(x)$ for $\lambda>0$ which is clearly an exponential family. Note our natural parameter space $\mathcal{H}$ contains the entire open halfplane $(0,\infty)$ hence is full rank and $T(X)=\sum_{i}X_{i}$ is sufficient complete.
+Claim: $g(X)=\frac{X_{1}}{X_{1}+\dots+X_{n}}$ is ancillary. We can notice that $X_{i}=\frac{E_{i}}{\lambda}$ where $E_{i}\sim Exp(1)$ (scale family). Thus, $g(X)=\frac{\frac{E_{1}}{\lambda}}{\left( \frac{E_{1}}{\lambda}+\dots+\frac{E_{n}}{\lambda} \right)}=\frac{E_{1}}{E_{1}+\dots+E_{n}}$ which has no $\lambda$/does not depend on $\lambda$ and is thus ancillary.
+Hence $g(X)\perp\!\!\!\perp T(X)$.
+What is $\mathbb{E}g(X)=$?
+$\mathbb{E}[g(X)T(X)]=\mathbb{E}X_{1}=\frac{1}{\lambda}$ where first equality comes from the fact $g(X)$ has $T(X)=\sum X_{i}$ in denominator.
+Also note that $T(X)=\sum X_{i}\sim\Gamma(n,\lambda)$ $\mathbb{E}[g(X)T(X)]=\mathbb{E}g(X)\mathbb{E}T(X)=\mathbb{E}g(X)* \frac{n}{\lambda}$. Hence, $\mathbb{E}g(X)=\frac{\frac{1}{\lambda}}{\frac{n}{\lambda}}=\frac{1}{n}$.
+>Useful fact: $X\sim\Gamma(\alpha,\lambda),Y\sim\Gamma(\beta,\lambda),X\perp\!\!\!\perp Y\implies X+Y\sim\Gamma(\alpha+\beta,\lambda)$.
+
+Example
+$X_{1},\dots,X_{n}\overset{\text{iid}}{\sim}N(\mu,\sigma^{2})$
+Recall $\bar{X}_{n},S_{n}^{2}$. We will examine a very simple proof that these are independent.
+Suppose $\sigma^{2}$ is known.
+Recall that $f(x|\mu)=\frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(-\frac{1}{2\sigma^{2}}x^{2}+\frac{\mu}{\sigma^{2}}x-\frac{\mu^{2}}{2\sigma^{2}}\right)=\frac{e^{-1/2\sigma^{2}x^{2}}}{\sqrt{2\pi\sigma^2}} \exp\left(\frac{\mu}{\sigma^{2}}x-\frac{\mu^{2}}{2\sigma^{2}}\right)$ (i.e. we can bring the $\sigma^{2}$ term into our $h(x)$ function). Notice full rank exponential family (because $\frac{\mu}{\sigma^{2}}$ takes all real values since $\mu\in \mathbb{R}$ so our $\mathcal{H}=\mathcal{W}$) hence $n\bar{X}=\sum X_{i}$ is sufficient complete.
+$X_{i}=\mu+Y_{i}$ where $Y_{i}\sim N(0,\sigma^{2})$. Hence $S_{n}^{2}=\frac{1}{n-1} \sum_{i=1}^{n}(X_{i}-\bar{X})^{2}=\frac{1}{n-1} \sum_{i=1}^{n}(Y_{i}-\bar{Y})\implies$ $S$ is ancillary (in $\mu$ unknown and $\sigma$ known model).
+So by Basu's theorem $\bar{X}_{n}\perp\!\!\!\perp S_{n}^{2}$.
+
+
+# Inference
+Idea is that we have a model $f(x|\theta)$ that generates our data $X$ and our goal is to determine/predict what the $\theta$ was that generated our data.
+Types of estimators:
+- Point estimators - Gives one point, one predicted $\theta$ value
+	- Almost always wrong, but hopefully close
+	- Measures of performance:
+		- $MSE=\mathbb{E}_{\theta}||\hat{\theta}-\theta||^{2}$
+		- $bias=\mathbb{E}_{\theta}\hat{\theta}-\theta$
+- Set estimators - Gives a whole set $C(X)$ which is random set
+	- Know point is always wrong, but set has a chance to catch the truth
+	- Hopefully $\mathbb{P}(\theta\in C(X))$ is high which is our measure of performance
+- Distribution estimator - Gives a distribution for $\theta$ 
+	- Typical example is Bayesian posterior (but other choices exist)
+	- We want a distribution with low variance (condensed so not a vague distribution), but also that is close to the true (so expectation close)
+We will also talk about Hypothesis Testing
+We will start with point estimation and be using vocabulary and ideas from decision theory as a basis for evaluating estimators.
+
+## Decision Theory
+We suppose $X\sim f(x|\theta)$ and $\theta\in\Theta$ still, but now we have one more thing: $\mathcal{A}$ action space/decision space. So in summary we have
+- Parameter space $\Theta$
+- Data space $\mathcal{X}$
+- Action space $\mathcal{A}$
+
+We have some way of measuring whether our action is compatible with the true $\theta$ i.e. a Loss function $L(\theta,a)$. So small values good, large values bad.
+$d:\mathcal{X}\to \mathcal{A}$ is called our decision rule
+In point estimation, $\Theta=\mathcal{A}$ typically i.e. our action space is just the parameter space because the action we take is guessing a specific $\hat{\theta}$. It's not always the case though. For example, consider $\Theta=\{ (\mu,\sigma^{2}):\mu\in \mathbb{R},\sigma^{2}>0 \}$ then if we are just predicting $\mu$ we have $\mathcal{A}=\{ \mu:\mu\in \mathbb{R} \}$. Basically, if we have nuisance parameters then $\Theta$ does not necessarily equal $\mathcal{A}$.
+Typically, $L(\theta,a)=||\theta-a||^{2}$ (but doesn't have to be)
 
