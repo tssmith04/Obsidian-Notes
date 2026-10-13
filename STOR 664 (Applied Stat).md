@@ -799,7 +799,7 @@ Replace $X$ by $XK\implies \tilde{X}=XK$.
 We can construct the $F$ statistic $$
 \frac{\frac{y^{T}(P_{X}-P_{XK})y}{p-r}}{\frac{y^{T}(I-P_{X})y}{n-p}}
 $$
-	Examining $P_{XK}$, note that $K:\mathbb{R}^{r}\to \mathbb{R}^{p}$ (maps from r subspace to p subspace) and $X:\mathbb{R}^{p}\to \mathbb{R}^{n}$. Thus, $\mathrm{Im}(K)=Col(K)$ and $\mathrm{Im}(X)=Col(X)$. So we are composing $X$ and $K$ meaning $XK:\mathbb{R}^{r}\to \mathbb{R}^{n}$. ($XR\in \mathbb{R}^{n\times r}$). Look at picture on phone 10/5 11:54 for drawing of this mapping. Recall image is all points that the domain maps too e.g. $f(x)=x^{2}\implies \mathrm{Im}(f)=[0,\infty)$.
+	Examining $P_{XK}$, note that $K:\mathbb{R}^{r}\to \mathbb{R}^{p}$ (maps from r subspace to p subspace) and $X:\mathbb{R}^{p}\to \mathbb{R}^{n}$. Thus, $\mathrm{Im}(K)=Col(K)$ and $\mathrm{Im}(X)=Col(X)$. So we are composing $X$ and $K$ meaning $XK:\mathbb{R}^{r}\to \mathbb{R}^{n}$. ($XK\in \mathbb{R}^{n\times r}$). Look at picture on phone 10/5 11:54 for drawing of this mapping. Recall image is all points that the domain maps too e.g. $f(x)=x^{2}\implies \mathrm{Im}(f)=[0,\infty)$.
 
 Getting back to the point "Replace $X$ by $XK\implies \tilde{X}=XK$.", any legal $\beta$ has a corresponding $\gamma\in \mathbb{R}^{r}$ such that $\beta=K\gamma$. This effectively restricts $\beta$ from $p$ points to $r$ points. Hence, the idea is that we are working in $\mathbb{R}^{r}$ without any restrictions by using $XK$ since having the $K$ bakes in this restriction to $\mathbb{R}^{r}$ from $\mathbb{R}^{p}$.
 Recall that $C\in \mathbb{R}^{q\times p}$ and $dim(\mathcal{N}(C))=r$. Assume $C$ has full row rank ($rank(C)=q$). Thus, $rank(C)+dim(\mathcal{N}(C))=q+r=p\implies q=p-r$ so in the formula above we can use $q$ or $p-r$ as degrees of freedom (denominator in numerator of $F$ statistic above).
@@ -839,7 +839,7 @@ Q2: Are any of the drugs effective?
 - We cannot test with t test, but can with $F$ test $$
 F=\frac{ \frac{y^{T}(P_{X}-P_{1_{n}})y}{p-1}}{\frac{y^{T}(I-P_{X})y}{n-p}}
 $$
-- Think of $P_{X}-P_{1_{n}}$ is what you gain by releasing the null. That is the projection we are subtracting is the model under the null. So if we just had $P_{X}$ we would be evaluating under our full model, but by evaluating under $P_{X}-P_{1_{n}}$ we are testing the model with the null released. I.e. we are going from $P_{restricted}$ to $P_{X}=P_{full}$ and this gap is represented as $P_{full}-P_{restricted}$,. **Look into a little more with AI**. Note that by expanding it out we also get $y^{T}P_{full}y-y^{T}P_{restricted}y=SS_{full}-SS_{restricted}$ so we are evaluating how much $SS$ is accounted for by the full but not by our restricted/null model.
+- Think of $P_{X}-P_{1_{n}}$ is what you gain by releasing the null. That is the projection we are subtracting is the model under the null. So if we just had $P_{X}$ we would be evaluating under our full model, but by evaluating under $P_{X}-P_{1_{n}}$ we are testing the model with the null released. I.e. we are going from $P_{restricted}$ to $P_{X}=P_{full}$ and this gap is represented as $P_{full}-P_{restricted}$,. **Look into a little more with AI**. Note that by expanding it out we also get $y^{T}P_{full}y-y^{T}P_{restricted}y=SS_{full}-SS_{restricted}$ so we are evaluating how much $SS$ is accounted for by the full after accounting for our null model.
 
 Q3: How does Drug A compare to Drug $B$?
 - Want to look at target of inference $\beta_{A}-\beta_{B}$.
@@ -856,7 +856,7 @@ Q4: Are the drugs all equivalent?
 - So to do this with $F$ test we first want to write $H_{0}:C\beta=0_{q}$ where $C\in \mathbb{R}^{q\times p}$. $C$ will represent the pairwise differences between drugs A,$B$, and $C$. Hence $C = [0\;-1\;1\;0;0\;1\;0\;-1]$ which tests if drug A = $B$ and drug A = drug $C$ (hence if drug $B$ = $C$ as well).
 - Thus, $H_{0}:C\beta=0_{q}\equiv\beta\in \mathcal{N}(C)$.
 - As we said above, we now create a basis for $\mathcal{N}(C)$ by orthogonal_complement(t(C)).
-- So let matrix $K$ have column space as null space of $C$: $Col(K)=\mathcal{N}(C)$. Thus, $XK$ is now our restricted $X$. Now we find $\hat{\phi}$ which is our coordinates (simplified betas i.e. $\beta_{B}-\beta_{A}$ and $\beta_{A}-\beta_{C}$) through standard normal equation $\hat{\phi}=(\tilde{X}^{T}\tilde{X})^{-1}\tilde{X}^{T}y$ where $\tilde{X}=XK$. Then to get the original $\hat{\beta}$ we unwrap $\hat{\phi}$ by $\hat{\beta}_{restricted}=K\hat{\phi}$. **Worth looking at more to solidify understanding**
+- So let matrix $K$ have column space as null space of $C$: $Col(K)=\mathcal{N}(C)$. Thus, $XK$ is now our restricted $X$. Now we find $\hat{\phi}$ which is our coordinates (simplified betas i.e. $\beta_{B}-\beta_{A}$ and $\beta_{A}-\beta_{C}$) through standard normal equation $\hat{\phi}=(\tilde{X}^{T}\tilde{X})^{-1}\tilde{X}^{T}y$ where $\tilde{X}=XK$. Then to get the original $\hat{\beta}$ we unwrap $\hat{\phi}$ by $\hat{\beta}_{restricted}=K\hat{\phi}$. Note that $\hat{\beta}_{restricted}$ just means it is the optimal $\beta$ such that $C\beta=0$ (restriction). **Worth looking at more to solidify understanding**
 
 Q5: $B$ claims the same mean effect as A; $C$ claims ten units more than B
 - So we want to test $\beta_{A}=\beta_{B}$ and $\beta_{C}=\beta_{B}+10$.
@@ -937,5 +937,18 @@ Q7:
 	- $RSS=\sum_{i=1}^{n}(y_{i}-\hat{y}_{i})^{2}\implies s^{2}=\frac{RSS}{n-p}$. Since $||Q_{2}^{T}y||_{2}^{2}=||\hat{\epsilon}||_{2}^{2}=RSS$ and $Q_{2}^{T}y\sim N_{n-p}(0_{n-p},\sigma^{2}I_{n-p})\implies \frac{RSS}{\sigma^{2}}\sim \chi^{2}_{n-p}\implies \mathbb{E}\left[ \frac{RSS}{\sigma^{2}} \right]=n-p\implies \mathbb{E}[RSS]=\sigma^{2}(n-p)$. Thus, $\mathbb{E}[s^{2}]=\mathbb{E}\left[ \frac{RSS}{n-p} \right]=\sigma^{2}$ and $\mathbb{E}\left[ \frac{RSS}{n} \right]=\frac{\sigma^{2}(n-p)}{n}$.
 - Inference for Vector Targets
 	- Let $V_{1}\sim\chi_{d_{1}}^{2},V_{2}\sim\chi_{d_{2}}^{2}$ with $V_{1}\perp\!\!\!\perp V_{2}$. Then $\frac{\frac{V_{1}}{d_{1}}}{\frac{V_{2}}{d_{2}}}\sim F_{d_{1},d_{2}}$.
-	- $\frac{||\hat{y}||_{2}^{2}}{\sigma^{2}}\sim \chi^{2}_{p}$ under $H_{0}:\beta=0_{p}$ (important for making mean 0; note d.o.f is p here because $\hat{y}=Q_{1}^{T}y$ lives in $\mathbb{R}^{p}$). $\frac{||\hat{\epsilon}||_{2}^{2}}{\sigma^{2}}\sim \chi^{2}_{n-p}$ always hence $\frac{\frac{||\hat{y}||_{2}^{2}}{p}}{\frac{||\hat{\epsilon}||_{2}^{2}}{n-p}}\sim F_{p,n-p}$ under $H_{0}:\beta=0_{p}$.
-	- 
+	- $\frac{||\hat{y}||_{2}^{2}}{\sigma^{2}}\sim \chi^{2}_{p}$ under $H_{0}:\beta=0_{p}$ (important for making mean 0; note d.o.f. is p here because $||\hat{y}||_{2}^{2}=||Q_{1}Q_{1}^{T}{y}||=||Q_{1}^{T}{y}||$ and $Q_{1}^{T}y$ lives in $\mathbb{R}^{p}$). $\frac{||\hat{\epsilon}||_{2}^{2}}{\sigma^{2}}\sim \chi^{2}_{n-p}$ always hence $\frac{\frac{||\hat{y}||_{2}^{2}}{p}}{\frac{||\hat{\epsilon}||_{2}^{2}}{n-p}}\sim F_{p,n-p}$ under $H_{0}:\beta=0_{p}$.
+	- $t_{n-p}^{2}\overset{d}{=}F_{1,n-p}$
+	- More generally to test $H_{0}:\beta_{M}=0$ we have $\frac{\frac{y^{T}(P_{X}-P_{X_{-M}})y}{|M|}} {\frac{y^{T}P_{X}^{\perp}y}{n-p}}\sim F_{|M|,n-p}$ i.e. we do $P_{full}-P_{null}$ in numerator to evaluate how much more the full model explains the null and the denominator examines what the model leaves unexplained and estimates $\sigma^{2}$ from it. Dividing by degrees of freedom is important to have each in "noise per dimension."
+	- Further generalizing, we have $H_{0}:C\beta=0_{q},C\in \mathbb{R}^{q\times p}\iff\beta\in \mathcal{N}(C)$. Hence $\beta=K\gamma$ for some $\gamma\in \mathbb{R}^{r}$ thus $y=X\beta+\epsilon$ under $H_{0}\implies y=(XK)\gamma+\epsilon$. Thus, our $P_{null}=P_{XK}$ giving us $\frac{\frac{y^{T}(P_{X}-P_{XK})y}{q}} {\frac{y^{T}(I-P_{X})y}{n-p}}\sim F_{q,n-p}$  where $q=p-r$. To find $\hat{\beta}_{R}$ (restricted $\hat{\beta}$) we find the coefficients under the restriction $\hat{\phi}=(K^{T}X^{T}XK)^{-1}K^{T}X^{T}y$ and then recover $\hat{\beta}_{R}=K\hat{\phi}$.
+	- Affine generalization: $H_{0}:C\beta=d$ then find $\beta_{0}$ such that $C\beta_{0}=d$ and get $\tilde{y}=y-X\beta_{0}$ then $\frac{\frac{\tilde{y}^{T}(P_{X}-P_{XK})\tilde{y}}{q}}{\frac{y^{T}(I-P_{X})y}{n-p}}\sim F_{q,n-p}$. Note that we keep $y$ in denominator because we still want to estimate true variance. $\beta_{0}$'s vary only through shifts in $\mathcal{N}(C)$. 
+	- Final form general recipe: **Testing $H_{0}:C\beta=d$** ($C\in\mathbb{R}^{q\times p}$ full row rank, $Col(K)=\mathcal{N}(C)$, $K^{T}K=I_{r}$, $r=p-q$)
+		1. Pick any $\beta_{0}$ with $C\beta_{0}=d$.
+		2. Shift: $\tilde{y}=y-X\beta_{0}$.
+		3. Fit the null model: $\hat{\phi}=\left((XK)^{T}XK\right)^{-1}(XK)^{T}\tilde{y}$.
+		4. Shift back: $\hat{\beta}_{R}=\beta_{0}+K\hat{\phi}$, with fitted values $X\hat{\beta}_{R}=X\beta_{0}+P_{XK}\tilde{y}$. (Check: $C\hat{\beta}_{R}=d$; $\hat{\beta}_{R}$ does not depend on the choice of $\beta_{0}$.)
+		5. Test:
+		$$
+		F=\frac{\tilde{y}^{T}(P_{X}-P_{XK})\tilde{y}/q}{y^{T}(I-P_{X})y/(n-p)}=\frac{(RSS_{R}-RSS)/q}{RSS/(n-p)}\overset{H_{0}}{\sim}F_{q,n-p}
+		$$
+		Reject if $F>F_{q,n-p,1-\alpha}$. The denominator can use $y$ or $\tilde{y}$: $(I-P_{X})X\beta_{0}=0_{n}$.
