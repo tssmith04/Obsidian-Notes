@@ -970,7 +970,7 @@ Hence $(X_{(1)},X_{(n)})$ is not complete.
 Recall Basu's Theorem Let $T(X)$ be sufficient complete and $A(X)$ be ancillary. Then $T(X)\perp\!\!\!\perp A(X)$.
 
 # **This Theorem will be on the exam**
-**Theorem**: Let $X_{1},\dots,X_{n}$ be iid from an exponential family each with density $f(x|\theta)=h(x)\exp(<w(\theta),T(x)>-A(\theta))$. Then the statistic $T(X)=\left( \sum_{i=1}^{n}t_{i}(x_{i}),\dots,\sum_{i=1}^{n}t_{k}(x_{i}) \right)=\sum t(x_{i})$ is sufficient complete if the exponential family is full rank. Full rank means that it isn't a curved exponential family i.e. $\exists G\subset \mathcal{H}$ (open) such that $G\subset \mathcal{W}=\{ (w_{1}(\theta),\dots,w_{k}(\theta)) :\theta\in\Theta\}$.
+**Theorem**: Let $X_{1},\dots,X_{n}$ be iid from an exponential family each with density $f(x|\theta)=h(x)\exp(<w(\theta),t(x)>-A(\theta))$. Then the statistic $T(X)=\left( \sum_{i=1}^{n}t_{1}(x_{i}),\dots,\sum_{i=1}^{n}t_{k}(x_{i}) \right)=\sum_{i} t(x_{i})$ is sufficient complete if the exponential family is full rank. Full rank means that it isn't a curved exponential family i.e. $\exists G\subset \mathcal{H}$ (open) such that $G\subset \mathcal{W}=\{ (w_{1}(\theta),\dots,w_{k}(\theta)) :\theta\in\Theta\}$.
 
 Proof: Not doing it in class, but intuitively it takes a point in $\mathcal{H}$ then expands around that point and shows that if some function is 0 on small open set then the whole set is 0 from theory of generative sums.
 
@@ -987,7 +987,7 @@ Example
 $X_{1},\dots,X_{n}\overset{\text{iid}}{\sim}N(\mu,\sigma^{2})$
 Recall $\bar{X}_{n},S_{n}^{2}$. We will examine a very simple proof that these are independent.
 Suppose $\sigma^{2}$ is known.
-Recall that $f(x|\mu)=\frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(-\frac{1}{2\sigma^{2}}x^{2}+\frac{\mu}{\sigma^{2}}x-\frac{\mu^{2}}{2\sigma^{2}}\right)=\frac{e^{-1/2\sigma^{2}x^{2}}}{\sqrt{2\pi\sigma^2}} \exp\left(\frac{\mu}{\sigma^{2}}x-\frac{\mu^{2}}{2\sigma^{2}}\right)$ (i.e. we can bring the $\sigma^{2}$ term into our $h(x)$ function). Notice full rank exponential family (because $\frac{\mu}{\sigma^{2}}$ takes all real values since $\mu\in \mathbb{R}$ so our $\mathcal{H}=\mathcal{W}$) hence $n\bar{X}=\sum X_{i}$ is sufficient complete.
+Recall that $f(x|\mu)=\frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(-\frac{1}{2\sigma^{2}}x^{2}+\frac{\mu}{\sigma^{2}}x-\frac{\mu^{2}}{2\sigma^{2}}\right)=\frac{e^{-1/2\sigma^{2}x^{2}}}{\sqrt{2\pi\sigma^2}} \exp\left(\frac{\mu}{\sigma^{2}}x-\frac{\mu^{2}}{2\sigma^{2}}\right)$ (i.e. we can bring the $\sigma^{2}$ term into our $h(x)$ function). Notice full rank exponential family (because $\frac{\mu}{\sigma^{2}}$ takes all real values since $\mu\in \mathbb{R}=\Theta$ so our $\mathcal{H}=\mathcal{W}$) hence $n\bar{X}=\sum X_{i}$ is sufficient complete.
 $X_{i}=\mu+Y_{i}$ where $Y_{i}\sim N(0,\sigma^{2})$. Hence $S_{n}^{2}=\frac{1}{n-1} \sum_{i=1}^{n}(X_{i}-\bar{X})^{2}=\frac{1}{n-1} \sum_{i=1}^{n}(Y_{i}-\bar{Y})\implies$ $S$ is ancillary (in $\mu$ unknown and $\sigma$ known model).
 So by Basu's theorem $\bar{X}_{n}\perp\!\!\!\perp S_{n}^{2}$.
 

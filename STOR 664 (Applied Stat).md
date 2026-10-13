@@ -91,10 +91,10 @@ Consider $A\in \mathbb{R}^{nxn}$. If $Ax=\lambda x$ for some $x\in \mathbb{R}^{n
 ### Positive Definite Matrices
 The symmetric matrix $A\in \mathbb{R}^{nxn}$ is positive definite (PD) if $\forall x\neq0_{n},\;x^{T}Ax>0\equiv$ All eigenvalues are positive.
 #### Properties of PD Matrix $A\in \mathbb{R}^{nxn}$
-	1. All diagonal entries are positive
-1. $A$ is invertible, $A^{-1}$ is also PD
-2. $tr(A)>0$ (inherent from property 1)
-3. $\exists$ non-singular $R$ s.t. $A=RR^{T}$
+1. All diagonal entries are positive
+2. $A$ is invertible, $A^{-1}$ is also PD
+3. $tr(A)>0$ (inherent from property 1)
+4. $\exists$ non-singular $R$ s.t. $A=RR^{T}$
 ### Positive Semidefinite Matrices
 The symmetric matrix $A\in \mathbb{R}^{nxn}$ is positive semidefinite (PSD) if $\forall x\neq0_{n},\;x^{T}Ax\geq0\equiv$ All eigenvalues are non-negative.
 #### Properties of PSD Matrix $A\in \mathbb{R}^{nxn}$
@@ -159,7 +159,7 @@ How would we solve for this argmin:
 	1. $\hat{\theta}\in Col(X)$ (Feasibility)
 	2. $(y-\hat{\theta})\in Col^{\perp}(X)$
 	Suppose $\hat{\theta}=P_{X}y$ and let $\tilde{\theta}$ be some other candidate solution. Then consider $y-\tilde{\theta}=y-\hat{\theta}+\hat{\theta}-\tilde{\theta}$. Also note that $||y-\tilde{\theta}||_{2}^{2}=||y-\hat{\theta}+\hat{\theta}-\tilde{\theta}||_{2}^{2}=(y-\hat{\theta}+\hat{\theta}-\tilde{\theta})^{T}(y-\hat{\theta}+\hat{\theta}-\tilde{\theta})=[(y-\hat{\theta})+(\hat{\theta}-\tilde{\theta})]^{T}[(y-\hat{\theta})+(\hat{\theta}-\tilde{\theta})]$ and multiplying these out we get $(y-\hat{\theta})^{T}(y-\hat{\theta})+2(y-\hat{\theta})^{T}(\hat{\theta}-\tilde{\theta})+(\hat{\theta}-\tilde{\theta})^{T}(\hat{\theta}-\tilde{\theta})$. Now focusing on the middle term (dropping 2) we have $(y-\hat{\theta})^{T}(\hat{\theta}-\tilde{\theta})=(y-P_{X}y)^{T}(P_{X}y-\tilde{\theta})=(y-P_{X}y)^{T}(P_{X}y-P_{X}\tilde{\theta})$ (since $\tilde{\theta}$ is a candidate solution $\implies\tilde{\theta}\in Col(X)$ so we can multiply by $P_{X}$ with no consequence) $=(y-P_{X}y)^{T}P_{X}(y-\tilde{\theta})=(P_{X}^{T}y-P_{X}^{T}P_{X}y)^{T}(y-\tilde{\theta})$ (now use projection properties) $=(P_{X}y-P_{X}y)^{T}(y-\tilde{\theta})=0^{T}(y-\tilde{\theta})=0$
-	Now going back up to $||y-\hat{\theta}||_{2}^{2}=(y-\hat{\theta})^{T}(y-\hat{\theta})+(\hat{\theta}-\tilde{\theta})^{T}(\hat{\theta}-\tilde{\theta})=||y-\hat{\theta}||_{2}^{2}+||\hat{\theta}-\tilde{\theta}||_{2}^{2}$. Note the second term is minimized to 0 when $\hat{\theta}=\tilde{\theta}$. We can't do anything with first term since we already fixed $\hat{\theta}=P_{X}y$. Thus, we conclude that $\hat{\theta}=P_{X}y$ is the minimizer (among all $\theta\in Col(X)$ ) of $||y-\theta||_{2}^{2}$. Moreover, since $\hat{\theta}\in Col(X)$ there exists a $\hat{\beta}$ such that $\hat{\theta}=X\hat{\beta}$. And since we are assuming $X$ has full column rank there is one and only one such $\hat{\beta}$. Also since $y-\hat{\theta}\in Col^{\perp}(X)$ (from Seeber and Lee appendix first property + existence proven above) we know that $X^{T}(y-\hat{\theta})=0\implies X^{T}y=X^{T}\hat{\theta}\implies X^{T}y=X^{T}X\hat{\beta}\implies\hat{\beta}=(X^{T}X)^{-1}X^{T}y$. Can look at picture on phone (8/26 12:18) as well for visualization which essentially says that $\hat{\theta}$ is the vector in the column space of $X$ that lies directly under $y$ i.e. the projection of $y$ onto the column space. Any other $\tilde{\theta}$ would be rotated around thus meaning the distance is further (not minimal).
+	Now going back up to $||y-\tilde{\theta}||_{2}^{2}=(y-\hat{\theta})^{T}(y-\hat{\theta})+(\hat{\theta}-\tilde{\theta})^{T}(\hat{\theta}-\tilde{\theta})=||y-\hat{\theta}||_{2}^{2}+||\hat{\theta}-\tilde{\theta}||_{2}^{2}$. Note the second term is minimized to 0 when $\hat{\theta}=\tilde{\theta}$. We can't do anything with first term since we already fixed $\hat{\theta}=P_{X}y$. Thus, we conclude that $\hat{\theta}=P_{X}y$ is the minimizer (among all $\theta\in Col(X)$ ) of $||y-\theta||_{2}^{2}$. Moreover, since $\hat{\theta}\in Col(X)$ there exists a $\hat{\beta}$ such that $\hat{\theta}=X\hat{\beta}$. And since we are assuming $X$ has full column rank there is one and only one such $\hat{\beta}$. Also since $y-\hat{\theta}\in Col^{\perp}(X)$ (from Seeber and Lee appendix first property + existence proven above) we know that $X^{T}(y-\hat{\theta})=0\implies X^{T}y=X^{T}\hat{\theta}\implies X^{T}y=X^{T}X\hat{\beta}\implies\hat{\beta}=(X^{T}X)^{-1}X^{T}y$. Can look at picture on phone (8/26 12:18) as well for visualization which essentially says that $\hat{\theta}$ is the vector in the column space of $X$ that lies directly under $y$ i.e. the projection of $y$ onto the column space. Any other $\tilde{\theta}$ would be rotated around thus meaning the distance is further (not minimal).
 
 ### Projection Computations
 To construct a projection matrix onto $Col(X)$ we could use $P_{X}=X(X^{T}X)^{-1}X^{T}$ but this includes an explicit inverse which we would like to avoid. If instead we have an orthonormal basis $\alpha_{1},\dots,\alpha_{p}$ such that $Col(X)=span(\{ \alpha_{1},\dots,\alpha_{p} \})$ we can build a $Q=[\alpha_{1}\;\dots\;\alpha_{p}]$ ($\alpha_{i}$ are column vectors). Then $Q^{T}Q=I_{p}$ and $P_{X}=QQ^{T}$. So the question is how can we get $Q$ from $X$?
@@ -222,7 +222,7 @@ So if we take $X=U_{1}D_{1}V^{T}$ we can consider when does $Col(X)=Col(U_{1})$?
 If you have the SVD of $X$ then we know that $X^{T}X=VD_{1}^{T}U_{1}^{T}U_{1}D_{1}V^{T}=VD_{1}^{2}V^{T}$. Note that there is a very fast way to invert this matrix: $(X^{T}X)^{-1}=V(D_{1}^{2})^{-1}V^{T}$. I.e. if you've already gone through the effort of finding the SVD, getting the inverse of $X^{T}X$ is easy.
 
 ### QR Decomposition
-$X=QR$ where $X\in \mathbb{R}^{nxp},Q\in \mathbb{R}^{nxn},R\in \mathbb{R}^{nxp}$ and $Q$ is orthogonal, $R$ is upper triangular. Note that this $Q$ is a little too big for the $Q$ we are looking for ($P_{X}=QQ^{T}$).
+$X=QR$ where $X\in \mathbb{R}^{nxp},Q\in \mathbb{R}^{nxn},R\in \mathbb{R}^{nxp}$ and $Q$ is orthogonal, $R$ is upper triangular. Note that this $Q$ is a little too big for the $Q$ we are looking for ($P_{X}=QQ^{T}$) since we just need a $Q$ to span $p$ columns of $X$.
 We can break up $Q=[Q_{1}|Q_{2}]$ and $R^{T}=[R_{1}|0_{n-p,p}]$. Thus, $X=Q_{1}R_{1}+Q_{2}0_{n-p,p}=Q_{1}R_{1}$ which is sometimes called the thin/skinny/economy QR decomposition.
 Suppose we have this decomposition. Then finding $\hat{\beta}=(X^{T}X)^{-1}X^{T}y=(R_{1}^{T}Q_{1}^{T}Q_{1}R_{1})^{-1}R_{1}^{T}Q_{1}^{T}y=(R_{1}^{T}R_{1})^{-1}R_{1}^{T}Q_{1}^{T}y$. Note that (we will go over next time) $R_{1}^{T}R_{1}$ is invertible and has a very easily computable inverse. Thus continuing the above we have $\hat{\beta}=R_{1}^{-1}R_{1}^{-T}R_{1}^{T}Q_{1}^{T}y=R_{1}^{-1}Q_{1}^{T}y$. This allows us to have the system $R_{1}\hat{\beta}=Q_{1}^{T}y$ which makes a triangular system of equations which is easy to back substitute and solve quickly.
 
@@ -558,7 +558,7 @@ $\mathbb{P}(C(y))=1-\alpha$
 We are thinking about $y$ as random vector.
 We are thinking about repeatedly realizing $\epsilon$'s and running this experiment over and over again. Because $Z$'s randomness comes through $\hat{\beta}$ whose randomness comes through $y$ whose randomness comes through $\epsilon$.
 We will shorthand $N_{\frac{\alpha}{2}}:=\Phi^{-1}\left( \frac{\alpha}{2} \right)=-N_{1-\frac{\alpha}{2}}$
-We can now rewrite $C(y)=\left\{  N_{\frac{\alpha}{2}}\leq Z\leq-N_{\frac{\alpha}{2}}  \right\}=\left\{  -N_{\frac{\alpha}{2}}\geq-Z  \geq N_{\frac{\alpha}{2}}\right\}=\left\{  -N_{\frac{\alpha}{2}}\geq \frac{\gamma^{T}\hat{\beta}-\gamma^{T}\beta}{\sqrt{ \sigma^{2}\gamma^{T}(X^{T}X)^{-1}\gamma }}\geq N_{\frac{\alpha}{2}} \right\}$
+We can now rewrite $C(y)=\left\{  N_{\frac{\alpha}{2}}\leq Z\leq-N_{\frac{\alpha}{2}}  \right\}=\left\{  -N_{\frac{\alpha}{2}}\geq-Z  \geq N_{\frac{\alpha}{2}}\right\}=\left\{  -N_{\frac{\alpha}{2}}\geq \frac{\gamma^{T}\beta-\gamma^{T}\hat{\beta}}{\sqrt{ \sigma^{2}\gamma^{T}(X^{T}X)^{-1}\gamma }}\geq N_{\frac{\alpha}{2}} \right\}$
 $=\left\{  -N_{\frac{\alpha}{2}}\sqrt{ \sigma^{2}\gamma^{T}(X^{T}X)^{-1}\gamma }+\gamma^{T}\hat{\beta}\geq\gamma^{T}\beta\geq N_{\frac{\alpha}{2}}\sqrt{ \sigma^{2}\gamma^{T}(X^{T}X)^{-1}\gamma }+\gamma^{T}\hat{\beta}  \right\}=1-\alpha$
 We can rewrite this compactly as $\mathbb{P}(\{\gamma^{T}\beta\in\{\gamma^{T}\hat{\beta}\pm N_{\frac{\alpha}{2}}\sqrt{ \sigma^{2}\gamma^{T}(X^{T}X)^{-1}\gamma }\}\})=1-\alpha$
 So we now have a confidence interval as the set $CI(y)=\{\gamma^{T}\hat{\beta}\pm N_{\frac{\alpha}{2}}\sqrt{ \sigma^{2}\gamma^{T}(X^{T}X)^{-1}\gamma }\}$
@@ -662,7 +662,7 @@ $$
 This requires the knot to be known. An estimated knot $\kappa$ in $\left(\frac{M}{60}-\kappa\right)_{+}$ makes the model nonlinear in its parameters.
 - **Hinge function:** $\mu$ is continuous at the knot and differentiable there iff $\beta_{3}=0$. $\beta_{3}$ is the *change in slope* (right slope minus left slope), not the slope after the knot, which is $\beta_{2}+\beta_{3}$.
 - **Identifiability:** if all $M_{i}\leq 60$, the third column of $X$ is $0_{n}$, so $e_{3}\in\mathcal{N}(X)$ and $\beta_{3}$ cannot be estimated.
-- **The null hypothesis must match the scientific question.** "No change between 60 and 120 minutes" is $H_{0}:\beta_{2}+\beta_{3}=0$, not $H_{0}:\beta_{3}=0$ (no bend) or $H_{0}:\beta_{2}=\beta_{3}=0$ (no effect anywhere, a two-constraint hypothesis).
+- **The null hypothesis must match the scientific question.** "No change between 60 and 120 minutes" is $H_{0}:\beta_{2}+\beta_{3}=0$, (because we have $\mu(120)-\mu(60)=(\beta_{1}+2\beta_{2}+\beta_{3})-(\beta_{1}+\beta_{2})=\beta_{2}+\beta_{3}$) not $H_{0}:\beta_{3}=0$ (no bend) or $H_{0}:\beta_{2}=\beta_{3}=0$ (no effect anywhere, a two-constraint hypothesis).
 - **Degrees of freedom:** if $n=p$ then $\hat{y}=y$, $RSS=0$, and $s^{2}=\frac{0}{0}$. Estimating $\sigma^{2}$ requires $n-p\geq 1$
 
 ### Standard Errors and Contrasts
@@ -688,7 +688,7 @@ $$
 $$
 - **Any split of $\alpha$ between the tails gives valid coverage.** Equal tails gives the shortest two-sided interval. One-sided bounds correspond to one-sided alternatives, and the direction must be chosen before looking at the data.
 - **Test–CI duality:** reject $H_{0}:\theta=b$ at level $\alpha$ iff $b$ is outside the $100(1-\alpha)\%$ CI. The CI is the set of null values that are not rejected. The proof uses $|x|\leq c\iff -c\leq x\leq c$.
-- **Two-sided p-value.** "Extreme" means far from what $H_{0}$ predicts, in either direction:
+- **Two-sided p-value.** "Extreme" means far from what $H_{0}$ predicts, in either direction: (note that $F_{d}$ is the cdf of the $t_{d}$ distribution here)
 $$
 p=\mathbb{P}_{H_{0}}\left(|T|\geq|t_{obs}|\right)=2F_{n-p}(-|t_{obs}|)
 $$
@@ -862,4 +862,80 @@ Q5: $B$ claims the same mean effect as A; $C$ claims ten units more than B
 - So we want to test $\beta_{A}=\beta_{B}$ and $\beta_{C}=\beta_{B}+10$.
 - Hence to get affine representation $C\beta=d$ we have $H_{0}:C\beta=d$ with $C=[0\;1\;-1\;0;\;0\;0\;-1\;1]$ and $d=[0;10]$.
 - Then the approach we can take is find a $\beta_{0}$ that satisfies the constraint $C\beta_{0}=d$ then shift y by $X\beta_{0}$.
+10/12
+Questions from slides continued
+Q5 continued
+- Note that an equivalent $C=[0\;1\;-1\;0;0\;-1\;0\;1]$ since in our null we assume that A and $B$ are the same. Mathematically, the null space of both $C$'s are the same.
+- If we have $C(\beta_{0}+\tilde{\beta})=d$ choose $\beta_{0}$ that satisfies $C\beta_{0}=d$ then we have $C\tilde{\beta}=0_{2}$.
+- We can then think of $\tilde{\beta}=K\hat{\phi}$ where $K$ is a basis for the null space of $C$ hence $\hat{\phi}$ is the regressed coefficients on $XK$ instead of $X$ after shifting $y-X\beta_{0}$. **Look into more**
+Q7:
+- Given a new data point with $X=[1\;0\;0\;1]$ we want a confidence interval for an expectation i.e. an interval for an observation (a prediction interval).
+- In this case with $X=[1\;0\;0\;1]$ we are giving them drug $C$, hence $y_{new}\sim N(\beta_{1}+\beta_{C},\sigma^{2})$ (new observation with this design) note that we have the mean as $X\beta=\beta_{1}+\beta_{C}$ (first and fourth betas). Hence, $\hat{y}_{new}=\hat{\beta}_{1}+\hat{\beta}_{4}$.
+- So our prediction interval is $\gamma^{T}\hat{\beta}\pm t_{n-p}^{-1}\left( 1-\frac{\alpha}{2} \right)\sqrt{ s^{2}\gamma^{T}(X^{T}X)^{-1}\gamma+s^{2}}$ where $\gamma^{T}$ is our new observation where $s^{2}\gamma^{T}(X^{T}X)^{-1}\gamma$ in square root comes from uncertainty of $\beta$ and $s^{2}$ term comes from uncertainty of $\epsilon$.
+9c Midterm practice
+- Intuition of the identity is that $RSS_{F}$ is the error from the full model and the sum term is the additional error from imposing the restriction.
+- For deriving the identity, we have $RSS_{F}=y^{T}(I-P_{X})y$. Let $z:=y-X\beta_{0}$ then $RSS_{R}=z^{T}(I-P_{XK})z$. 
 
+# Midterm Review
+- $Col(A)^{\perp}=\mathcal{N}(A^{T})$
+- Check if $P_{A}$ is a the projection matrix for $A$ (projection matrices are unique)
+	- Idempotence & Symmetry (projection matrix)
+	- $Col(P_{A})=Col(A)$ (valid for $A$)
+- $Col(AB)\subseteq Col(A)$
+- $Col(A)=\mathbb{R}^{n}\implies n\leq p$
+- For $A\in \mathbb{R}^{n\times p}$, $Col(A)=\{ Ax:x\in \mathbb{R}^{p} \}\subseteq \mathbb{R}^{n}$ and $Col(A)^{\perp}=\{ u\in \mathbb{R}^{n}:u^{T}Ax=0,\forall x\in \mathbb{R}^{p} \}\subseteq \mathbb{R}^{n}$
+- $rank(A)=p\iff A^{T}A\text{ is PD}\iff A^{T}A\text{ invertible}\iff \mathcal{N}(A)=\{ 0 \}$
+- $\mathcal{N}(A^{T}A)=\mathcal{N}(A)\implies rank(A^{T}A)=rank(A)$
+- Let $A$'s columns be a basis for $Col(X)$ then $P_{X}:=P_{Col(X)}=A(A^{T}A)^{-1}A^{T}$. (Note $A$ has full column rank)
+- $P_{X}^{\perp}=I-P_{X}=P_{\mathbb{R}^{n}}-P_{X}$
+- $y=P_{X}y+P_{X}^{\perp}y=\hat{y}+\hat{\epsilon}$
+- If $Q$ forms an orthogonal basis for subspace $\Omega$ then $P_{\Omega}=QQ^{T}$.
+- If $U\subseteq V$ then $P_{V}-P_{U}=P_{U^{\perp}\cap V}$ (projecting onto part of $V$ that is orthogonal to $U$).
+- If $U\subseteq V$ then $P_{U}P_{V}=P_{V}P_{U}=P_{U}$.
+- QR Decomposition: $Q\in \mathbb{R}^{n\times n},R\in \mathbb{R}^{n\times p}$
+	- $R_{1}\hat{\beta}=Q_{1}^{T}y$ i.e. given $Q^{T}y$ and $R$ we can find $\hat{\beta}$.
+	- $X=Q_{1}R_{1}$ where $Q=[Q_{1}|Q_{2}],R=[R_{1}|0_{n-p,p}]$ ($Q_{1}\in \mathbb{R}^{n\times p},R_{1}\in \mathbb{R}^{p\times p}$)
+	- $Q_{1}^{T}Q_{1}=I_{p},Q_{1}Q_{1}^{T}=P_{X},Q_{2}^{T}Q_{2}=I_{n-p},Q_{2}Q_{2}^{T}=P_{X}^{\perp}$
+	- $H_{k}=I_{n}-2P_{v_{k}}=I_{n}-\frac{2v_{k}v_{k}^{T}}{v_{k}^{T}v_{k}}$
+	- $Q^{T}y=\begin{bmatrix} z \\ d \end{bmatrix},\qquad z=Q_{1}^{T}y\in \mathbb{R}^{p},\quad d=Q_{2}^{T}y\in \mathbb{R}^{n-p}\implies||\hat{y}||_{2}^{2}=||z||_{2}^{2},||\hat{\epsilon}||_{2}^{2}=||d||_{2}^{2}$ i.e. Given just $Q^{T}y$ we can find $||\hat{y}||_{2}^{2}$ and $||\hat{\epsilon}||_{2}^{2}=RSS$.
+	- $Q_{2}^{T}y\sim N_{n-p}(0_{n-p},\sigma^{2}I_{n-p})$ and $Q_{1}^{T}y\sim N_{p}(X\beta,\sigma^{2}I_{p})$
+- Covariance
+	- $\mathrm{Cov}(U,W)=\mathbb{E}[UW^{T}]-\mathbb{E}[U]\mathbb{E}[W]^{T}$
+	- $\mathrm{Var}(AU)=A\mathrm{Var}(U)A^{T},\mathrm{Cov}(AU,BU)=A\mathrm{Var}(U)B^{T}$
+	- $\mathrm{Var}(\hat{\beta}_{1}-\hat{\beta}_{2})=\mathrm{Var}(\gamma^{T}\hat{\beta})=\gamma^{T}\mathrm{Var}(\hat{\beta})\gamma$.
+	- $\mathrm{Var}(a^{T}U)=a^{T}\Sigma a=\sum_{i} \sum_{j} a_{i}a_{j}\Sigma_{ij}$ where $\Sigma$ is covariance matrix of random variables in random vector $U$
+	- $\mathrm{Var}(\hat{\beta}_{2}+\hat{\beta}_{3})=\mathrm{Var}(\hat{\beta}_{2})+\mathrm{Var}(\hat{\beta}_{3})+2\mathrm{Cov}(\hat{\beta}_{2},\hat{\beta}_{3})$ hence negative covariance shrinks the variance of a sum and inflates the variance of a difference.
+- Lemma for following: $v^{T}y=0,\forall y\in \mathbb{R}^{n}\iff v=0_{n}$:
+	- $\gamma^{T}\hat{y}=\gamma^{T}P_{X}y=0\;\;\forall y\iff X^{T}\gamma=0_{p}\iff \gamma\in Col(X)^{\perp}$
+	- $\gamma^{T}\hat{\epsilon}=0\;\;\forall y\iff \gamma\in Col(X)$
+	- Recipes if time
+- Distributional Facts:
+	- $y\sim N_{n}(X\beta,\sigma^{2}I_{n})$, $rank(\Sigma)=n$ (full rank so invertible), lives in $\mathbb{R}^{n}$
+	- $\hat{\beta}\sim N_{p}(\beta,\sigma^{2}(X^{T}X)^{-1})$, $rank(\Sigma)=p$ (full rank so invertible), lives in $\mathbb{R}^{p}$
+	- $\hat{y}\sim N_{n}(X\beta,\sigma^{2}P_{X})$, $rank(\Sigma)=p$ (not full rank), lives in $Col(X)$
+	- $\hat{\epsilon}\sim N_{n}(0,\sigma^{2}P_{X}^{\perp})$, $rank(\Sigma)=n-p$ (not full rank), lives in $Col(X)^{\perp}$ (note residuals not n independent normals, but rather are correlated hence $\Sigma=\sigma^{2}(I-P_{X})$)
+	- $\mathcal{N}(\Sigma)$ describes the directions in which distribution $V$ does not vary. The general principle is $V-\mu\in Col(\Sigma)\implies V\in Col(\Sigma)+\mu$.
+- Stack parameters to get joint normality and 0 covariance to prove independence between $\hat{y}\perp\!\!\!\perp\hat{\epsilon},\hat{\beta}\perp\!\!\!\perp\hat{\epsilon}$. For example: $\begin{bmatrix} \hat{y} \\ \hat{\epsilon} \end{bmatrix}=\begin{bmatrix} P \\ I_{n}-P \end{bmatrix}y=Cy\implies Cy\sim N_{2n}\left(\begin{bmatrix} X\beta \\ 0_{n} \end{bmatrix},\;\sigma^{2}\begin{bmatrix} P & 0 \\ 0 & I_{n}-P \end{bmatrix}\right)$
+- If $\mathrm{Var}(\hat{\beta})$ has negative terms in off-diagonals, then $\mathrm{Var}(\hat{\beta}_{1}+\hat{\beta}_{2})$ observes a reduction in variance and an increase in variance for positive terms. This is the idea the collinearity is a variance phenomenon.
+- Confidence Intervals:
+	- Recall $Z=\frac{\gamma^{T}\hat{\beta}-\gamma^{T}\beta}{\sqrt{ \sigma^{2}\gamma^{T}(X^{T}X)^{-1}\gamma }}\sim N(0,1)$ hence we have $CI(y)=\{\gamma^{T}\hat{\beta}\pm N_{\frac{\alpha}{2}}\sqrt{ \sigma^{2}\gamma^{T}(X^{T}X)^{-1}\gamma }\}$ giving $\mathbb{P}(\gamma^{T}\beta\in CI(y))=1-\alpha$. Note this is a confidence interval that we hope contains our true parameter $\gamma^{T}\beta$ with $1-\alpha$ confidence. Hypothesis testing on the other hand checks if $\gamma^{T}\hat{\beta}\in \{b\pm N_{\frac{\alpha}{2}}\sqrt{ \sigma^{2}\gamma^{T}(X^{T}X)^{-1}\gamma }\}$ under our null $H_{0}:\gamma^{T}\beta=b$.
+	- For unknown variance: $\gamma^{T}\beta\in \{ \gamma^{T}\hat{\beta}\pm t_{n-p}^{-1}\left( \frac{\alpha}{2} \right)s\sqrt{ \gamma^{T}(X^{T}X)^{-1}\gamma }\}$
+- t-distribution:
+	- Let $Z\sim N(0,1)$ and $V\sim \chi_{d}^{2}$ with $Z$ independent of $V$. Then $\frac{Z}{\sqrt{ \frac{V}{d} }}\sim t_{d}$ (t distribution with $d$ d.o.f.).
+	- $\frac{\gamma^{T}\hat{\beta}-\gamma^{T}\beta}{s\sqrt{\gamma^{T}(X^{T}X)^{-1}\gamma }}\sim t_{n-p}$ where $s^{2}=\frac{\sum_{i=1}^{n}(y_{i}-\hat{y}_{i})^{2}}{(n-p)}$
+- Coverage
+	- $\mathbb{E}[s]<\sigma$ because ($\mathbb{E}[s]=\mathbb{E}[\sqrt{ s^{2} }]<\sqrt{ \mathbb{E}[s^{2}] }=\sigma$)
+	- $t_{d}(\alpha)$ quantile will always be larger than equivalent normal quantile $z_{\alpha}$
+	- Width only smaller with probability 1 if the randomness cancels (i.e. no $s$ in the comparison $\frac{L_{1}}{L_{2}}$)
+- Linear Models and Designs
+	- $n-p\geq1$ in order to estimate $\sigma^{2}$ (i.e. we must have at least 1 degree of freedom to estimate variance)
+	- When formulating null hypothesis evaluate in terms of vectors rather than intuitive explanation (remember "No change from 60 to 120" example in HW3 takeaways)
+	- $SE(\gamma^{T}\hat{\beta})=\sigma\sqrt{ v_{\gamma} }$ is standard error if $\sigma^{2}$ is known and $\widehat{SE}(\gamma^{T}\hat{\beta})=s\sqrt{ v_{\gamma} }$ is estimated standard error (if $\sigma^{2}$ is unknown). We use this for determining our CI as $\gamma^{T}\hat{\beta}\pm z*SE$ for known variance and $\gamma^{T}\hat{\beta}\pm t*\widehat{SE}$ for unknown variance
+	- Test–CI duality: reject $H_{0}:\theta=b$ at level $\alpha$ iff $b$ is outside the $100(1-\alpha)\%$ CI
+	- **General rule of thumb: If $\sigma$ is known use all things $Z$ if unknown use all things $t$**
+	- For two sided p value of $H_{0}:\gamma^{T}\beta=b$ we have $p=\mathbb{P}_{H_{0}}(|T|\geq|t_{obs}|)=2F(-|t_{obs}|)$ where $T=\frac{\gamma^{T}\hat{\beta}-b}{s\sqrt{ v_{\gamma} }}$ and $t_{obs}$ is just plugging in everything for actual data.
+	- $RSS=\sum_{i=1}^{n}(y_{i}-\hat{y}_{i})^{2}\implies s^{2}=\frac{RSS}{n-p}$. Since $||Q_{2}^{T}y||_{2}^{2}=||\hat{\epsilon}||_{2}^{2}=RSS$ and $Q_{2}^{T}y\sim N_{n-p}(0_{n-p},\sigma^{2}I_{n-p})\implies \frac{RSS}{\sigma^{2}}\sim \chi^{2}_{n-p}\implies \mathbb{E}\left[ \frac{RSS}{\sigma^{2}} \right]=n-p\implies \mathbb{E}[RSS]=\sigma^{2}(n-p)$. Thus, $\mathbb{E}[s^{2}]=\mathbb{E}\left[ \frac{RSS}{n-p} \right]=\sigma^{2}$ and $\mathbb{E}\left[ \frac{RSS}{n} \right]=\frac{\sigma^{2}(n-p)}{n}$.
+- Inference for Vector Targets
+	- Let $V_{1}\sim\chi_{d_{1}}^{2},V_{2}\sim\chi_{d_{2}}^{2}$ with $V_{1}\perp\!\!\!\perp V_{2}$. Then $\frac{\frac{V_{1}}{d_{1}}}{\frac{V_{2}}{d_{2}}}\sim F_{d_{1},d_{2}}$.
+	- $\frac{||\hat{y}||_{2}^{2}}{\sigma^{2}}\sim \chi^{2}_{p}$ under $H_{0}:\beta=0_{p}$ (important for making mean 0; note d.o.f is p here because $\hat{y}=Q_{1}^{T}y$ lives in $\mathbb{R}^{p}$). $\frac{||\hat{\epsilon}||_{2}^{2}}{\sigma^{2}}\sim \chi^{2}_{n-p}$ always hence $\frac{\frac{||\hat{y}||_{2}^{2}}{p}}{\frac{||\hat{\epsilon}||_{2}^{2}}{n-p}}\sim F_{p,n-p}$ under $H_{0}:\beta=0_{p}$.
+	- 
