@@ -1020,3 +1020,70 @@ $d:\mathcal{X}\to \mathcal{A}$ is called our decision rule
 In point estimation, $\Theta=\mathcal{A}$ typically i.e. our action space is just the parameter space because the action we take is guessing a specific $\hat{\theta}$. It's not always the case though. For example, consider $\Theta=\{ (\mu,\sigma^{2}):\mu\in \mathbb{R},\sigma^{2}>0 \}$ then if we are just predicting $\mu$ we have $\mathcal{A}=\{ \mu:\mu\in \mathbb{R} \}$. Basically, if we have nuisance parameters then $\Theta$ does not necessarily equal $\mathcal{A}$.
 Typically, $L(\theta,a)=||\theta-a||^{2}$ (but doesn't have to be)
 
+10/20
+Decision Theory Continued
+Recall our data $X$ is generated from some population with an unknown parameter $\theta\in\Theta$ and then we make a decision $\delta(x)$ (decision rule) which chooses an action from our action space $\mathcal{A}$. We then evaluate our decision rule $\delta(x)$ using our loss function $L(\theta,a)$ (smaller is better) which is assumed to know the true parameter $\theta$. 
+
+Assess quality of decision rules $L(\theta,\delta(x))$. We want to evaluate how our decision rule performs on average, not just for random (through x) decisions. Hence we have the risk function $R(\theta,\delta)=\mathbb{E}_{\theta}L(\theta,\delta(x))$.
+Decision rules with smaller risk functions are preferred.
+
+How decision is used for statistical problems?
+- Point estimation: Trying to make the best guess for the parameter that generated the data
+	- $\mathcal{A}=\Theta$ (our action is choosing a parameter from the parameter space)
+	- $d:X\to\Theta$
+	- Examples of loss functions:
+		- Squared Loss: $L(\theta,a)=(\theta-a)^{2}$ with risk function being mean squared error (MSE) $R(\theta,\delta)=\mathbb{E}_{\theta}(\delta(x)-\theta)^{2}$
+		- Absolute Loss: $L(\theta,a)=|\theta-a|$ with risk function being mean absolute deviation (MAD) $R(\theta,\delta)=\mathbb{E}_{\theta}|\delta(x)-\theta|$
+- Two Class Classification
+	- Two subsets of parameter space: $\Theta=\Theta_{0}\cup\Theta_{1}$ (disjoint)
+	- Our action space: $\mathcal{A}=\{ 0,1 \}$
+	- Our loss function is a table: with matching decisions being 0 e.g. $a=0,\theta\in\Theta_{0}$ and mismatch decisions to be constants $c_{0},c_{1}$ and WLOG we can just have it be $1,c$ e.g. $a=0,\theta\in\Theta_{1}\implies1$ and $a=1,\theta\in\Theta_{0}\implies c$. All that really matters is the ratio between $c_{0}$ and $c_{1}$ hence we can normalize to 1 and $c$. Think about $c_{0},c_{1}$ as the cost of making different types of classification errors.
+	- Hence our risk function: $$
+R(\theta,\delta)=\mathbb{E}_{\theta}L(\theta,a)=
+\begin{cases}
+\mathbb{P}_{\theta}(\delta(x)=0) & \text{if }\theta\in\Theta_{1} \\
+c\mathbb{P}_{\theta}(\delta(x)=1) & \text{if }\theta\in\Theta_{0}
+\end{cases}$$
+
+How to compare various decision rules?
+**Definition (inadmissible)**: $f(x|\theta),\theta\in\Theta,L(\theta,a)$ are all fixed. A decision rule $\delta(x)$ is inadmissible if there is $\delta'(x)$ so that $R(\theta,\delta'(x))\leq R(\theta,\delta(x)),\forall\theta$ and $\exists\theta\;s.t.\;R(\theta,\delta'(x))<R(\theta,\delta)$ ($\delta'(x)$ strictly dominates $\delta(x)$).
+
+**Definition (admissible)**: Decision rule is admissible if it is not inadmissible.
+
+Example:
+$X_{1},\dots,X_{n}\overset{\text{iid}}{\sim}Bernoulli(p)$
+$\Theta=[0,1]$
+For simplicity we will use square loss: $L(\theta,p)=(\theta-p)^{2}$
+Consider several rules and evaluate their risk functions:
+1. $\bar{X}_{n}=\delta_{1}$
+2. $X_{1}=\delta_{2}$
+3. $\frac{1}{2}=\delta_{3}$
+4. $\frac{\sum_{i}x_{i}+\frac{\sqrt{n}}{2}}{n+\sqrt{ n }}$
+Recall that $\sum X_{i}\sim Bin(n,p)$
+Now calculating the risk functions:
+5. $R(p,\delta_{1})=\frac{\mathbb{E}_{p}\left( \sum_{i=1}^{n}x_{i}-np \right)^{2}}{n^{2}}=\frac{np(1-p)}{n^{2}}=\frac{p(1-p)}{n}$
+6. $R(p,\delta_{2})=\mathbb{E}_{p}(X_{1}-p)^{2}=p(1-p)$
+7. $R\left( p, \delta_{3} \right)=\left( p-\frac{1}{2} \right)^{2}$
+8. $R(p,\delta_{4})=\mathbb{E}_{p}\left( \frac{\sum_{i}x_{i}+\frac{\sqrt{n}}{2}}{n+\sqrt{ n }}-p \right)^{2}= \frac{\mathbb{E}_{p}\left( \sum X_{i}+\frac{\sqrt{ n }}{2}-np-\sqrt{ n }p \right)^{2}}{(n+\sqrt{ n })^{2}}=\frac{\mathbb{E}_{p}\left( \sum X_{i}-np \right)^{2}-2\sqrt{ n }\left( \frac{1}{2}-p \right)\mathbb{E}\left( \sum X_{i}-np \right)+n\left( p-\frac{1}{2} \right)^{2}}{(n+\sqrt{ n })^{2}}$
+$=\frac{\left( np(1-p)-0+np^{2}-np+\frac{n}{4} \right)}{(n+\sqrt{ n })^{2}}=\frac{n}{4(n+\sqrt{ n })^{2}}$.
+Then look at pictures on phone (10/20 10:28) comparing $R_{i}(\cdot)$'s.
+We can see that $\delta_{2}$ is inadmissible strictly dominated by $\delta_{1}$.
+$\delta_{1},\delta_{3},\delta_{4}$ are admissible (but we have not proved it yet)
+Note that although intuitively it seems like you could have a wider quadratic that dominates $\delta_{3}=\frac{1}{2}$, the only way to reach 0 is by being a constant (since being random would give it a positive probability and force it to be $>0$) and $\frac{1}{2}$ is the only constant that attains 0 at $\frac{1}{2}$.
+From this picture we also know that there cannot be a best estimator (under definition of dominates every other; we will get to definition of area under the curve for "best").
+
+We have two options to get "the best":
+- Limit the competition e.g. only unbiased estimators
+- Change the rules
+
+Going more into "Change the Rules." There are two common ones we will use:
+- Minimax: The best decision rule is the one that minimizes $\sup\limits_{\theta}R(\theta,\delta)$ and is called minimax
+- Average Case (Bayes Rule): $r_{\pi}(\delta)=\int_{\Theta}R(\theta,\delta)\pi(\theta)d\theta$. Think about $\pi(\cdot)$ as just a weight function, but when we get to the Bayesian world this is the prior (assuming probability density). The best case here is called the Bayes rule.
+
+
+
+
+
+
+
+

@@ -766,7 +766,7 @@ For each of the following, is it a projection matrix? What space does it project
 
 To show these more rigorously we can choose any orthonormal basis for $V$ as $Q_{V}$ and build an orthonormal basis for $U$ where the first columns are $Q_{V}$: $Q_{U}=[Q_{V}\;\tilde{Q}_{U}]$. Thus we have $P_{U}=Q_{U}Q_{U}^{T}$ and $P_{V}=Q_{V}Q_{V}^{T}$ so $P_{U}P_{V}=Q_{U}Q_{U}^{T}Q_{V}Q_{V}^{T}=Q_{V}Q_{V}^{T}$. Note that $\tilde{Q}_{U}$ is an orthonormal basis for $U \cap V^{\perp}$.
 
-Note that $\lim_{ k \to \infty }(P_{U}P_{V})^{k}=0$ for two subspaces that aren't nested. Intuitively, we bounce back and forth between the two spaces slowly compressing and getting closer to 0 with every iteration.
+Note that $\lim_{ k \to \infty }(P_{U}P_{V})^{k}=0$ for two subspaces that aren't nested. Intuitively, we bounce back and forth between the two spaces slowly compressing and getting closer to 0 with every iteration. In general it converges to the projection onto $P_{U\cap V}$.
 
 
 For null $H_{0}:\beta_{M}=0$ where $M$ is an index set its the same idea: $$
@@ -898,7 +898,7 @@ Q7:
 	- $Q_{1}^{T}Q_{1}=I_{p},Q_{1}Q_{1}^{T}=P_{X},Q_{2}^{T}Q_{2}=I_{n-p},Q_{2}Q_{2}^{T}=P_{X}^{\perp}$
 	- $H_{k}=I_{n}-2P_{v_{k}}=I_{n}-\frac{2v_{k}v_{k}^{T}}{v_{k}^{T}v_{k}}$
 	- $Q^{T}y=\begin{bmatrix} z \\ d \end{bmatrix},\qquad z=Q_{1}^{T}y\in \mathbb{R}^{p},\quad d=Q_{2}^{T}y\in \mathbb{R}^{n-p}\implies||\hat{y}||_{2}^{2}=||z||_{2}^{2},||\hat{\epsilon}||_{2}^{2}=||d||_{2}^{2}$ i.e. Given just $Q^{T}y$ we can find $||\hat{y}||_{2}^{2}$ and $||\hat{\epsilon}||_{2}^{2}=RSS$.
-	- $Q_{2}^{T}y\sim N_{n-p}(0_{n-p},\sigma^{2}I_{n-p})$ and $Q_{1}^{T}y\sim N_{p}(X\beta,\sigma^{2}I_{p})$
+	- $Q_{2}^{T}y\sim N_{n-p}(0_{n-p},\sigma^{2}I_{n-p})$ and $Q_{1}^{T}y\sim N_{p}(R_{1}\beta,\sigma^{2}I_{p})$
 - Covariance
 	- $\mathrm{Cov}(U,W)=\mathbb{E}[UW^{T}]-\mathbb{E}[U]\mathbb{E}[W]^{T}$
 	- $\mathrm{Var}(AU)=A\mathrm{Var}(U)A^{T},\mathrm{Cov}(AU,BU)=A\mathrm{Var}(U)B^{T}$
@@ -952,3 +952,61 @@ Q7:
 		F=\frac{\tilde{y}^{T}(P_{X}-P_{XK})\tilde{y}/q}{y^{T}(I-P_{X})y/(n-p)}=\frac{(RSS_{R}-RSS)/q}{RSS/(n-p)}\overset{H_{0}}{\sim}F_{q,n-p}
 		$$
 		Reject if $F>F_{q,n-p,1-\alpha}$. The denominator can use $y$ or $\tilde{y}$: $(I-P_{X})X\beta_{0}=0_{n}$.
+
+10/19
+### Multiple Testing (Regression Setting)
+We know how to do inference (in the sense of hypothesis tests and confidence intervals) for $\gamma^{T}\beta$ or to test $H_{0}:C\beta=d$.
+What if we ask multiple inferential questions of the same dataset?
+Ex: CIs for $\beta^{T}\gamma^{(1)},\beta^{T}\gamma^{(2)},\dots,\beta^{T}\gamma^{(k)}$ or we test $H_{0}^{(1)}:\beta_{1}=0,\dots,H_{0}^{(p)}:\beta_{p}=0$. Or we might explore and selectively report some subset of our findings.
+
+We've talked about how individual tests and CIs have desirable properties, but what about the whole pipeline?
+What we will cover today:
+- Familywise Error Rate (FWER)
+- Bonferroni Correction
+- Halm-Bonferroni
+- Scheffe Correction
+- Later in semester
+	- False Discovery
+	- Selective Inference
+
+Warmup: Coordinate-wise Inference and regression
+Usual model and assumptions: $y=X\beta+\epsilon,\epsilon \sim N_{n}(0_{n},\sigma^{2}I_{n})$. Estimate $\hat{\beta}$ and construction CIs for $\beta_{1},\dots,\beta_{p}$.
+Note $R$ will denote confidence regions (here they will be CIs, but they may just be regions later).
+$\hat{R}_{j}:=\hat{\beta}_{j}\pm t_{n-p}^{-1}\left( 1-\frac{\alpha}{2} \right)s\sqrt{ e_{j}^{T}(X^{T}X)^{-1}e_{j} }$
+Let $E_{j}$ be the event that the true $\{ y:\beta_{j}\in \hat{R}_{j}(y)\}$ (our confidence interval is a function of $y$ i.e. is y measurable). The whole point is we want to be able to talk about probabilities.
+$\mathbb{P}(E_{j})=1-\alpha$ (for a fixed $E_{j}$)
+What is the probability that ALL our CIs cover? It depends on the dependence of $\beta$'s. If they were independent we would have the intuitive result of $(1-\alpha)^{p}$ (since $1-\alpha$ for each $\beta\in \mathbb{R}^{p}$). 
+Let $\delta$  be the probability that at least one of our CIs doesn't cover: $\delta=\mathbb{P}(\exists j:\beta_{j}\not\in \hat{R}_{j}(y))\implies1-\delta=\mathbb{P}(\forall j:\beta_{j}\in \hat{R}_{j})=\mathbb{P}\left[ \bigcap_{j=1}^{p}E_{j} \right]$ (this is where if independent then just becomes $(1-\alpha)^{p}$) $=1-\mathbb{P}\left[ \bigcup_{j=1}^{p}E_{j}^{c} \right]\geq1-\sum_{j=1}^{p}\mathbb{P}[E_{j}^{c}]$ (union bound of subadditivity) $=1-p\alpha$. Hence $1-\delta\geq1-p\alpha\implies\delta\leq p\alpha$.
+For a fixed $\alpha$ and large $p$, this may be vacuously true, but remember that we get to choose $\alpha$.
+
+**Definition (FWER)**: The Family Wise Error Rate (FWER) is the probability that at least one member of a family of statements is untrue.
+What do we mean by an untrue statement? For CI it is $\beta_{j}\not\in \hat{R}_{j}$ and for hypothesis testing rejecting the null when it is in fact true.
+So here our FWER is $\delta$.
+
+#### Bonferroni Correction
+Motivated by the union bound argument. Suppose we want to control $\delta$ at some level $\alpha_{0}$. Then construct $1-\frac{\alpha_{0}}{p}$ level confidence intervals. Then $1-\delta\geq1-\sum_{i=1}^{p}\mathbb{P}[E_{i}^{c}]=1-\frac{p\alpha_{0}}{p}=1-\alpha_{0}\implies\delta\leq\alpha_{0}$.
+
+Example: Suppose we have tested $H_{0}^{(1)},\dots,H_{0}^{(k)}$ where each $H_{0}^{(j)}:C^{(j)}\beta=d^{(j)}$. From each of these tests we have a p-value $p^{(1)},\dots,p^{(k)}$.
+Using the p-values, how should we make rejection decisions if our goal is to control $FWER\leq 0.05$.
+
+When is Bonferroni conservative?
+Still using $p^{(1)},\dots,p^{(k)}$. Under what dependence structure is Bonferroni maximally conservative?
+All identical tests, i.e. k identical tests. Hence we don't need any correction since we are doing the same test k times we only need to do it once.
+The bound is attained at extreme negative dependence (i.e. partition/nonoverlapping; it is easy to assume non-overlapping events are independent, but by them being partitioned/non-overlapping it limits the probability of other events).
+#### Holm-Bonferroni
+Uniformly more powerful than Bonferroni and requires no additional assumptions.
+Procedure:
+- Input: $K$ individually valid p-values (i.e. if you look at any particular p-value on its own it would be uniformly distributed under the null) and $\alpha_{0}$ target FWER control
+	1. Sort the p-values $p_{(1)}\leq\dots\leq p_{(K)}$ (order statistics)
+	2. Find $k^{*}=\min\left\{  j\in \{ 1,\dots,K \} :p_{(j)}\geq \frac{\alpha_{0}}{K+1-j} \right\}$
+	3. Reject $H_{0}$'s corresponding to $p_{(1)},\dots,p_{(k^{*}-1)}$ and fail to reject the rest.
+	>Note: If $k^{*}=1$ reject nothing. Also note that our smallest p-value is being compared to Bonferroni $\frac{\alpha_{0}}{K}$ and we progressively get weaker comparisons with the $p_{(2)}\geq \frac{\alpha_{0}}{K-1}$ all the way up to $p_{(K)}\geq\alpha_{0}$.
+
+Proof of FWER control:
+1. View it as closed testing procedure
+2. Direct proof (doing this one)
+Let $\mathcal{I}_{0}=\{ i\in \{ 1,\dots,K \}:H_{0}^{(i)}\text{ is true} \}$. Let $m_{0}=\#\{ \mathcal{I}_{0} \}$.
+Claim: If we have falsely rejected a true null, then there exists an $l$ such that $p_{(l)}\leq \frac{\alpha_{0}}{m_{0}}$ where $p_{(l)}$ corresponds to a true null.
+If we sort our nulls by same ordering of p-value order statistics: $H_{(1)},\dots,H_{(l)},H_{(l+1)},\dots,H_{(K)}$.
+Since we are rejecting $H_{(l)}$ we can assume that $H_{(1)},\dots,H_{(l-1)}$ are rejected.
+Since we rejected $H_{(l)}$ we know that $p_{(l)}\leq \frac{\alpha_{0}}{K+1-l}\leq \frac{\alpha_{0}}{m_{0}}$ (note the second inequality comes from the fact that $l-1\leq K-m_{0}\implies m_{0}\leq K-l+1$).
