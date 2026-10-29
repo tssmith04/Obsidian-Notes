@@ -995,6 +995,7 @@ All identical tests, i.e. k identical tests. Hence we don't need any correction 
 The bound is attained at extreme negative dependence (i.e. partition/nonoverlapping; it is easy to assume non-overlapping events are independent, but by them being partitioned/non-overlapping it limits the probability of other events).
 #### Holm-Bonferroni
 Uniformly more powerful than Bonferroni and requires no additional assumptions.
+Claim: This procedure controls FWER at $\alpha_{0}$.
 Procedure:
 - Input: $K$ individually valid p-values (i.e. if you look at any particular p-value on its own it would be uniformly distributed under the null) and $\alpha_{0}$ target FWER control
 	1. Sort the p-values $p_{(1)}\leq\dots\leq p_{(K)}$ (order statistics)
@@ -1010,3 +1011,122 @@ Claim: If we have falsely rejected a true null, then there exists an $l$ such th
 If we sort our nulls by same ordering of p-value order statistics: $H_{(1)},\dots,H_{(l)},H_{(l+1)},\dots,H_{(K)}$.
 Since we are rejecting $H_{(l)}$ we can assume that $H_{(1)},\dots,H_{(l-1)}$ are rejected.
 Since we rejected $H_{(l)}$ we know that $p_{(l)}\leq \frac{\alpha_{0}}{K+1-l}\leq \frac{\alpha_{0}}{m_{0}}$ (note the second inequality comes from the fact that $l-1\leq K-m_{0}\implies m_{0}\leq K-l+1$).
+
+10/21
+Holm-Bonferroni Proof Continued:
+Sketch of proof
+1. FWE $\implies \exists l:p_{(l)} \leq \frac{\alpha_{0}}{m_{0}}$ for a true null where $m_{0}$ is # of true nulls
+2. $\mathbb{P}(FWE)=FWER\leq \mathbb{P}\left( \exists l:p_{(l)} \leq \frac{\alpha_{0}}{m_{0}} \right)$
+3. $\mathbb{P}\left( \exists l: p_{(l)} \leq \frac{\alpha_{0}}{m_{0}} \right)\leq\alpha_{0}$
+4. Chain these 3 things together to conclude FWER $\leq\alpha_{0}$
+Step 1
+Claim: If a family-wise error occurs, there must exist an $l$ such that $p_{(l)}\leq \frac{\alpha_{0}}{m_{0}}$ where $m_{0}$ is the # of true nulls (we don't know what $m_{0}$ is though).
+Proof of claim by construction: Choose $l$ to correspond to $p_{(l)}$ for the true null with the smallest p-value (which must have been rejected since a FWE occurred).
+If we sort our nulls by same ordering of p-value order statistics: $H_{(1)},\dots,H_{(l)},H_{(l+1)},\dots,H_{(K)}$.
+Since we are rejecting $H_{(l)}$ we can assume that $H_{(1)},\dots,H_{(l-1)}$ are rejected.
+Moreover, since $l$ is the first true null we rejected we know that $H_{(1)},\dots,H_{(l-1)}$ are also false nulls.
+So we have $K$ total hypotheses, $m_{0}$ true nulls, and $K-m_{0}$ false nulls. 
+Since we rejected $H_{(1)},\dots,H_{(l-1)}$ we know that we have at least $l-1$ false nulls, but we have at most $K-m_{0}$ false nulls hence $l-1\leq K-m_{0}\implies m_{0}\leq K-l+1$.
+Since we rejected $H_{(l)}$ under Holm-Bonferroni that means that $p_{(l)}\leq \frac{\alpha_{0}}{K+1-l}\leq \frac{\alpha_{0}}{m_{0}}$ where the second inequality comes from $m_{0}\leq K-l+1$. Step 1 complete.
+
+Step 2
+A family-wise error implies the existence of $l$ satisfying $p_{(l)}\leq \frac{\alpha_{0}}{m_{0}}$ for a true null. Hence call "A family wise error occurs" event $A$ and call "the existence of $l$ satisfying $p_{(l)}\leq \frac{\alpha_{0}}{m_{0}}$ for a true null" event $B$. Since $A\implies B$ it follows that $\mathbb{P}(A)\leq \mathbb{P}(B)$. Step 2 complete.
+
+Step 3
+$\mathbb{P}\left( \exists l:p_{(l)}\leq \frac{\alpha_{0}}{m_{0}} \right)= \mathbb{P}\left( \exists l:p_{l}\leq \frac{\alpha_{0}}{m_{0}} \right)= \mathbb{P}\left( \bigcup_{\text{true nulls}}p_{l}\leq \frac{\alpha_{0}}{m_{0}} \right)$ $\leq \sum_{\text{true nulls}}\mathbb{P}\left( p_{l}\leq \frac{\alpha_{0}}{m_{0}} \right)=\sum_{\text{true null}} \frac{\alpha_{0}}{m_{0}}=m_{0} \frac{\alpha_{0}}{m_{0}}=\alpha_{0}$
+Note in the third to last equality we are implicitly assuming our p-values follow a uniform distribution, but this comes from the fact that any valid p-value must be stochastically dominated by a uniform (don't need to know this, just nice to know) hence if it wasn't uniform, but was still a valid p-value it would be a $\leq$ instead of =.
+
+Step 4
+Putting it all together $FWER=\mathbb{P}(FWE)\leq \mathbb{P}(\exists l: p_{(l)}\leq \frac{\alpha_{0}}{m_{0}})\leq\alpha_{0}$. Hence we have proved that under Holm-Bonferroni $FWER\leq\alpha_{0}$.
+
+One downside of Holm-Bonferroni is that there is no obvious prescription for confidence intervals
+
+### Confidence Intervals (Revisited) and Simultaneous Inference
+CI Options:
+1. $\gamma^{T}\beta$ : $\gamma^{T}\hat{\beta}\pm t_{n-p}^{-1}\left( 1-\frac{\alpha}{2} \right)s\sqrt{ \gamma^{T}(X^{T}X)^{-1}\gamma }$
+2. Now suppose we have $\gamma_{1},\dots,\gamma_{K}$ and we want CI for $\{ \gamma^{T}_{k}\beta \}_{k=1,\dots,K}$ that hold simultaneously with prob ability $1-\alpha_{0}$ : $\gamma^{T}_{k}\hat{\beta}\pm t_{n-p}^{-1}\left( 1-\frac{\alpha_{0}}{2K} \right)s\sqrt{ \gamma^{T}_{k}(X^{T}X)^{-1}\gamma_{k} }$ (Bonferroni-Corrected Confidence Intervals). Note that as $K\to \infty$ our confidence intervals become meaningless as they cover everything.
+
+#### Scheffe Corrected CIs
+Consider a set $\Gamma$ of vectors in $\mathbb{R}^{p}$ (could be infinite set, hence handling our growing $K$ concern for Bonferroni-Corrected CIs above).
+For a particular $\gamma\in\Gamma$ the Scheffe corrected CI for $\gamma^{T}\beta$ is $\gamma^{T}\hat{\beta}\pm \sqrt{ pF_{p,n-p}^{-1}(1-\alpha)s^{2}\gamma^{T}(X^{T}X)^{-1}\gamma }$ .
+
+The key idea about CI that we will exploit is that $\mathbb{P}_{\theta}(\theta\in R(y))\geq1-\alpha$ where $\theta$ is our parameter, $R$ is a confidence region, and $y$ is our random vector. So let $g:\Theta\to\Omega$ where $\Theta$ is our parameter space and $\Omega$ is a different parameter space and define $g(R)=\{ g(t): t\in R \}$. Then if $\theta\in R\implies g(\theta)\in g(R)$ and moreover this will hold $\forall g:\Theta\to\Omega$.
+Consider $\Theta=\mathbb{R}^{2}$ and two functions $g_{1}(\theta)=e_{1}^{T}\theta$ and $g_{2}(\theta)=e_{2}^{T}\theta$ (pulling out the two coordinates of theta). 
+Claim: Whenever $\theta\in R$ $g_{1}(\theta)\in g_{1}(R)$ and $g_{2}(\theta)\in g_{2}(R)$. Note the converse does not hold though; consider when $R$ is an ellipse in $\mathbb{R}^{2}$ then our $g_{1}$ and $g_{2}$ form lines for the boundaries of $R$ but if reconstructed would make a rectangle not an ellipse. The extra gap near the corners of this rectangle are where $g_{1}(\theta)\in g_{1}(R)$ but $\theta\not\in R$. Look at picture on phone for help (10/21 12:24). So when we are doing Bonferroni Correction we are in essence forming a rectangle/hyperrectangle that contains the confidence regions (but have a little bit of extra coverage; think of the corners).
+
+For Scheffe we want to:
+1. Build a confidence region for $\mu=\mathbb{E}[y]$
+2. Push this forward to get a confidence region for $\beta$
+3. Push forward to get a confidence interval for $\gamma^{T}\beta$
+
+Step 1
+$\frac{||\hat{\mu}-\mu||_{2}^{2}}{\sigma^{2}}\sim \chi_{p}^{2}$ since $||\hat{\mu}-\mu||^{2}_{2}=y^{T}P_{X}y$ and we can follow typical argument for showing chi squared.
+We also know that $\frac{(n-p)s^{2}}{\sigma^{2}}\sim \chi_{n-p}^{2}$. Hence $\frac{||\hat{\mu}-\mu||_{2}^{2}/p}{s^{2}}\sim F_{p,n-p}$. Hence $\{ \mu: \frac{||\hat{\mu}-\mu||_{2}^{2}/p}{s^{2}}\leq F^{-1}_{p,n-p}(1-\alpha)\}$ which will be a ball in the $Col(X)$.
+
+10/26
+Side notes (before getting back to lecture material):
+Valid p-values are super uniform under the null i.e. they satisfy $\mathbb{P}_{H_{0}}(p\leq t)\leq t$. Uniform is super uniform, and with mass shifted to the right it is super uniform (like right triangle with hypotenuse coming out from origin). 
+Going back, householder reflectors are generally not rotation matrices. (minor correction)
+
+### Power of Our Tests
+What happens if $H_{0}$ isn't true?
+**Definition (Power)**: The probability that our test rejects $H_{0}$ when $H_{0}$ is false.
+>Note: Since the alternative hypothesis is often composite (e.g. $\exists$ many $\beta$ satisfying $\beta\neq0$) power is often considered a function of a specific alternative and the design (which includes $n$)
+
+Why should we care about power?
+- Lets us consider type 2 errors (power = 1 - $\mathbb{P}$(type 2 error))
+- Lets you rule out silly, but otherwise valid testing regimes e.g. size $\alpha$ test where we always take $p\sim U(0,1)$ independent of our data. In this example it has size and power $\alpha$.
+- Helps us plan studies
+
+**Power Analysis**
+Justification using literature, rhetoric, and calculations that a study is worth doing. For example, you want to test a drug on mice with null that your drug has no effect. A power analysis can help you determine the number of mice you need to achieve your desired power.
+
+#### Noncentral t,$\chi^{2}$, and $F$ distributions
+**Noncentral t**
+Let $W\sim N_{1}(\delta,1)$. Let $V\sim \chi^{2}_{m}$ with $W\perp\!\!\!\perp V$. Then $\frac{W}{\sqrt{ \frac{V}{m} }}\sim t_{m}(\delta)$ (follows t distribution with $m$ d.o.f. and non-centrality parameter $\delta$). 
+
+**Noncentral $\chi^{2}$**
+Let $w_{1},\dots,w_{m}{\sim}N_{1}(\xi_{i},1)$ with $w_{i}$'s independent. Hence $W\sim N_{m}(\xi,I_{m})$. Let $\lambda=\sum_{i=1}^{m}\xi_{i}^{2}=||\xi||_{2}^{2}$. Then if we take $V = \sum_{i=1}^{m}w_{i}^{2}=||W||_{2}^{2}$ then $V\sim \chi^{2}_{m}(\lambda)$ where $\lambda$ is our non-centrality parameter.
+
+**Noncentral $F$**
+Suppose that $V_{1}\sim \chi^{2}_{q}(\lambda),V_{2}\sim \chi^{2}_{m}(0)\equiv \chi^{2}_{m}$ with $V_{1}\perp\!\!\!\perp V_{2}$. Then $\frac{\frac{V_{1}}{q}}{\frac{V_{2}}{m}}\sim F_{q,m}(\lambda)$.
+Note that there is such a thing as a doubly non-central $F$ distribution when $V_{2}$ is non-central. However, this does not normally come up since the denominator is typically noise which is centered at 0. It can come up in model misspecification though because we compare against a model with some covariates left out which makes it noncentral. (Not super important, but nice to know).
+
+**Distribution Under Alternatives**
+$y=X\beta+\epsilon$ and $\epsilon \sim N_{n}(0_{n},\sigma^{2}I_{n})$ with $X\in \mathbb{R}^{n\times p}$ with $rank(X)=p<n$ and $\beta,\sigma^{2}$ both unknown.
+We plan to test $H_{0}:\beta_{2}=0$ at level $\alpha$. What is the power of our test if $\beta_{2}=b$?
+Q1) Warmup: what is the power when $b=0$? Answer: $\alpha$
+Q2) How will we test? Answer: Our test statistic is $t:=\frac{e_{2}^{T}\hat{\beta}-0}{s\sqrt{ e_{2}^{T}(X^{T}X)^{-1}e_{2} }}$. Now reject if $|t|\geq$ critical value $t_{n-p}^{-1}\left( 1-\frac{\alpha}{2} \right)$.
+Q3) What is the probability of rejection if $\beta_{2}=b$?
+- When $\beta_{2}=b$ what is the distribution of t? We have $\frac{\hat{\beta}_{2}}{s\sqrt{ e^{T}_{2}(X^{T}X)^{-1}e_{2} }}$ as our test statistic and we know $\hat{\beta}_{2}\sim N_{1}(b,\sigma^{2}e_{2}^{T}(X^{T}X)^{-1}e_{2})$. Hence $\frac{\hat{\beta}_{2}}{\sigma \sqrt{ e_{2}^{T}(X^{T}X)^{-1}e_{2} }}\sim N_{1}\left( \frac{b}{\sigma \sqrt{ e_{2}^{T}(X^{T}X)^{-1}e_{2} }},1 \right)$. Also $(n-p)s^{2}\sim\sigma^{2}\chi^{2}_{n-p}\implies \frac{(n-p)s^{2}}{\sigma^{2}}\sim \chi_{n-p}^{2}$. Hence $t:=\frac{\hat{\beta}_{2}}{s\sqrt{ e^{T}_{2}(X^{T}X)^{-1}e_{2} }}\sim t_{n-p}\left(\frac{b}{\sigma \sqrt{ e_{2}^{T}(X^{T}X)^{-1}e_{2} }}\right)=t_{n-p}(\delta)$.
+- Now using this gives the probability of rejection as $\mathbb{P}\left( t\geq t_{n-p}^{-1}\left( 1-\frac{\alpha}{2} \right) \right)+\mathbb{P}\left( t\leq t_{n-p}^{-1}\left( \frac{\alpha}{2} \right) \right)$ where $t\sim t_{n-p}(\delta)$.
+
+How does power change with $b$? If $b$ gets larger in magnitude (difference from zero) then power increases.
+What about $\beta_{-2}$ (i.e. the other coefficients)? They don't affect power since they don't show up in non-centrality parameter.
+How does sample size enter? Through $X^{T}X$ whose entries get larger as $n$ increases hence entries of $(X^{T}X)^{-1}$ decrease which causes our non-centrality parameter $\delta$ to increase. Hence, power increases as $n$ increases since power increases the more non-central we are (i.e. larger the non-centrality parameter is).
+
+10/28
+### Power of t-tests for $\gamma^{T}\beta$
+$t:=\frac{\hat{\beta}_{2}}{\sqrt{ s^{2}e_{2}^{T}(X^{T}X)^{-1}e_{2} }}$
+Suppose $\beta_{2}=b$ then what distribution does $t$ follow? $t\sim t_{n-p}\left( \frac{b}{\sqrt{ \sigma^{2}e_{2}^{T}(X^{T}X)^{-1}e_{2} }} \right)$
+In order to arrive at this we needed to look at the $\frac{\hat{\beta}_{2}}{\sqrt{ e_{2}^{T}(X^{T}X)^{-1}e_{2} }}$ term since $\hat{\beta}_{2}\sim N(b,\sigma^{2}e_{2}^{T}(X^{T}X)^{-1}e_{2})$ so dividing by $\sqrt{ \sigma^{2}e_{2}^{T}(X^{T}X)^{-1}e_{2} }$ shifts our means and gives us variance 1 in the normal i.e. $\frac{\hat{\beta}_{2}}{\sqrt{ \sigma^{2}e_{2}^{T}(X^{T}X)^{-1}e_{2} }}\sim N\left(\frac{b}{\sqrt{ \sigma^{2}e_{2}^{T}(X^{T}X)^{-1}e_{2} }},1\right)$ .
+Recall $\frac{W}{\sqrt{ \frac{V}{q} }}\sim t_{q}(\delta)$ if $W\sim N(\delta,1)$ and $V\sim \chi^{2}_{q}$ with $W\perp\!\!\!\perp V$.
+Remember $s^{2}=\frac{y^{T}(I-P_{X})y}{n-p}$ and $y^{T}P_{X}^{\perp}y\sim \sigma^{2}\chi^{2}_{n-p}\implies \frac{y^{T}P_{X}^{\perp}y}{\sigma^{2}}\sim \chi^{2}_{n-p}$. Hence $\frac{s^{2}}{\sigma^{2}}=\frac{V}{q}$ in our form above. 
+Hence we have all components to conclude $t\sim t_{n-p}\left( \frac{b}{\sqrt{ \sigma^{2}e_{2}^{T}(X^{T}X)^{-1}e_{2} }} \right)$.
+
+Generally, we have $$T=\frac{\gamma^{T}\hat{\beta}}{s\sqrt{ v_{\gamma} }}\sim t_{n-p}(\delta), \qquad\delta=\frac{\gamma^{T}\beta}{\sigma \sqrt{ v_{\gamma} }}$$
+Look at slides on Power in canvas.
+
+### Non-central $F$ tests
+Suppose we want to test $H_{0}:C\beta=0_{q}$ (note if affine test the logic all goes through, just more tedious book keeping).
+Let $K$ be a matrix that satisfies $Col(K)=\mathcal{N}(C)$. Assume $C\in \mathbb{R}^{q\times p}$ and $K\in \mathbb{R}^{p\times p-q}$.
+Also let $P=P_{X}-P_{XK}$ be a projection matrix and let $P_{0}=(I-P_{X})$.
+So our $F$ statistic is $$
+f:=\frac{y^{T}Py/q}{y^{T}P_{0}y/(n-p)}
+$$
+We reject when $f\geq F^{-1}_{q,n-p}(1-\alpha)$.
+We want the distribution under the alternative.
+Let $\mu=X\beta$. Then $V_{1}=\frac{y^{T}Py}{\sigma^{2}}\sim \chi^{2}_{q}\left( \frac{\mu^{T}P\mu}{\sigma^{2}} \right)$ (non-centrality parameter $\lambda=\frac{\mu^{T}P\mu}{\sigma^{2}}$)
+Then $V_{2}=\frac{y^{T}P_{0}y}{\sigma^{2}}\sim \chi^{2}_{n-p}$.
+Suppose we want power when $C\beta=d$. Find any $\tilde{\beta}$ satisfying $C\tilde{\beta}=d$ and let $\tilde{\mu}=X\tilde{\beta}$. Then compute $\lambda$ using $\mu=\tilde{\mu}$.
+Upshot is that the parts of $\beta$ that are left free will get killed when taking quadratic form $\lambda$.

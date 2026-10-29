@@ -838,7 +838,7 @@ Note that $T(X)=\left( \sum x_{i},\sum x_{i}^{2} \right)$ is also sufficient (bu
 
 >Note: The minimal sufficient statistic is not necessarily unique. Consider when $g(\cdot)$ is invertible.
 
-**Theorem**: Let $X\sim \{ f(x|\theta) \}_{\theta\in\Theta}$ and if $T(X)$ is a statistic that satisfies $$
+**Theorem (Likelihood Ratio Test)**: Let $X\sim \{ f(x|\theta) \}_{\theta\in\Theta}$ and if $T(X)$ is a statistic that satisfies $$
 f(x|\theta)=h(x,y)f(y|\theta)\iff T(X)=T(Y)
 $$Then, $T(X)$ is minimal sufficient.
 
@@ -1080,10 +1080,204 @@ Going more into "Change the Rules." There are two common ones we will use:
 - Minimax: The best decision rule is the one that minimizes $\sup\limits_{\theta}R(\theta,\delta)$ and is called minimax
 - Average Case (Bayes Rule): $r_{\pi}(\delta)=\int_{\Theta}R(\theta,\delta)\pi(\theta)d\theta$. Think about $\pi(\cdot)$ as just a weight function, but when we get to the Bayesian world this is the prior (assuming probability density). The best case here is called the Bayes rule.
 
+10/22
+## Unbiased Estimators
+Consider $f(x|\theta),\ \theta\in\Theta$ and let $\tau(\theta)$ be the parameter of interest. $T(X)$ is commonly said to be unbiased for $\tau(\theta)$ if $$
+\mathbb{E}_{\theta}[T(X)]=\tau(\theta),\quad\forall\theta\in\Theta
+$$
+Thus, we have "limited the competition" (one of the two options from 10/20 for getting a "best" estimator).
 
+**Definition (Unbiased decision rule)**: Fix $f(x|\theta),\ \theta\in\Theta$ and loss $L(\theta,a)$. A decision rule $\delta(X)$ is unbiased if $$
+\mathbb{E}_{\theta}[L(\theta',\delta(X))]\geq \mathbb{E}_{\theta}[L(\theta,\delta(X))],\quad\forall\theta,\theta'\in\Theta
+$$
+I.e., if we plug in a different (wrong) $\theta'$, we incur a higher expected loss than with the true $\theta\in\Theta$.
 
+**Observation**: Let $L(\theta,a)=(\tau(\theta)-a)^{2}$ and $\varphi(\theta)=\mathbb{E}_{\theta}\delta(X)$. Then (under the regularity condition below) $\delta(X)$ is unbiased iff $$
+\varphi(\theta)=\tau(\theta),\quad\forall\theta\in\Theta
+$$
+So under squared error loss, the decision-theoretic definition matches the usual definition of unbiasedness.
 
+Proof: 
+$\mathbb{E}_{\theta}L(\theta',\delta(X))-\mathbb{E}_{\theta}L(\theta,\delta(X))=\mathbb{E}_{\theta}\left[(\tau(\theta')-\delta(X))^{2}-(\tau(\theta)-\delta(X))^{2}\right]$
+$=\mathbb{E}_{\theta}\left[\tau(\theta')^{2}-2\tau(\theta')\delta(X)+\delta(X)^{2}-\left(\tau(\theta)^{2}-2\tau(\theta)\delta(X)+\delta(X)^{2}\right)\right]$
+$=\tau(\theta')^{2}-\tau(\theta)^{2}-2\tau(\theta')\varphi(\theta)+2\tau(\theta)\varphi(\theta)+\left[\varphi(\theta)^{2}-\varphi(\theta)^{2}\right]$ (add and subtract $\varphi(\theta)^{2}$ to complete the squares)
+$=(\tau(\theta')-\varphi(\theta))^{2}-(\tau(\theta)-\varphi(\theta))^{2}=:D_{\theta}$
 
+($\Leftarrow$): If $\varphi(\theta)=\tau(\theta)\ \forall\theta\in\Theta$, then $D_{\theta}=(\tau(\theta')-\tau(\theta))^{2}\geq0$.
+($\Rightarrow$): Assume $D_{\theta}\geq0$ for all $\theta,\theta'\in\Theta$. We require a regularity condition: for every $\theta\in\Theta$ there exists $\theta^{*}\in\Theta$ such that $\tau(\theta^{*})=\varphi(\theta)$ (i.e. $\varphi(\theta)$ lies in the range of $\tau$). Then take $\theta'=\theta^{*}$ in $D_{\theta}$: $$
+0\leq(\tau(\theta^{*})-\varphi(\theta))^{2}-(\tau(\theta)-\varphi(\theta))^{2}=-(\tau(\theta)-\varphi(\theta))^{2}\implies\tau(\theta)=\varphi(\theta)
+$$
 
+Example (absolute loss):
+Let $L(\theta,a)=|\tau(\theta)-a|$.
+Q: For what value of $\eta$ is the following minimized? $$
+I_{\eta}:=\mathbb{E}_{\theta}|\eta-\delta(X)|
+$$
+Let $f_{\delta}(s|\theta)$ be the density of $\delta(X)$. Then $$
+I_{\eta}=\int_{-\infty}^{\eta}(\eta-s)f_{\delta}(s|\theta)ds+\int_{\eta}^{\infty}(s-\eta)f_{\delta}(s|\theta)ds
+$$ $$
+=\eta\int_{-\infty}^{\eta}f_{\delta}(s|\theta)ds-\int_{-\infty}^{\eta}sf_{\delta}(s|\theta)ds+\int_{\eta}^{\infty}sf_{\delta}(s|\theta)ds-\eta\int_{\eta}^{\infty}f_{\delta}(s|\theta)ds
+$$
+Taking the derivative (Leibniz rule, term by term): $$
+\frac{d}{d\eta}I_{\eta}=\left[\int_{-\infty}^{\eta}f_{\delta}(s|\theta)ds+\eta f_{\delta}(\eta|\theta)\right]-\eta f_{\delta}(\eta|\theta)-\eta f_{\delta}(\eta|\theta)+\left[-\int_{\eta}^{\infty}f_{\delta}(s|\theta)ds+\eta f_{\delta}(\eta|\theta)\right]
+$$ $$
+=\int_{-\infty}^{\eta}f_{\delta}(s|\theta)ds-\int_{\eta}^{\infty}f_{\delta}(s|\theta)ds\overset{\text{set}}{=}0\iff\frac{1}{2}=\int_{-\infty}^{\eta}f_{\delta}(s|\theta)ds
+$$
+Since $\frac{d^{2}}{d\eta^{2}}I_{\eta}=2f_{\delta}(\eta|\theta)\geq0$, $I_{\eta}$ is convex in $\eta$, so this critical point is a minimum. The minimizer is the median of $\delta(X)$.
+Thus, if $\tau(\theta)=\operatorname{median}_{\theta}\delta(X),\ \forall\theta\in\Theta$, then $\delta(X)$ is unbiased under absolute loss ("median-unbiased").
+>Note: The density is only for convenience. In general $\mathbb{E}|\eta-Y|$ is minimized at any median of $Y$.
 
+**Definition (Mean Squared Error)**: The risk function under squared error loss $$
+R(\theta,\delta)=\mathbb{E}_{\theta}(\tau(\theta)-\delta(X))^{2}
+$$ is commonly called the Mean Squared Error (MSE).
 
+**Proposition (Bias-Variance Decomposition)**: With $\varphi(\theta)=\mathbb{E}_{\theta}\delta(X)$, $$
+\mathbb{E}_{\theta}(\tau(\theta)-\delta(X))^{2}=\mathbb{E}_{\theta}\left[(\tau(\theta)-\varphi(\theta))-(\delta(X)-\varphi(\theta))\right]^{2}
+$$ $$
+=(\tau(\theta)-\varphi(\theta))^{2}-2(\tau(\theta)-\varphi(\theta))\mathbb{E}_{\theta}(\delta(X)-\varphi(\theta))+\mathbb{E}_{\theta}(\delta(X)-\varphi(\theta))^{2}
+$$ $$
+=\left[\mathbb{E}_{\theta}\delta(X)-\tau(\theta)\right]^{2}+\mathrm{Var}_{\theta}\,\delta(X)
+$$
+(the middle term vanishes since $\mathbb{E}_{\theta}(\delta(X)-\varphi(\theta))=0$).
+Thus, if we only consider unbiased estimators, $MSE(\theta)=\mathrm{Var}_{\theta}\,\delta(X)$.
+
+**Definition (Uniformly Minimum Variance Unbiased Estimator)**: $W$ is UMVUE for $\tau(\theta)$ if
+1. $\mathbb{E}_{\theta}W=\tau(\theta),\quad\forall\theta\in\Theta$
+2. $\mathrm{Var}_{\theta}W\leq\mathrm{Var}_{\theta}\tilde{W},\quad\forall\theta\in\Theta$ and all other unbiased $\tilde{W}$
+
+Example:
+Let $X_{1},\dots,X_{n}\overset{\text{iid}}{\sim}Pois(\lambda)$ and consider $\bar{X}_{n}$ and $S_{n}^{2}$. Indeed $\mathbb{E}_{\lambda}\bar{X}_{n}=\mathbb{E}_{\lambda}S_{n}^{2}=\lambda$, so both are unbiased.
+What are their variances? (Using $\mathrm{Var}(S_{n}^{2})$ from 9/8, with $\sigma^{2}=\lambda$ and $\mu_{4}=\lambda+3\lambda^{2}$ for Poisson.) $$
+\mathrm{Var}_{\lambda}\bar{X}_{n}=\frac{\lambda}{n},\qquad\mathrm{Var}_{\lambda}S_{n}^{2}=\frac{1}{n}\left(\mu_{4}-\frac{n-3}{n-1}\sigma^{4}\right)=\frac{1}{n}\left(3\lambda^{2}+\lambda-\frac{n-3}{n-1}\lambda^{2}\right)=\frac{\lambda}{n}+\frac{2\lambda^{2}}{n-1}
+$$
+$\implies\mathrm{Var}_{\lambda}\bar{X}_{n}<\mathrm{Var}_{\lambda}S_{n}^{2}$ for all $\lambda>0$. Notice $S_{n}^{2}$ is thus inadmissible (as an estimator of $\lambda$ under squared error loss, since MSE = Var for both).
+Q: Is $\bar{X}_{n}$ UMVUE?
+
+**Theorem (Lehmann-Scheffé)**: Let $T(X)$ be complete sufficient. Then $$
+\delta(X)=g(T)
+$$ is the (unique) UMVUE of $\mathbb{E}_{\theta}g(T)$, where $g(\cdot)$ is any function with $\mathrm{Var}_{\theta}\,g(T)<\infty$.
+>Note: Combined with Rao-Blackwell, the recipe is to find any unbiased estimator that is a function of a complete sufficient statistic.
+
+Example:
+Let $X_{1},\dots,X_{n}\overset{\text{iid}}{\sim}Pois(\lambda)$ (full rank exponential family). Then $$
+f(x|\lambda)=\left(\prod_{i=1}^{n}\frac{1}{x_{i}!}\right)\exp\left[\left(\sum_{i=1}^{n}x_{i}\right)\log\lambda-n\lambda\right]
+$$
+The natural parameter is $\eta=\log\lambda$, and $\lambda\in(0,\infty)$ maps onto $\mathcal{H}=\mathbb{R}$ (open). So by the full rank exponential family theorem (10/8), $\sum_{i}X_{i}$ is complete sufficient. $$
+\implies g\left(\sum_{i}X_{i}\right)=\frac{\sum_{i}X_{i}}{n}=\bar{X}_{n}\text{ is UMVUE for }\mathbb{E}_{\lambda}\,g\left(\sum_{i}X_{i}\right)=\lambda
+$$
+This answers the question above: yes, $\bar{X}_{n}$ is UMVUE.
+
+Example (Normal):
+Let $X_{1},\dots,X_{n}\overset{\text{iid}}{\sim}N(\mu,\sigma^{2})$ with both $\mu\in\mathbb{R}$ and $\sigma^{2}>0$ unknown. From 9/15 and the iid proposition, the joint density is $$
+f(x|\mu,\sigma^{2})=(2\pi\sigma^{2})^{-n/2}\exp\left(\frac{\mu}{\sigma^{2}}\sum_{i=1}^{n}x_{i}-\frac{1}{2\sigma^{2}}\sum_{i=1}^{n}x_{i}^{2}-\frac{n\mu^{2}}{2\sigma^{2}}\right)
+$$
+So $w(\mu,\sigma^{2})=\left(\frac{\mu}{\sigma^{2}},-\frac{1}{2\sigma^{2}}\right)$ and $T(X)=\left(\sum_{i}X_{i},\sum_{i}X_{i}^{2}\right)$.
+As $(\mu,\sigma^{2})$ ranges over $\mathbb{R}\times(0,\infty)$, $w$ covers all of $\mathbb{R}\times(-\infty,0)=\mathcal{H}$, which is open. So the family is full rank, and by the 10/8 theorem $T(X)$ is complete sufficient.
+
+The map $T\mapsto(\bar{X}_{n},S_{n}^{2})$ is 1-1, since $$
+\sum_{i}X_{i}=n\bar{X}_{n},\qquad\sum_{i}X_{i}^{2}=(n-1)S_{n}^{2}+n\bar{X}_{n}^{2}
+$$
+So $(\bar{X}_{n},S_{n}^{2})$ is also complete sufficient. Any function of it is a function of $T$.
+- $\mathbb{E}\bar{X}_{n}=\mu\implies\bar{X}_{n}$ is UMVUE for $\mu$ (Lehmann-Scheffé)
+- $\mathbb{E}S_{n}^{2}=\sigma^{2}\implies S_{n}^{2}$ is UMVUE for $\sigma^{2}$ (Lehmann-Scheffé)
+- Since $g$ can be any function of $T$, we can also correct a biased estimator. For $\mu^{2}$: $\mathbb{E}\bar{X}_{n}^{2}=\mathrm{Var}(\bar{X}_{n})+\mu^{2}=\frac{\sigma^{2}}{n}+\mu^{2}$, so $$
+\mathbb{E}\left(\bar{X}_{n}^{2}-\frac{S_{n}^{2}}{n}\right)=\mu^{2}\implies\bar{X}_{n}^{2}-\frac{S_{n}^{2}}{n}\text{ is UMVUE for }\mu^{2}
+$$
+>Note: The general recipe is to (1) find a complete sufficient $T$, (2) find any function of $T$ whose expectation is $\tau(\theta)$, adjusting by subtracting bias terms that are themselves functions of $T$. Lehmann-Scheffé then says you are done. The $\mu^{2}$ estimator can be negative even though $\mu^{2}\geq0$, which is one known weakness of insisting on unbiasedness.
+
+10/27
+### UMVUE (Uniform Minimum-Variance Unbiased Estimator)
+**Theorem (Rao-Blackwell)**: $X\sim f(x|\theta),\theta\in\Theta,L(\theta,a)$, $T(X)$ is sufficient, $\delta(X)$ is an estimator. Assume for $\theta\in\Theta$, the $L(\theta,\cdot)$ is convex and $R(\theta,\delta)<\infty$. Define $\mu(T(X))=\mathbb{E}[\delta|T]$ (we implicitly assume that the conditional expectation exists $\mathbb{E}\delta<\infty$). Then $R(\theta,\mu)\leq R(\theta,\delta)$.
+Proof: $R(\theta,\mu)=\mathbb{E}_{\theta}L(\theta,\mathbb{E}[\delta|T])\leq \mathbb{E}_{\theta}(\mathbb{E}_{\theta}[L(\theta,\delta)|T])=\mathbb{E}_{\theta}L(\theta,\delta)=R(\theta,\delta)$ where inequality comes from Jensen's.
+>Note if the loss function is strictly convex then this inequality is sharp as long as $\mathbb{E}_{\theta}[L(\theta,\delta)|T]$ is not constant i.e. $\mathbb{P}(\delta\neq \mu)>0$.
+
+**Theorem (Lehmann-Scheffe)**: $X\sim f(x|\theta),\theta\in\Theta$ and $T(X)$ is sufficient complete. $\delta(X)$ has finite variance. Then $\mu=\mathbb{E}[\delta|T]$ is UMVUE of $\tau(\theta)=\mathbb{E}_{\theta}\delta(X)$.
+Proof: Let $W$ be another statistic for which $\mathbb{E}_{\theta}W=\tau(\theta)\;\forall\theta$ (Unbiased estimator) and $\mathrm{Var}_{\theta}(W)<\mathrm{Var}_{\theta}(\mu)$ for some $\theta$. Define $\bar{W}=\mathbb{E}[W|T]$. Hence by Rao-Blackwell $\mathrm{Var}_{\theta}(\bar{W})=\mathbb{E}_{\theta}(\bar{W}-\tau(\theta))^{2}\leq \mathbb{E}_{\theta}(W-\tau(\theta))^{2}=\mathrm{Var}_{\theta}W$. Notice $\mathbb{E}_{\theta}g(T)=\mathbb{E}_{\theta}(\bar{W}-\mu)=\tau(\theta)-\tau\theta)=0\;\forall\theta\implies \mathbb{P}_{\theta}(\bar{W}=\mu)=1$ which is a contradiction to fact that $\mathrm{Var}_{\theta}\bar{W}\leq \mathrm{Var}_{\theta}W<\mathrm{Var}_{\theta}\mu$. Note that the implication comes from $T$ being complete since $T$ complete implies if $\mathbb{E}_{\theta}g(T)=\mathbb{E}_{\theta}(\bar{W}(T)-\mu(T))=0\implies \mathbb{P}_{\theta}(g(T)=0)=1\implies \mathbb{P}_{\theta}(\bar{W}(T)=\mu(T))=1$.
+
+Example:
+$X_{1},\dots,X_{n}\overset{\text{iid}}{\sim}U(0,\theta)$ for $\theta>0$
+This is not an exponential family, however, we've shown before that $T=X_{(n)}$ is complete sufficient.
+Recall that $F_{X_{(n)}}(s)=\mathbb{P}(X_{(n)}\leq s)=\mathbb{P}(X_{1}\leq s, \dots,X_{n}\leq s)=\left( \frac{s}{\theta} \right)^{n}$ hence $f_{X_{(n)}}=\frac{ns^{n-1}}{\theta^{n}}\mathbb{I}_{(0,\theta)}(s)$. $\mathbb{E}X_{(n)}=\int_{0}^{\theta} \frac{sns^{n-1}}{\theta^{n}}ds=\frac{n}{\theta^{n}}\left( \frac{s^{n+1}}{n+1} \right)|_{0}^{\theta}=\frac{n}{n+1}\theta\implies \mathbb{E}\left( \frac{n+1}{n}X_{(n)} \right)=\theta\implies \frac{n+1}{n}X_{(n)}$ is UMVUE of $\theta$.
+
+Example:
+$X_{1},\dots,X_{n}\overset{\text{iid}}{\sim}Poisson(\lambda)$
+This is full rank exponential family and $\sum_{i=1}^{n}X_{i}=T$ is sufficient complete.
+Find UMVUE of $\lambda^{2}$.
+We want to guess g so that $\mathbb{E}_{\lambda}g(T)=\lambda^{2}\;\forall\lambda$.
+We will use the trick that $\sum X_{i}\sim Poisson(n\lambda)$
+$\mathbb{E}_{\lambda}\left( \sum X_{i} \right)^{2}=\mathrm{Var}_{\lambda}\left( \sum X_{i} \right)+\left( \mathbb{E}\sum X_{i} \right)^{2}=n\lambda+ (n\lambda)^{2}$. This suggests that $g\left( \sum X_{i} \right)= \frac{\left( \sum X_{i} \right)^{2}-\sum X_{i}}{n^{2}}$. Notice then $\mathbb{E}_{\lambda}g\left( \sum X_{i} \right)=\lambda^{2}$. Thus $g\left( \sum X_{i} \right)$ is UMVUE of $\lambda$.
+Sometimes guessing $g$ is not this easy. For example, find UMVUE of $e^{-\lambda}$.
+The trick here will be find an unbiased estimator of $e^{-\lambda}$ then take conditional expectation $\mu=\mathbb{E}[\delta|T]$.
+Note $\mathbb{P}(X_{1}=0)=e^{-\lambda}$ and $\delta(X)=\mathbb{I}_{\{ 0 \}}(X_{1})$. Then $\mathbb{E}[\delta|T]=?$. We know that $\mathbb{P}(X_{1}=0|T=t)=\frac{\mathbb{P}\left( X_{1}=0,\sum_{i=2}^{n} X_{i}=t \right)}{\mathbb{P}\left( \sum_{i=1}^{n} X_{i}=t \right)}= \frac{\frac{e^{-\lambda}((n-1)\lambda)^{t}e^{-(n-1)\lambda}}{t!}}{\frac{(n\lambda)^{t}e^{-n\lambda}}{t!}}=(\frac{n-1}{n})^{t}$
+Hence $\mathbb{E}[\delta|T=t]=\mathbb{P}(X_{1}=0|T=t)=\left( 1-\frac{1}{n} \right)^{t}\implies \mathbb{E}[\delta|T]=\left( 1-\frac{1}{n} \right)^{T}\implies\left( 1-\frac{1}{n} \right)^{\sum X_{i}}$ is UMVUE of $e^{-\lambda}$.
+
+Example:
+$X_{1},\dots,X_{n}\overset{\text{iid}}{\sim}N(\mu,\sigma^{2})$. Last time we proved that $S_{n}^{2}=\frac{1}{n-1}\sum_{i=1}^{n}(X_{i}-\bar{X})^{2}$ is UMVUE of $\sigma^{2}$.
+Now lets calculate the $MSE(S_{n}^{2})=\mathrm{Var}S_{n}^{2}=\frac{1}{n}\left( \mu_{4}- \frac{n-3}{n-1}\sigma^{4} \right)=\frac{2\sigma^{4}}{n-1}$ since $\mu_{4}=3\sigma^{4}$ for Normal.
+Consider $\hat{\sigma}^{2}=\frac{1}{n}\sum_{i=1}^{n}(X_{i}-\bar{X})^{2}=\frac{n-1}{n}S_{n}^{2}$. This is no longer unbiased estimator but we can still calculate $MSE(\hat{\sigma}^{2})=\left(\mathbb{E} \frac{n-1}{n}S_{n}^{2}-\sigma^{2} \right)^{2}+\mathrm{Var}\left( \frac{n-1}{n}S_{n}^{2} \right)$ (biased squared + variance) $=\left( \frac{n-1}{n}-1 \right)^{2}\sigma^{4}+\left( \frac{n-1}{n} \right)^{2} \frac{2\sigma^{4}}{n-1}=\frac{\sigma^{4}}{n^{2}}+\frac{n-1}{n^{2}}2\sigma^{4}=\frac{2\sigma^{4}}{n}-\frac{\sigma^{4}}{n^{2}}<MSE(S_{n}^{2})$. Hence our UMVUE $S_{n}^{2}$ is not even admissible!
+
+Exercise: Find $c$ so that $c\sum(X_{i}-\bar{X})^{2}$ has the smallest $MSE$. Spoiler: $c=\frac{1}{n+1}$.
+
+### Bayesian Estimation
+We want to look at other ways of finding "best" estimators. Detour into Bayesian Inference as tools from this are very useful.
+So far our setup has been that we draw a $\theta$ from $\Theta$ and generate our data through $f(x|\theta)$ and we want to find this $\theta$. In the Bayesian world we assume that $\theta$ was itself generated by some random process $\pi(\theta)$ i.e. $\theta \sim \pi(\theta)$. Note that $\pi(\theta)$ is called the prior distribution.
+Then we have our model (also called likelihood) $X\sim f(x|\theta)$.
+Hence this allows me to think about the joint distribution $(\theta,X)\sim \pi(\theta)f(x|\theta)$.
+After observing $X$ we have $\theta|X=x\sim \pi(\theta|x)= \frac{\pi(\theta)f(x|\theta)}{m(x)}$ where $m(x)=\int_{\Theta} \pi(\theta)f(x|\theta)d\theta$ (marginal of x). $\pi(\theta|x)$ is called the posterior distribution and $m(x)$ is marginal distribution of $X$.
+
+10/29
+Fixed (frequentist) vs Random (Bayesian) Parameter
+Frequentist probability can be thought of as long-time averages while Bayesian is more subjective
+Both have the same model $f(x|\theta),\theta\in\Theta$ but Bayesian additionally brings the prior $\pi(\theta)$ (the density on $\Theta$). The prior should somehow be selected based on belief prior to observing data.
+$f(x,\theta)=\pi(\theta)f(x|\theta)$ - joint between parameter $\theta$ and data $X$
+With joint we can have marginal: $m(x)=\int_{\Theta}\pi(\theta)f(x|\theta)d\theta$
+Finally we also have conditional distribution $\frac{\pi(\theta)f(x|\theta)}{m(x)}=\pi(\theta|x)$ is the posterior. (Bayes Theorem)
+
+This is a "distribution estimator": Can pick a "typical" value as a point estimator where typical can be
+- posterior mean ($\mathbb{E}[\theta|X]=\int\theta \pi(\theta|x)d\theta$) also called Posterior Bayes Estimator
+- Posterior mode ($\arg\max_{\theta}\pi(\theta|x)$)
+- Posterior median $\int_{-\infty}^{\theta}\pi(\hat{\theta}|x)d\hat{\theta}=\frac{1}{2}$
+- And many more
+
+Example:
+$X\sim Bin(n,p)$ with $n$ known and $p\in[0,1]$ unknown
+$f(x|p)=\binom{n}{x}p^{x}(1-p)^{n-x}\mathbb{I}_{\{ 0,\dots,n \}}(x)$ with prior $p\sim Beta(\alpha,\beta)$.
+Recall Beta distribution then $\pi(p)=\frac{1}{B(\alpha,\beta)}p^{\alpha-1}(1-p)^{\beta-1}\mathbb{I}_{(0,1)}(p)$
+Fact from calculus is that $B(\alpha,\beta)=\frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)}$. Also recall $X\sim B(\alpha,\beta)\implies \mathbb{E}X=\frac{\alpha}{\alpha+\beta},\;\mathrm{Var}(X)=\frac{\alpha}{\alpha+\beta} \frac{\beta}{\alpha+\beta} \frac{1}{\alpha+\beta+1}$.
+So posterior in this case is $$\pi(p|x)=\frac{\binom{n}{x}p^{x}(1-p)^{n-x}\mathbb{I}_{\{ 0,\dots,n \}}(x)p^{\alpha-1}(1-p)^{\beta-1}\mathbb{I}_{(0,1)}(p)}{B(\alpha,\beta)}=C(x)p^{x+\alpha-1}(1-p)^{n-x+\beta-1}\mathbb{I}_{(0,1)}(p)$$
+Where $C$ is whatever makes us integrate to 1, so $C$ depends on $X$ and contains our indicator. Hence in this case $C$ is $\frac{\mathbb{I}_{\{ 0,\dots,n \}}(x)}{B(x+\alpha,n-x+\beta)}$. Hence $\pi(p|x)\sim Beta(x+\alpha,n-x+\beta)$.
+>Note: The we don't need to explicitly divide by the marginal $m(x)$ here because it will just get wrapped into $C(x)$ as $m(x)$ doesn't depend on $p$. Hence we can just set up $\pi(\theta|x)=C(x)\pi(\theta)f(x|\theta)$ and find $C(x)$ that makes us integrate to 1. The key is that $\pi(p|X)\propto \pi(\theta)f(x|\theta)$.
+
+Thus posterior mean is $\mathbb{E}(p|X)=\frac{X+\alpha}{n+\alpha+\beta}=\frac{x}{n} \frac{n}{n+x+\beta}+ \frac{\alpha}{\alpha+\beta} \frac{\alpha+\beta}{n+\alpha+\beta}$ where we can think of $\frac{x}{n}$ as the data mean and $\frac{\alpha}{\alpha+\beta}$ as the prior mean.
+
+Example:
+$X\sim N\left( \mu, \frac{\sigma^{2}}{n} \right)$ with $\mu\in \mathbb{R}$ unknown and $\sigma^{2}>0$ known
+$\pi(\mu)\sim N(\theta,\tau^{2})$ with $\theta,\tau^{2}$ known
+Hence $\pi(\mu|x)=\frac{1}{\sqrt{2\pi\tau^2}} \exp\left(-\frac{(\mu-\theta)^2}{2\tau^2}\right) \frac{1}{\sqrt{\frac{2\pi\sigma^2}{n}}} \exp\left(-\frac{(x-\mu)^2}{\frac{2\sigma^2}{n}}\right)/m(x)$. Hence looking at the exponents we have $\frac{(\mu-\theta)^{2}}{\tau^{2}}+\frac{n}{\sigma^{2}}(x-\mu)^{2}=\frac{\mu^{2}}{\tau^{2}}-\frac{2\mu\theta}{\tau^{2}}+\frac{\theta^{2}}{\tau^{2}}+\frac{\mu^{2}n}{\sigma^{2}}-\frac{2\mu xn}{\sigma^{2}}+\frac{x^{2}n}{\sigma^{2}}=\mu^{2}\left( \frac{1}{\tau^{2}}+\frac{n}{\sigma^{2}} \right)-2\mu\left( \frac{\theta}{\tau^{2}}+\frac{2xn}{\sigma^{2}}+C \right)=\left( \frac{1}{\tau^{2}}+\frac{n}{\sigma^{2}} \right)\left( \mu-\frac{\left( \frac{\theta}{\theta^{2}}+\frac{xn}{\sigma^{2}} \right)}{\frac{1}{\tau^{2}}+\frac{n}{\sigma^{2}}} \right)^{2}+D:=\alpha+D$ where $C$ and $D$ are constants.
+Hence our prior is $\pi(\mu|x)=E\exp\left( -\frac{D}{2} \right)$ where $E$ is "some ugly constant" meaning $\pi(\mu|x)\sim N\left( \frac{\frac{xn}{\sigma^{2}}}{\frac{1}{\tau^{2}}+\frac{n}{\sigma^{2}}}+\frac{\frac{\theta}{\tau^{2}}}{\frac{1}{\tau^{2}}+\frac{n}{\sigma^{2}}}, \frac{1}{\frac{1}{\tau^{2}}+\frac{n}{\sigma^{2}}} \right)$. 
+### Conjugate Family Priors
+**Definition (Conjugate Family)**: If $f(x|\theta),\theta\in\Theta$ then $\mathcal{P}$ is a conjugate family of priors if  $\pi(\theta)\in \mathcal{P}\implies \pi(\theta|x)\in \mathcal{P}$.
+So in the normal example above normal is conjugate for normal.
+
+### Back to Decision Theory
+We have model $f(x|\theta),\theta\in\Theta$ a loss function $L(\theta,a)$ and risk function $R(\theta,\delta)=\mathbb{E}_{\theta}L(\theta,\delta(X))$.
+Recall we cannot be the uniformly best decision rule since we can never beat deterministic law if correct. Hence we can keep the "best" ones (deterministic) from competing through UMVUE. I.e. find the best UMVUE estimator since deterministic can't be UMVUE.
+Now we want to look at approach 2, change the rules.
+**Definition (Bayes Risk)**: $r_{\pi}(\delta)=\int_{\Theta}R(\theta,\delta(X))\pi(\theta)d\theta$
+For Bayes risk view it as the prior acts as weights on our risk function.
+**Definition (Bayes Rule)**: The decision rule $\delta$ that makes $r_{\pi}(\delta)$ the smallest possible.
+>Note: Bayes Rule is not unique, there can be multiple $\delta$ that give the same Bayes risk. There is also no guarantee that a Bayes Rule even exists (if infimum achieved exists; if not achieved doesn't exist).
+
+Now how do we find a Bayes rule?
+Assume $L\geq0$.
+Bayes risk $r_{\pi}(\delta)=\int_{\Theta}\int_{\mathcal{X}}L(\theta,\delta(x))f(x|\theta)dx\pi(\theta)d\theta=\int_{\mathcal{X}}\int_{\Theta}L(\theta,\delta(x)) \frac{f(x|\theta)\pi(\theta)}{m(x)}d\theta m(x)dx$ (Note that letting $L\geq0$ makes our integrals be $\geq0$ which lets us apply Fubini's Theorem). The inner integral here is often called the posterior risk: $R_{\pi}(\delta(x)|x)=\int_{\Theta}L(\theta,\delta(x))\pi(\theta|x)d\theta$
+If I can find $a(x)=\arg\min_{a}R_{\pi}(a|x)$. Then $a(x)$ is the Bayes Rule since we are finding the minimum value the inner integral can take and hence minimizing the whole integral.
+
+Bayes view ($\pi$-prior): 
+$r_{\pi}(\delta)=\mathbb{E}L(\theta,\delta(x))$ (Bayes Risk; no conditioning)
+$R(\theta,\delta)=\mathbb{E}[L(\theta,\delta(x))|\theta]$ (regular risk; condition on parameter)
+$R_{\pi}(\delta|x)=\mathbb{E}[L(\theta,\delta(x))|X]$ (posterior risk; condition on data)
+
+What happens if loss function is squared loss?
+I.e. consider $L(\theta,a)=(\tau(\theta)-a)^{2}$.
+Bayes rule is the minimizer of the posterior risk $\arg\min_{a}\mathbb{E}[(\tau(\theta)-a)^{2}|X]=\arg\min_{\alpha}\mathbb{E}[\tau(\theta)^{2}|X]-2a\mathbb{E}[\tau(\theta)|X]+a^{2}\implies a=\mathbb{E}[\tau(\theta)|X]$. The posterior mean is the bayes rule of square loss.
