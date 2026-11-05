@@ -1155,7 +1155,7 @@ Q: Is $\bar{X}_{n}$ UMVUE?
 
 **Theorem (Lehmann-Scheffé)**: Let $T(X)$ be complete sufficient. Then $$
 \delta(X)=g(T)
-$$ is the (unique) UMVUE of $\mathbb{E}_{\theta}g(T)$, where $g(\cdot)$ is any function with $\mathrm{Var}_{\theta}\,g(T)<\infty$.
+	$$ is the (unique) UMVUE of $\mathbb{E}_{\theta}g(T)$, where $g(\cdot)$ is any function with $\mathrm{Var}_{\theta}\,g(T)<\infty$.
 >Note: Combined with Rao-Blackwell, the recipe is to find any unbiased estimator that is a function of a complete sufficient statistic.
 
 Example:
@@ -1248,13 +1248,13 @@ So posterior in this case is $$\pi(p|x)=\frac{\binom{n}{x}p^{x}(1-p)^{n-x}\mathb
 Where $C$ is whatever makes us integrate to 1, so $C$ depends on $X$ and contains our indicator. Hence in this case $C$ is $\frac{\mathbb{I}_{\{ 0,\dots,n \}}(x)}{B(x+\alpha,n-x+\beta)}$. Hence $\pi(p|x)\sim Beta(x+\alpha,n-x+\beta)$.
 >Note: The we don't need to explicitly divide by the marginal $m(x)$ here because it will just get wrapped into $C(x)$ as $m(x)$ doesn't depend on $p$. Hence we can just set up $\pi(\theta|x)=C(x)\pi(\theta)f(x|\theta)$ and find $C(x)$ that makes us integrate to 1. The key is that $\pi(p|X)\propto \pi(\theta)f(x|\theta)$.
 
-Thus posterior mean is $\mathbb{E}(p|X)=\frac{X+\alpha}{n+\alpha+\beta}=\frac{x}{n} \frac{n}{n+x+\beta}+ \frac{\alpha}{\alpha+\beta} \frac{\alpha+\beta}{n+\alpha+\beta}$ where we can think of $\frac{x}{n}$ as the data mean and $\frac{\alpha}{\alpha+\beta}$ as the prior mean.
+Thus posterior mean is $\mathbb{E}(p|X)=\frac{X+\alpha}{n+\alpha+\beta}=\frac{x}{n} \frac{n}{n+\alpha+\beta}+ \frac{\alpha}{\alpha+\beta} \frac{\alpha+\beta}{n+\alpha+\beta}$ where we can think of $\frac{x}{n}$ as the data mean and $\frac{\alpha}{\alpha+\beta}$ as the prior mean.
 
 Example:
 $X\sim N\left( \mu, \frac{\sigma^{2}}{n} \right)$ with $\mu\in \mathbb{R}$ unknown and $\sigma^{2}>0$ known
 $\pi(\mu)\sim N(\theta,\tau^{2})$ with $\theta,\tau^{2}$ known
-Hence $\pi(\mu|x)=\frac{1}{\sqrt{2\pi\tau^2}} \exp\left(-\frac{(\mu-\theta)^2}{2\tau^2}\right) \frac{1}{\sqrt{\frac{2\pi\sigma^2}{n}}} \exp\left(-\frac{(x-\mu)^2}{\frac{2\sigma^2}{n}}\right)/m(x)$. Hence looking at the exponents we have $\frac{(\mu-\theta)^{2}}{\tau^{2}}+\frac{n}{\sigma^{2}}(x-\mu)^{2}=\frac{\mu^{2}}{\tau^{2}}-\frac{2\mu\theta}{\tau^{2}}+\frac{\theta^{2}}{\tau^{2}}+\frac{\mu^{2}n}{\sigma^{2}}-\frac{2\mu xn}{\sigma^{2}}+\frac{x^{2}n}{\sigma^{2}}=\mu^{2}\left( \frac{1}{\tau^{2}}+\frac{n}{\sigma^{2}} \right)-2\mu\left( \frac{\theta}{\tau^{2}}+\frac{2xn}{\sigma^{2}}+C \right)=\left( \frac{1}{\tau^{2}}+\frac{n}{\sigma^{2}} \right)\left( \mu-\frac{\left( \frac{\theta}{\theta^{2}}+\frac{xn}{\sigma^{2}} \right)}{\frac{1}{\tau^{2}}+\frac{n}{\sigma^{2}}} \right)^{2}+D:=\alpha+D$ where $C$ and $D$ are constants.
-Hence our prior is $\pi(\mu|x)=E\exp\left( -\frac{D}{2} \right)$ where $E$ is "some ugly constant" meaning $\pi(\mu|x)\sim N\left( \frac{\frac{xn}{\sigma^{2}}}{\frac{1}{\tau^{2}}+\frac{n}{\sigma^{2}}}+\frac{\frac{\theta}{\tau^{2}}}{\frac{1}{\tau^{2}}+\frac{n}{\sigma^{2}}}, \frac{1}{\frac{1}{\tau^{2}}+\frac{n}{\sigma^{2}}} \right)$. 
+Hence $\pi(\mu|x)=\frac{1}{\sqrt{2\pi\tau^2}} \exp\left(-\frac{(\mu-\theta)^2}{2\tau^2}\right) \frac{1}{\sqrt{\frac{2\pi\sigma^2}{n}}} \exp\left(-\frac{(x-\mu)^2}{\frac{2\sigma^2}{n}}\right)/m(x)$. Hence looking at the exponents we have $\frac{(\mu-\theta)^{2}}{\tau^{2}}+\frac{n}{\sigma^{2}}(x-\mu)^{2}=\frac{\mu^{2}}{\tau^{2}}-\frac{2\mu\theta}{\tau^{2}}+\frac{\theta^{2}}{\tau^{2}}+\frac{\mu^{2}n}{\sigma^{2}}-\frac{2\mu xn}{\sigma^{2}}+\frac{x^{2}n}{\sigma^{2}}=\mu^{2}\left( \frac{1}{\tau^{2}}+\frac{n}{\sigma^{2}} \right)-2\mu\left( \frac{\theta}{\tau^{2}}+\frac{2xn}{\sigma^{2}}+C \right)=\left( \frac{1}{\tau^{2}}+\frac{n}{\sigma^{2}} \right)\left( \mu-\frac{\left( \frac{\theta}{\tau^{2}}+\frac{xn}{\sigma^{2}} \right)}{\frac{1}{\tau^{2}}+\frac{n}{\sigma^{2}}} \right)^{2}+D:=\alpha+D$ where $C$ and $D$ are constants.
+Hence our posterior is $\pi(\mu|x)=E\exp\left( -\frac{D}{2} \right)$ where $E$ is "some ugly constant" meaning $\pi(\mu|x)\sim N\left( \frac{\frac{xn}{\sigma^{2}}}{\frac{1}{\tau^{2}}+\frac{n}{\sigma^{2}}}+\frac{\frac{\theta}{\tau^{2}}}{\frac{1}{\tau^{2}}+\frac{n}{\sigma^{2}}}, \frac{1}{\frac{1}{\tau^{2}}+\frac{n}{\sigma^{2}}} \right)$. 
 ### Conjugate Family Priors
 **Definition (Conjugate Family)**: If $f(x|\theta),\theta\in\Theta$ then $\mathcal{P}$ is a conjugate family of priors if  $\pi(\theta)\in \mathcal{P}\implies \pi(\theta|x)\in \mathcal{P}$.
 So in the normal example above normal is conjugate for normal.
@@ -1281,3 +1281,102 @@ $R_{\pi}(\delta|x)=\mathbb{E}[L(\theta,\delta(x))|X]$ (posterior risk; condition
 What happens if loss function is squared loss?
 I.e. consider $L(\theta,a)=(\tau(\theta)-a)^{2}$.
 Bayes rule is the minimizer of the posterior risk $\arg\min_{a}\mathbb{E}[(\tau(\theta)-a)^{2}|X]=\arg\min_{\alpha}\mathbb{E}[\tau(\theta)^{2}|X]-2a\mathbb{E}[\tau(\theta)|X]+a^{2}\implies a=\mathbb{E}[\tau(\theta)|X]$. The posterior mean is the bayes rule of square loss.
+
+11/3
+### Point Estimation Via Decision Theory
+$f(x|\theta),\theta\in\Theta,L(\theta,a)$ with decision rule $\delta(X)$
+Recall Risk is $R(\theta,\delta)=\mathbb{E}_{\theta}(L(\theta,\delta(X)))=\mathbb{E}[R(\theta,\delta(X))|\theta]$
+Bayes Risk is $r_{\pi}(\delta(X))=\int_{\Theta}R(\theta,\delta(X))\pi(\theta)d\mu(\theta=\mathbb{E}[L(\theta,\delta)])$ Hence $\pi(\theta)$ is a prior (or weight function)
+$(\theta,X)\sim f(x|\theta)\pi(\theta)$ is the Bayesian joint distribution
+We now have Posterior risk: $R_{\pi}(X,\delta)=\int L(\theta,\delta(x))\pi(\theta|x)d\mu(\theta)=\mathbb{E}[L(\theta,\delta)|X]$
+Notice that $r_{\pi}(\delta)=\int R_{\pi}(x,\delta)m(x)d\nu(x)$ (tower property).
+
+**Theorem**: If $\delta(x)=\arg\min_{a}R_{\pi}(x,a)$ $\forall x\in \mathcal{X}$ then $\delta(X)$ is a Bayes rule.
+Recall Bayes rule is $\delta$ that minimizes $r_{\pi}(\delta)$.
+
+Example:
+$X_{1},\dots,X_{n}\overset{\text{iid}}{\sim}Bernoulli(p)$ and prior $\pi(p)\sim Beta(\alpha,\beta)$ which gives us posterior $\pi(p|x)\sim Beta\left( \sum x_{i}+\alpha,n-\sum x_{i}+\beta \right)$. If we have $L(p,a)=(p-a)^{2}$ (squared loss) then the Bayes rule is the mean: $\mathbb{E}[p|X]=\frac{\left( \sum x_{i}+\alpha \right)}{n+\alpha+\beta}$ (mean of beta dist).
+Now consider a different loss function: $L(p,a)=\frac{(p-a)^{2}}{p(1-p)}=\left(\frac{p-a}{\sqrt{ p(1-p) }}\right)^{2}$ where we are still using squared loss but under standard deviations? since we are dividing by variance of individual Bernoulli trials ($p(1-p)$). 
+What is the Bayes rule in this case?
+$\mathbb{E}[L(p,a)|X]=\mathbb{E}\left[ \frac{p}{1-p}|X \right]-2a\mathbb{E}\left[ \frac{1}{1-p}|X \right]+a^{2}\mathbb{E}\left[ \frac{1}{p(1-p)}|X \right]$. Our theorem tells us we need to minimize this w.r.t. $a$. Hence $a^{*}=\frac{\mathbb{E}\left[ \frac{1}{1-p}|X \right]}{\mathbb{E}\left[ \frac{1}{p(1-p)}|X \right]}$. Now just calculate these expectations.
+Note if $S\sim Beta(a,b)$ then $\mathbb{E}\left[ \frac{1}{S} \right]=\int \frac{\frac{1}{s}s^{a-1}(1-s)^{b-1}}{B(a,b)}ds = \frac{1}{B(a,b)}\int s^{a-2}(1-s)^{b-1}ds=\frac{B(a-1,b)}{B(a,b)}$ as long as $a>1$. Similarly $\mathbb{E}\left[ \frac{1}{S(1-S)} \right]=\int \frac{\frac{1}{s(1-s)}s^{a-1}(1-s)^{b-1}}{B(a,b)}ds=\frac{B(a-1,b-1)}{B(a,b)}$ for $a,b>1$.
+Thus, $a^{*}=\frac{\left( \frac{B(a,b-1)}{B(a,b)} \right)}{\frac{B(a-1,b-1)}{B(a,b)}}=\frac{\frac{\Gamma(a)\Gamma(b-1)}{\Gamma(a+b-1)}}{\frac{\Gamma(a-1)\Gamma(b-1)}{\Gamma(a+b-2)}}=\frac{\Gamma(a)}{\Gamma(a-1)} \frac{\Gamma(a+b-2)}{\Gamma(a+b-1)}=\frac{a-1}{a+b-2}$ (due to recursive relationship of $\Gamma(\cdot)$) $= \frac{\sum x_{i}+\alpha-1}{n+\alpha+\beta-2}$ by plugging in we were using $a=\sum x_{i}+\alpha,\beta=n-\sum x_{i}+\beta$.
+
+Example:
+$\Theta=\{ \theta_{1},\dots,\theta_{q} \}$ and $\mathcal{A}=\{ a_{1},\dots,a_{m} \}$ i.e. parameter space and decision space are discrete (don't need to be finite). Then our loss function is a matrix $L(\theta_{i},a_{j})=w_{ij}$.
+$X\sim f(x|\theta)$ and prior $\pi(\theta_{i})=\pi_{i}$.
+Here the posterior is $\pi(\theta_{j}|x)=\frac{f(x|\theta_{j})\pi_{j}}{\sum_{i=1}^{q}f(x|\theta_{i})\pi_{i}}$.
+Thus our posterior loss is $r_{\pi}(a_{k})=\frac{\sum_{i=1}^{q}w_{ik}f(x|\theta_{i})\pi_{i}}{\sum_{i=1}^{q}f(x|\theta_{i})\pi_{i}}$ because this is expectation of loss function $L(\theta_{i},a_{j})$ hence we sum over all $w_{ik}$'s times the posterior (probability of seeing $\theta_{j}$).
+The Bayes rule $\delta_{B}=min_{k}r_{\pi}(a_{k})$.
+
+Consider case $\Theta=\{ \theta_{0},\theta_{1} \}$ and $\mathcal{A}=\{ a_{0},a_{1} \}$ with $L(\theta,a)=1$ if $a=1,\theta=\theta_{0}$ and $L(\theta,a)=c$ if $a=0,\theta=\theta_{1}$ and $L(\theta,a)=0$ otherwise. $\pi_{0}+\pi_{1}=1$.
+So $$
+r_{\pi}(a_{k})=
+\begin{cases}
+\frac{cf(x|\theta_{1})\pi_{1}}{f(x|\theta_{1})\pi_{1}+f(x|\theta_{0})\pi_{0}} & k=0 \\
+\frac{f(x|\theta_{0})\pi_{0}}{f(x|\theta_{1})\pi_{1}+f(x|\theta_{0})\pi_{0}} & k=1
+\end{cases}
+$$
+So comparing these two we can cancel denominators and rearrange to have our Bayes rule:
+$$
+\delta_{B}=\begin{cases}
+1 & \frac{f(x|\theta_{1})}{f(x|\theta_{0})}> \frac{\pi_{0}}{\pi_{1}} \frac{1}{c} \\
+0 & \frac{f(x|\theta_{1})}{f(x|\theta_{0})}< \frac{\pi_{0}}{\pi_{1}} \frac{1}{c}
+\end{cases}
+$$
+
+
+### Minimax
+We are looking for a decision rule $\delta$ that minimizes not the average, but the maximum $\sup\limits_{\theta\in\Theta}R(\theta,\delta)$.
+**Theorem**: Let $\delta^{*}$ be a decision rule such that $r=\sup\limits_{\Theta}R(\theta,\delta^{*})<\infty$ (finite supremum for decision rule). Also assume that if there is a prior $\pi^{*}$ so that $\delta^{*}$ is a Bayes rule with respect to $\pi^{*}$ and $\pi^{*}(R(\theta,\delta^{*})=r)=1$ i.e. the risk function is a constant with prior probability almost surely. Then $\delta^{*}$ is minimax.
+>Note the way to think about this is that we have a decision rule $\delta^{*}$ that is a Bayes rule w.r.t. prior $\pi^{*}$ and $\delta^{*}$ has constant risk.
+
+Example:
+$X_{1},\dots,X_{n}\overset{\text{iid}}{\sim}Bernoulli(p)$ and $L(p,a)=(a-p)^{2}$ Recall at beginning we had weird example that $R\left(p, \frac{\left( \sum x_{i}+\frac{\sqrt{ n }}{2} \right)}{n+\sqrt{ n }} \right)=\frac{n}{4(n+\sqrt{ n })^{2}}$. This is a constant risk that doesn't depend on $p$ so the question is "is this a bayes rule with respect to any prior?" The answer is yes since $\delta_{3}=\frac{\left( \sum x_{i}+\sqrt{ \frac{n}{2} } \right)}{n+\sqrt{ n }}$ is a Bayes rule with respect to prior $B\left( \frac{\sqrt{ n }}{2}, \frac{\sqrt{ n }}{2} \right)$. Hence $\delta_{3}$ is minimax. 
+
+Can we find a minimax for a different loss function $L(p,a)=\frac{(p-a)^{2}}{p(1-p)}$?
+Approach: Can we find Bayes rule that has a flat risk? If we can't it doesn't mean minimax doesn't exist, but if we can find one we have proven one exists.
+Hope Beta prior will work!
+Recall $Beta(a,b)\implies\delta_{a,b}=\frac{\left( \sum x_{i}+a-1 \right)}{n+a+b-2}$. Is there $a,b$ so that the risk $R(p,\delta _{a,b})$ is constant?
+Algebra is painful so skipping some steps:
+$\mathbb{E}_{p} \frac{\left(\frac{\left( \sum x_{i}+a-1 \right)}{n+a+b-2}-p\right)^{2}}{p(1-p)}$ then add and subtract the mean $\frac{np+a-1}{n+a+b-2}$ to make algebra easier and at end of the day you are left with $=\frac{(a-1)^{2}-(2(a-1)(a+b-2)-n)p+((a+b-2)^{2}-n)p^{2}}{p(1-p)(a+b-2+n)^{2}}$. If we set $a=b=1$ then it simplifies to $\frac{1}{n}$ which is constant. The conclusion is that $\delta_{1,1}=\frac{\sum x_{i}}{n}$ is minimax for $L(p,a)=\frac{(p-a)^{2}}{p(1-p)}$.
+
+>Note all Bayes Rules are admissible.
+
+11/5
+### Minimax Continued
+$X\sim f(X|\theta),\theta\in\Theta,L(\theta,a)$ and $R(\theta,\delta)=\mathbb{E}_{\theta}L(\theta,\delta(X))$
+$\delta$ is minimax if $\delta=\arg\min_{\delta}\sup\limits_{{\theta\in\Theta}}R(\theta,\delta)$
+ **Theorem**: Let $\delta^{*}$ be decision rule and $r=\sup\limits_{\theta\in\Theta}R(\theta,\delta^{*})<\infty$. If there are priors $\pi_{k}$ so that $r_{k}=\inf\limits_{\delta}r_{\pi_{k}}(\delta)\to r$ as $k\to \infty$. Then $\delta^{*}$ is minimax.
+ Proof: Let $\bar{\delta}$ be so that $\sup\limits_{\theta}R(\theta,\bar{\delta})=\bar{r}<r$. Compute $\bar{r}\geq r_{\pi_{k}}(\bar{\delta})\geq r_{k}\to r$ which is contradiction since $\bar{r}<r$.
+>Comment: Take $\pi_{k}=\pi^{*}$ from last time. This new theorem implies the previous theorem.
+
+Example:
+$X_{1},\dots,X_{n}\overset{\text{iid}}{\sim}N(\mu,\sigma^{2})$ with $\sigma^{2}$ known. Use squared loss $L(\mu,a)=(\mu-a)^{2}$. Find minimax.
+Observation: Take $\bar{X}_{n}$ as decision rule then $R(\mu,\bar{X}_{n})=\mathbb{E}_{\mu}(\bar{X}_{n}-\mu)^{2}=\mathrm{Var}(\bar{X}_{n})=\frac{\sigma^{2}}{n}$ which doesn't depend on $\mu$ hence constant/flat. So hope to use previous theorem (from last class).
+The problem is that we cannot find some prior that gives us $\bar{X}_{n}$. But our $r=R(\mu,\bar{X}_{n})$ so we want to converge to $r$.
+Recall $\mu \sim N(\theta,\tau^{2})$ (normal prior) then the posterior is $\mu|X\sim N\left( \frac{\tau^{2}}{\tau^{2}+\frac{\sigma^{2}}{n}}\bar{X}_{n}+\frac{\frac{\sigma^{2}}{n}}{\tau^{2}+\frac{\sigma^{2}}{n}}\theta, \frac{1}{\frac{1}{\tau^{2}}+\frac{n}{\sigma^{2}}} \right)$.
+So Bayes Rule is posterior mean: $\mathbb{E}[\mu|X]=\frac{\tau^{2}}{\tau^{2}+\frac{\sigma^{2}}{n}}\bar{X}_{n}+\frac{\frac{\sigma^{2}}{n}}{\tau^{2}+\frac{\sigma^{2}}{n}}\theta$. So to get $\bar{X}_{n}$ we would need $\theta=0,\tau^{2}=\infty$. We cannot have $\tau^{2}=\infty$, but we can have a sequence that goes to $\infty$ (hence use the second theorem covered today). For example let $\pi_{k}\sim N(0,k)\implies\delta_{k}=\frac{k}{k+\frac{\sigma^{2}}{n}}\bar{X}_{n}$. Now how do we calculate $r_{k}$?
+Recall $r_{k}=\mathbb{E}[L(\theta,\delta_{k})]=\mathbb{E}[\mathbb{E}(L(\theta,\delta_{k})|X)]=\int R_{\pi_{k}}(x,\delta _{k})m_{k}(x)dx$. Note that $r_{k}=r_{\pi_{k}}$ here because it is the Bayes Rule hence the minimum. **Look into this.** Alternatively $r_{k}=\mathbb{E}L(\theta,\delta_{k})=\mathbb{E}[\mathbb{E}(L(\theta,\delta_{k})|\mu)]=\int R(\theta,\delta_{k})\pi_{k}(\theta)d\theta$. We will call these two differing equalities routes 1 and 2.
+So route 1 we have $R_{\pi_{k}}(x,\delta_{k})=\int(\mu-\delta_{k})^{2}\pi(\mu|x)d\mu=$ posterior variance because $\delta_{k}$ is the posterior mean hence $R_{\pi_{k}}(x,\delta_{k})=\mathbb{E}[\mu-\delta_{k}]^{2}=\mathrm{Var}(\mu|X)=\frac{1}{\frac{1}{\tau^{2}}+\frac{n}{\sigma^{2}}}$. This gives us route 1 continued to $=\int \frac{1}{\frac{1}{k}+\frac{n}{\sigma^{2}}}m_{k}(x)dx= \frac{1}{\frac{1}{k}+\frac{n}{\sigma^{2}}}\to \frac{\sigma^{2}}{n}$ as $k\to \infty$. Thus, $\bar{X}_{n}$ is minimax.
+
+Continuing route 2 we have $R(\mu,\delta_{k})=\mathbb{E}_{\mu}\left( \frac{k}{k+\frac{\sigma^{2}}{n}}\bar{X}_{n}+\frac{\frac{\sigma^{2}}{n}}{k+\frac{\sigma^{2}}{n}}\theta-\mu \right)^{2}=\mathbb{E}_{\mu}\left( \frac{k}{k+\frac{\sigma^{2}}{n}}(\bar{X}_{n}-\mu)+\frac{\frac{\sigma^{2}}{n}}{k+\frac{\sigma^{2}}{n}}(\theta-\mu) \right)^{2}= \left(\frac{k}{k+\frac{\sigma^{2}}{n}}\right)^{2}\mathbb{E}[\bar{X}_{n}-\mu]^{2}+0+\left( \frac{\frac{\sigma^{2}}{n}}{k+\frac{\sigma^{2}}{n}} \right)^{2}(\theta-\mu)^{2}$ (where cross term is 0 because $\mathbb{E}[\bar{X}_{n}-\mu]=0$) $=\frac{\sigma^{2}}{n}\left( \frac{k}{k+\frac{\sigma^{2}}{n}} \right)^{2}+(\mu-\theta)^{2}\left( \frac{\frac{\sigma^{2}}{n}}{k+\frac{\sigma^{2}}{n}} \right)^{2}$. Note that all $\theta=0$.
+So $r_{k}=\int R(\mu,\delta_{k})\pi_{k}(\mu)d\mu=\frac{\sigma^{2}}{n}\left( \frac{k}{k+\frac{\sigma^{2}}{n}} \right)^{2}+k\left( \frac{\frac{\sigma^{2}}{n}}{k+\frac{\sigma^{2}}{n}} \right)^{2}=\frac{\frac{k\sigma^{2}}{n}}{k+\frac{\sigma^{2}}{n}}\to \frac{\sigma^{2}}{n}$ (where the second term comes from the fact that it is the prior variance)
+
+### Common ways leading to decent estimators
+Next we will look at common ways to get decent estimators. Whether or not they are the best estimators is to be determined.
+1. Method of Moments (MoM) - easiest to use, doesn't always lead to great estimators
+2. Maximum Likelihood Estimator (MLE) - typically better than MoM, but harder to find
+3. Estimating equation (EE) - generalization of both of these
+#### Method of Moments
+$X_{1},\dots,X_{n}\overset{\text{iid}}{\sim}f(x|\theta),\theta\in\Theta$. The $j$th moment is $M_{j}(\theta)=\mathbb{E}_{\theta}X^{j}$. There are also other types of moments like central moment $\mathbb{E}_{\theta}(X-\mathbb{E}X)^{j}$ which is central $j$th moment. Cumulants are also form of moments. In this class we will focus on $M_{j}(\theta)$, but anything we do for these moments we could do for other types of moments as well.
+There are sample moments $\frac{1}{n}\sum x_{i}, \frac{1}{n}\sum x_{i}^{2},\dots$ i.e. the $j$th sample moment is $\frac{1}{n}\sum x^{j}_{i}$. SLLN tells us that our sample moments will converge a.s. to our moments $M_{j}(\theta)$: $\frac{1}{n}\sum x_{i}^{j}\to \mathbb{E}X^{j}$ a.s. by SLLN.
+So the idea is estimator who equals theoretical moment with sample moment and solve for $\theta$.
+
+Examples:
+$X_{1},\dots,X_{n}\overset{\text{iid}}{\sim}Exp(\lambda)$. Find MoM estimator of $\lambda$ ($\hat{\lambda}$).
+$\mathbb{E}X=\frac{1}{\lambda}$. Method of moments rule says set $\bar{X}_{n}=\frac{1}{\hat{\lambda}}\implies\hat{\lambda}=\frac{1}{\bar{X}_{n}}=\frac{n}{\sum x_{i}}$.
+
+$X_{1},\dots,X_{n}\overset{\text{iid}}{\sim}\Gamma(\alpha,\lambda)$
+$\mathbb{E}X=\frac{\alpha}{\lambda}, \mathrm{Var}(X)=\frac{\alpha}{\lambda^{2}}\implies \mathbb{E}X^{2}=\frac{\alpha}{\lambda^{2}}+\frac{\alpha^{2}}{\lambda^{2}}=\frac{\alpha(\alpha+1)}{\lambda^{2}}$.
+So $\bar{X}_{n}=\frac{\hat{\alpha}}{\hat{\lambda}},\bar{X}^{2}=\frac{\hat{\alpha}(\hat{\alpha}+1)}{\hat{\lambda}^{2}}$. Thus, $\hat{\alpha}=\bar{X}_{n}\hat{\lambda}\implies \frac{\bar{X}_{n}\hat{\lambda}(\bar{X}_{n}\hat{\lambda}+1)}{\hat{\lambda}^{2}}=\bar{X}^{2}\implies \hat{\lambda}^{2}(\bar{X}_{n})^{2}+\hat{\lambda}\bar{X}_{n}-\hat{\lambda}^{2}\bar{X}^{2}=0$. One solution is $\hat{\lambda}=0$, but we don't like that so we divide by $\hat{\lambda}$ and get $\hat{\lambda}=\frac{\bar{X}_{n}}{\bar{X}^{2}-(\bar{X}_{n})^{2}}\implies\hat{\alpha}=\frac{(\bar{X}_{n})^{2}}{\bar{X}^{2}-(\bar{X}_{n})^{2}}$.

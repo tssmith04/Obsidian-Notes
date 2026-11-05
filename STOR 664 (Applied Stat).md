@@ -1130,3 +1130,42 @@ Let $\mu=X\beta$. Then $V_{1}=\frac{y^{T}Py}{\sigma^{2}}\sim \chi^{2}_{q}\left( 
 Then $V_{2}=\frac{y^{T}P_{0}y}{\sigma^{2}}\sim \chi^{2}_{n-p}$.
 Suppose we want power when $C\beta=d$. Find any $\tilde{\beta}$ satisfying $C\tilde{\beta}=d$ and let $\tilde{\mu}=X\tilde{\beta}$. Then compute $\lambda$ using $\mu=\tilde{\mu}$.
 Upshot is that the parts of $\beta$ that are left free will get killed when taking quadratic form $\lambda$.
+
+11/4
+### Model Selection
+In section 7 of ESL (Elements of Statistical Learning) or slightly more classical treatment Section 12 of S+L (Seeber and Lee)
+
+Why select a model? Standard model and noise
+- We are unsure of model structure (so we can have many models that could potentially model this; considering including interactions, transformations on variables, etc. we need to be able to pick models)
+- Depends on what we want to do downstream
+
+Motivations
+1. Learn the true $\beta$'s
+2. Predict new Observations
+There can often be conflict between these two goals which can sometimes be formulated as the Bias-Variance tradeoff
+
+#### Variable Selection
+$y=X\beta+\epsilon$ with $X\in \mathbb{R}^{n\times p}$ consider $p$ large but still $n>p$.
+Task is to choose a subset of predictors to use in our model
+Note there are $2^{p}$ possible models (different subsets of predictors)
+
+Challenges
+1. Can't realistically consider $2^{p}$ models
+2. What makes one model better than another and how can we tell using our data?
+
+Compute $SSE_{m}$ where m denotes a particular model $m\in$ the power set of indices e.g. $m_{1}=\{ 1,3,7,10 \}$ the indices of predictors or $m_{2}=\{ 1,3,7,10,15 \}$ in which case we would say $m_{1}$ is nested in $m_{2}$. 
+$$
+SSE_{m}=||y-X_{m}\hat{\beta}_{m}||_{2}^{2}
+$$
+I.e. we restrict our data to just the $m$ columns which is $X_{m}$ then find our predicted betas $\hat{\beta}_{m}$ on $X_{m}$.
+
+Question: Which model will we choose if we use $m^{*}=\arg\min_{m}||y-X_{m}\hat{\beta}_{m}||_{2}^{2}$? The model with all the predictors (the full model). 
+
+Instead of this brute force approach (checking all subsets) we can do best subset regression.
+$\hat{\beta}_{s}:=\arg\min_{||b||_{0}\leq s}||y-Xb||_{2}^{2}$. Recall $||b||_{0}=\#\{ i:b_{i}\neq0 \}$. (number of nonzero elements). Again if we let $s=p$ then we will find the whole model. Otherwise we are essentially limiting how many predictors we can have.
+
+**Definition (Coefficient of Multiple Determination)**: $R^{2}=1-\frac{SSE}{SSTO}$ (SSE/Sum Squared Total) $=1 - \frac{y^{T}(I-P_{X})y}{y^{T}(I-P_{1_{n}})y}$.
+Choosing the model that maximizes $R^{2}$ will just minimize $SSE$ which will always choose the largest possible model. 
+
+Instead we will use a correction:
+**Definition (Adjusted $R^{2}$)**: $R^{2}_{adj}=1- \frac{SSE/(n-p)}{SSTO/(n-1)}=1-\frac{MSE}{MSTO}$. Intuitively this adds a penalizer for adding predictors that aren't needed. This helps, but in practice it tends to over select (so doesn't penalize enough).
