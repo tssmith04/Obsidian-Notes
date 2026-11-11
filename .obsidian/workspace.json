@@ -49,7 +49,8 @@
               "title": "STOR 664 (Applied Stat)"
             }
           }
-        ]
+        ],
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -214,10 +215,10 @@
       "bases:Create new base": false
     }
   },
-  "active": "8e52cbfec906edc1",
+  "active": "1688b1f700cce4f8",
   "lastOpenFiles": [
-    "STOR 664 (Applied Stat).md",
     "STOR 654 (Stat Theory).md",
+    "STOR 664 (Applied Stat).md",
     "STOR 612.md",
     "snippet.md",
     "STOR 512.md",

@@ -1169,3 +1169,268 @@ Choosing the model that maximizes $R^{2}$ will just minimize $SSE$ which will al
 
 Instead we will use a correction:
 **Definition (Adjusted $R^{2}$)**: $R^{2}_{adj}=1- \frac{SSE/(n-p)}{SSTO/(n-1)}=1-\frac{MSE}{MSTO}$. Intuitively this adds a penalizer for adding predictors that aren't needed. This helps, but in practice it tends to over select (so doesn't penalize enough).
+
+11/9 (no lecture — reading S+L 12.1–12.3.3)
+## S+L Ch. 12: Prediction and Model Selection (12.1–12.3.3)
+
+> Notation bridge: S+L write $\text{RSS}$ for what we call $SSE$ in lecture, $\mathbf{P}$ for $P_{X}$, and use $p$ = number of columns of the design (so $p-1$ variables + intercept). $K$ = total number of candidate explanatory variables, so the full model has $K+1$ columns.
+
+### 12.1 Setup and Roadmap
+
+We now assume a large pool of $K$ candidate variables $x_{1},\dots,x_{K}$ and must decide which ones to use. Two (sometimes conflicting) framings:
+
+1. **"Pure" model selection:** the truth really is $$ Y=\beta_{0}+\beta_{1}x_{1}+\dots+\beta_{K}x_{K}+\varepsilon \tag{12.1} $$ and the job is to find which $\beta_{j}=0$.
+2. **Predictive framing (more realistic):** the truth is not that simple; use the $x_{j}$'s as raw material to build the model of form (12.1) with the best predictive accuracy.
+
+Counterintuitive point: even if the goal is pure prediction, using _every_ variable is often worse than throwing some away (especially when $K$ is large relative to $n$).
+
+Map of the chapter (the four strategies):
+
+- **All possible regressions (APR):** define a criterion, evaluate it on all $2^{K}$ subsets, pick the optimizer (Section 12.3 — this reading).
+- **Sequential testing:** forward selection, backward elimination, stepwise (12.4). Cheap, but assumes (12.1) is true and no guarantee of optimality for any 12.3 criterion.
+- **Shrinkage:** keep all variables but use biased estimators (ridge, garrote, lasso) (12.5).
+- **Bayesian / model averaging** (12.6).
+
+> Warning (12.7): if the same data are used to _select_ the model and then to _fit/infer_, the usual inference from earlier chapters is invalid — it overstates precision of estimates and accuracy of predictions.
+
+---
+
+### 12.2 Why Select?
+
+#### Motivating example (Linhart & Zucchini)
+
+True model: $Y_{i}=\exp(ax_{i}^{2}+b)+\varepsilon_{i}$, $\varepsilon_{i}\overset{iid}{\sim}N(0,\sigma^{2})$, with $a=0.02$, $b=0.1$, $\sigma=1.5$, $n=100$, $x_{i}$ equally spaced on $[1,10]$. Target: $f(5)=e^{0.6}\approx1.822$.
+
+The analyst fits polynomials of degree $1,\dots,7$. A degree-7 polynomial can approximate $f$ almost perfectly (Fig 12.1b), so in principle it _could_ predict well. Simulating repeated data sets (Fig 12.1d):
+
+- Degree 1: stable (low variance) but big bias — can't capture the curvature.
+- Degree 7: essentially unbiased but highly variable — it is flexible enough to chase the noise.
+- Minimum MSE: **cubic**. The best predictor uses 3 of the 7 available power terms.
+
+So both too few and too many variables hurt. Now the theory.
+
+#### Prediction Error and Model Error
+
+Training set $(x_{i},Y_{i})$, $i=1,\dots,n$, $X\in\mathbb{R}^{n\times p}$. New design points $X_{0}\in\mathbb{R}^{m\times p}$ with new responses $Y_{0}$, $\mu_{0}=E[Y_{0}]$. Assume $\mathrm{Var}(Y)=\sigma^{2}I_{n}$, $\mathrm{Var}(Y_{0})=\sigma^{2}I_{m}$, $Y\perp!!!\perp Y_{0}$, same mean structure. Predictor: $X_{0}\hat{\beta}$ with $\hat{\beta}=(X^{T}X)^{-1}X^{T}Y$ from the training set.
+
+Add and subtract $\mu_{0}$: $$ |Y_{0}-X_{0}\hat{\beta}|_{2}^{2}=|Y_{0}-\mu_{0}|_{2}^{2}+|\mu_{0}-X_{0}\hat{\beta}|_{2}^{2}+2(Y_{0}-\mu_{0})^{T}(\mu_{0}-X_{0}\hat{\beta}) \tag{12.4} $$ **Definition (Prediction Error)**: take expectation over the _new_ data only (so $\hat{\beta}$ is held fixed): $$ \text{PE}=E_{Y_{0}}\left[|Y_{0}-X_{0}\hat{\beta}|_{2}^{2}\right]=m\sigma^{2}+|\mu_{0}-X_{0}\hat{\beta}|_{2}^{2} \tag{12.5} $$ The cross term dies because $Y_{0}\perp!!!\perp\hat{\beta}$ and $E_{Y_{0}}[Y_{0}-\mu_{0}]=0$.
+
+**Definition (Model Error)**: $$ \text{ME}=|\mu_{0}-X_{0}\hat{\beta}|_{2}^{2},\qquad \text{PE}=m\sigma^{2}+\text{ME} \tag{12.6–12.7} $$ $m\sigma^{2}$ is irreducible noise; ME is the only part the model controls. Minimizing PE $\iff$ minimizing ME. Note PE and ME are still random (functions of the training $Y$ through $\hat{\beta}$).
+
+#### Expected ME when predicting at the training design ($X_{0}=X$)
+
+Then $m=n$, $\mu_{0}=\mu=E[Y]$. Write $\varepsilon=Y-\mu$ and $P=P_{X}=X(X^{T}X)^{-1}X^{T}$. Since $X\hat{\beta}=PY=P\mu+P\varepsilon$: $$ \text{ME}=|\mu-PY|_{2}^{2}=|(I_{n}-P)\mu-P\varepsilon|_{2}^{2}=\mu^{T}(I_{n}-P)\mu+\varepsilon^{T}P\varepsilon $$ The cross term $-2\mu^{T}(I-P)P\varepsilon=0$ because $(I-P)P=P-P^{2}=0$.
+
+> [!tip] Linear algebra used here
+> 
+> - $P$ is symmetric idempotent, so $(I-P)$ and $P$ project onto orthogonal subspaces ($\text{Col}(X)^{\perp}$ and $\text{Col}(X)$). Pythagoras kills the cross term.
+> - $E[\varepsilon^{T}A\varepsilon]=\sigma^{2}\operatorname{tr}(A)$ when $\mathrm{Var}(\varepsilon)=\sigma^{2}I$ (S+L Thm 1.5: $E[Y^{T}AY]=\operatorname{tr}(A\Sigma)+\mu^{T}A\mu$).
+> - For a projection, $\operatorname{tr}(P)=\operatorname{rank}(P)=p$.
+
+Taking expectations: $$ E[\text{ME}]=\mu^{T}(I_{n}-P)\mu+\sigma^{2}p \tag{12.8} $$ $$ E[\text{PE}]=(n+p)\sigma^{2}+\mu^{T}(I_{n}-P)\mu \tag{12.9} $$
+
+**Bias–variance reading of (12.8).** Define
+
+- $\text{TOTAL BIAS}=|\mu-E[X\hat{\beta}]|_{2}=|\mu-P\mu|_{2}$, so $(\text{TOTAL BIAS})^{2}=\mu^{T}(I-P)\mu$ (Exercise 12a.1). Zero iff $\mu\in\text{Col}(X)$.
+- $\text{TOTAL VARIANCE}=\operatorname{tr}(\mathrm{Var}[X\hat{\beta}])=\operatorname{tr}(\sigma^{2}P)=\sigma^{2}p$.
+
+$$ E[\text{ME}]=(\text{TOTAL BIAS})^{2}+\text{TOTAL VARIANCE} $$ Adding a (linearly independent) column: $\text{Col}(X)$ grows so $|(I-P)\mu|^{2}$ can only shrink (bias $\downarrow$), but $p$ goes up by 1 (variance $\uparrow$ by $\sigma^{2}$). The best model balances these.
+
+> Connection to ESL Ch. 7: predicting at the same $x_{i}$'s is ESL's "in-sample error". The $2p\sigma^{2}$-type optimism that shows up below in $C_{p}$ is the same idea.
+
+#### When the true model _is_ (12.1): can a wrong (smaller) model predict better?
+
+Partition $X=(X_{1},X_{2})$, $\beta=(\beta_{1}^{T},\beta_{2}^{T})^{T}$ with $X_{1}$ having $p$ columns, $X_{2}$ the remaining $K-p+1$. Suppose $\beta_{2}\neq0$. Predict $x^{T}\beta$ at $x=(x_{1}^{T},x_{2}^{T})^{T}$ with either:
+
+- **Biased (submodel)** predictor $x_{1}^{T}\hat{\beta}_{1}$, $\hat{\beta}_{1}=(X_{1}^{T}X_{1})^{-1}X_{1}^{T}Y$, or
+- **Unbiased (full)** predictor $x^{T}\hat{\beta}$.
+
+Let $L=(X_{1}^{T}X_{1})^{-1}X_{1}^{T}X_{2}$ (the "alias matrix" — regress each column of $X_{2}$ on $X_{1}$). From Section 9.2, omitted variables give $E[\hat{\beta}_{1}]=\beta_{1}+L\beta_{2}$. Define $$ h=L^{T}x_{1}-x_{2},\qquad M=\left[X_{2}^{T}(I_{n}-P_{1})X_{2}\right]^{-1},\qquad P_{1}=X_{1}(X_{1}^{T}X_{1})^{-1}X_{1}^{T} $$ Bias of submodel predictor: $x_{1}^{T}E[\hat{\beta}_{1}]-x^{T}\beta=x_{1}^{T}L\beta_{2}-x_{2}^{T}\beta_{2}=h^{T}\beta_{2}$. With $m=1$ in (12.5): $$ \text{Submodel: }E[\text{PE}]=\sigma^{2}+\mathrm{var}[x_{1}^{T}\hat{\beta}_{1}]+(h^{T}\beta_{2})^{2} \tag{12.10} $$ $$ \text{Full: }E[\text{PE}]=\sigma^{2}+\mathrm{var}[x_{1}^{T}\hat{\beta}_{1}]+\sigma^{2}h^{T}Mh \tag{12.11} $$
+
+> [!note] Why (12.11)? (fills in the Section 9.2 step) In the full fit, $\hat{\beta}_{2}=MX_{2}^{T}(I-P_{1})Y$ and $\hat{\beta}_{1}^{\text{full}}=\hat{\beta}_{1}-L\hat{\beta}_{2}$. So $x^{T}\hat{\beta}=x_{1}^{T}\hat{\beta}_{1}-h^{T}\hat{\beta}_{2}$. Also $\mathrm{Cov}(\hat{\beta}_{1},\hat{\beta}_{2})\propto X_{1}^{T}(I-P_{1})X_{2}=0$ and $\mathrm{Var}(\hat{\beta}_{2})=\sigma^{2}M$. Hence $\mathrm{var}[x^{T}\hat{\beta}]=\mathrm{var}[x_{1}^{T}\hat{\beta}_{1}]+\sigma^{2}h^{T}Mh$: **the full model always pays extra variance** $\sigma^{2}h^{T}Mh\ge0$.
+
+So the submodel wins at $x$ iff $$ (h^{T}\beta_{2})^{2}<\sigma^{2}h^{T}Mh \tag{12.12} $$ $M$ is positive definite (Lemma, S+L 3.7), so by the generalized Cauchy–Schwarz inequality (A.4.11) $$ (h^{T}\beta_{2})^{2}\le (h^{T}Mh)(\beta_{2}^{T}M^{-1}\beta_{2})\quad\forall h $$ (Proof idea: $h^{T}\beta_{2}=(M^{1/2}h)^{T}(M^{-1/2}\beta_{2})$, then ordinary Cauchy–Schwarz.) Therefore if $$ \beta_{2}^{T}M^{-1}\beta_{2}=\beta_{2}^{T}X_{2}^{T}(I_{n}-P_{1})X_{2}\beta_{2}<\sigma^{2} $$ the **submodel predicts better at every $x$**, even though it is the wrong model.
+
+> [!tip] Tie-back to our 10/28 notes (non-central $F$) $\lambda=\beta_{2}^{T}X_{2}^{T}(I-P_{1})X_{2}\beta_{2}/\sigma^{2}$ is exactly the non-centrality parameter of the $F$-test of $H_{0}:\beta_{2}=0$ (it's $\mu^{T}(P_{X}-P_{1})\mu/\sigma^{2}$ with $\mu=X\beta$). So: **if $\lambda<1$, drop $X_{2}$ for prediction.** Small signal relative to noise $\Rightarrow$ the bias you incur is cheaper than the variance you'd pay to remove it.
+
+Same trade-off as the polynomial example: more variables $\Rightarrow$ less bias, more variance.
+
+---
+
+### 12.3 Choosing the Best Subset
+
+Strategy: least squares on a chosen subset; pick the subset by optimizing a criterion. Four families of criteria:
+
+1. Goodness of fit (12.3.1)
+2. Estimates of prediction error / model error (12.3.2)
+3. Estimates of distributional discrepancy, i.e. KL (12.3.3)
+4. Approximations to posterior probabilities (12.3.4 — not in this reading)
+
+#### 12.3.1 Goodness-of-Fit Criteria
+
+RSS alone is useless for comparing models of different size: if $S_{1}\subset S_{2}$ then $\text{RSS}(S_{2})\le\text{RSS}(S_{1})$ (adding even pure-noise columns lowers RSS, since you project onto a bigger subspace). It _is_ fine for comparing models with the same number of variables. Need a size correction.
+
+**Option 1:** $S_{p}^{2}=\text{RSS}_{p}/(n-p)$ — choose the smallest.
+
+**Option 2 — Adjusted $R^{2}$**: $$ \bar{R}_{p}^{2}=1-(1-R_{p}^{2})\frac{n-1}{n-p} \tag{12.14} $$ Choose the largest.
+
+_Motivation via the $F$-test against the full model._ With $K$ variables available and the current model using $p-1<K$ of them, the $F$-statistic for testing the submodel against the full model (Exercises 4c.3) is $$ F_{p}=\frac{R_{K+1}^{2}-R_{p}^{2}}{1-R_{K+1}^{2}}\cdot\frac{n-K-1}{K-p+1} \tag{12.15} $$ Solving for $1-R_{p}^{2}$: $$ 1-R_{p}^{2}=(1-R_{K+1}^{2}),\frac{(K-p+1)F_{p}+n-K-1}{n-K-1} \tag{12.16} $$ Plug into (12.14): $$ 1-\bar{R}_{p}^{2}=\underbrace{(1-R_{K+1}^{2})\frac{n-1}{n-K-1}}_{=,1-\bar{R}_{K+1}^{2}}\cdot\frac{(K-p+1)F_{p}+n-K-1}{n-p} $$ If $F_{p}>1$, the numerator of the last fraction exceeds $(K-p+1)+n-K-1=n-p$, so the fraction is $>1$ and $$ \bar{R}_{p}^{2}<\bar{R}_{K+1}^{2} $$ So **adjusted $R^{2}$ prefers the bigger model exactly when $F_{p}>1$** — and large $F_{p}$ is evidence for the bigger model. (Note the threshold is $1$, far more lenient than an $F$ critical value — foreshadows $\bar{R}^{2}$ including too many variables.)
+
+**Equivalence with $S^{2}$.** With $SSY=\sum_{i}(Y_{i}-\bar{Y})^{2}$ (our $SSTO$) and $1-R_{p}^{2}=\text{RSS}_{p}/SSY$: $$ \bar{R}_{p}^{2}=1-\frac{\text{RSS}_{p}/(n-p)}{SSY/(n-1)}=1-\frac{S_{p}^{2}}{SSY/(n-1)} $$ $SSY$ doesn't depend on the model, so max $\bar{R}^{2}\iff$ min $S_{p}^{2}$. Options 1 and 2 are the same criterion.
+
+#### 12.3.2 Criteria Based on Prediction Error
+
+$E[\text{ME}]$ in (12.8) involves the unknown $\mu$, so we need to _estimate_ it.
+
+##### Mallows' $C_{p}$
+
+Fit a $p$-parameter model with $X_{p}$, $P_{p}=X_{p}(X_{p}^{T}X_{p})^{-1}X_{p}^{T}$. By Thm 1.5 (with $\mathrm{Var}(Y)=\sigma^{2}I$, $\operatorname{tr}(I-P_{p})=n-p$): $$ E[\text{RSS}_{p}]=E[Y^{T}(I_{n}-P_{p})Y]=\mu^{T}(I_{n}-P_{p})\mu+(n-p)\sigma^{2}=E[\text{ME}]+(n-2p)\sigma^{2} \tag{12.17} $$ using (12.8). Rearranging, $\dfrac{E[\text{ME}]}{\sigma^{2}}=\dfrac{E[\text{RSS}_{p}]}{\sigma^{2}}+2p-n$. So given an estimate $\hat{\sigma}^{2}$: $$ C_{p}=\frac{\text{RSS}_{p}}{\hat{\sigma}^{2}}+2p-n \tag{12.18} $$ estimates the **scaled expected model error** $E[\text{ME}]/\sigma^{2}$.
+
+If the model fits well ($\mu$ nearly in $\text{Col}(X_{p})$, so $\mu^{T}(I-P_{p})\mu\approx0$): $$ E[C_{p}]\approx\frac{\mu^{T}(I-P_{p})\mu}{\sigma^{2}}+(n-p)+2p-n\approx p \tag{12.19} $$ **$C_{p}$ plot:** plot $C_{p}$ vs. $p$ for all subsets; models near the line $C_{p}=p$ fit well; models well above it are biased. Use it to see which variables matter.
+
+_Usual choice of $\hat{\sigma}^{2}$:_ from the full model, $\hat{\sigma}^{2}=\text{RSS}_{K+1}/(n-K-1)$. Then automatically $C_{K+1}=K+1$.
+
+_Relation to $\bar{R}^{2}$:_ $\text{RSS}_{p}/\text{RSS}_{K+1}=(1-R_{p}^{2})/(1-R_{K+1}^{2})$, so $$ C_{p}=\frac{(1-R_{p}^{2})(n-K-1)}{1-R_{K+1}^{2}}-n+2p $$ and after substituting $1-R_{p}^{2}=(1-\bar{R}_{p}^{2})\frac{n-p}{n-1}$, $$ C_{p}-p=(n-p),\frac{\bar{R}_{K+1}^{2}-\bar{R}_{p}^{2}}{1-\bar{R}_{K+1}^{2}} $$ If $n\gg p$, $(n-p)$ is roughly constant across models, so **min $(C_{p}-p)\approx$ max $\bar{R}_{p}^{2}$**.
+
+> Caveat: Mallows himself _discouraged_ picking the model with smallest $C_{p}$ (same for $\bar{R}^{2}$/$S^{2}$). The formula $E[C_{p}]\approx p$ is for a model fixed in advance; minimizing over models introduces selection bias (Example 12.1 below; more in 12.9).
+
+##### Cross-Validation
+
+Ideal: a fresh test set $(x_{0i},Y_{0i})$, $i=1,\dots,m$, and $$ \frac{1}{m}\sum_{i=1}^{m}(Y_{0i}-x_{0i}^{T}\hat{\beta})^{2} \tag{12.20} $$ No new data? Split the training set: hold out a set $D$ of $d$ cases, fit on the other $n-d$, compute (12.20) on $D$ to get $\widehat{\text{PE}}(D)$; repeat over many $D_{1},D_{2},\dots$ and average. Tension: too few fitting cases $\Rightarrow$ poor predictor; too few test cases $\Rightarrow$ noisy PE estimate.
+
+**Leave-one-out, CV(1)** ($d=1$): let $\hat{\beta}_{(i)}$ be the fit without case $i$. $$ \text{CV}(1)=\frac{1}{n}\sum_{i=1}^{n}\left(Y_{i}-x_{i}^{T}\hat{\beta}_{(i)}\right)^{2} \tag{12.21} $$ No need to refit $n$ times. Using the deletion formula (10.5), $\hat{\beta}_{(i)}=\hat{\beta}-\dfrac{(X^{T}X)^{-1}x_{i}e_{i}}{1-h_{i}}$ with $e_{i}=Y_{i}-x_{i}^{T}\hat{\beta}$, $h_{i}=x_{i}^{T}(X^{T}X)^{-1}x_{i}$: $$ Y_{i}-x_{i}^{T}\hat{\beta}_{(i)}=e_{i}+\frac{h_{i}e_{i}}{1-h_{i}}=\frac{e_{i}}{1-h_{i}} \tag{12.22} $$ $$ \text{CV}(1)=\frac{1}{n}\sum_{i=1}^{n}\left(\frac{e_{i}}{1-h_{i}}\right)^{2} \tag{12.23} $$ (This is the PRESS statistic / $n$.)
+
+> [!tip] Linear algebra used here (10.5) comes from the Sherman–Morrison rank-one update: $(X^{T}X-x_{i}x_{i}^{T})^{-1}=(X^{T}X)^{-1}+\dfrac{(X^{T}X)^{-1}x_{i}x_{i}^{T}(X^{T}X)^{-1}}{1-h_{i}}$. Removing a row of $X$ is a rank-one downdate of $X^{T}X$.
+
+**CV(1) overestimates PE.** Let $\eta=(I-P)\mu$ (bias vector), $\eta_{i}$ its $i$-th entry. Since $e=(I-P)Y=\eta+(I-P)\varepsilon$: $$ E[e_{i}^{2}]=\eta_{i}^{2}+E[{(I-P)\varepsilon}_{i}^{2}] \tag{12.24} $$ With $D_{i}=u_{i}u_{i}^{T}$ ($u_{i}$ the $i$-th standard basis vector, so $D_{i}$ is diagonal with a single 1 in position $i$), ${(I-P)\varepsilon}_{i}^{2}=\varepsilon^{T}(I-P)D_{i}(I-P)\varepsilon$, so $$ E[{(I-P)\varepsilon}_{i}^{2}]=\sigma^{2}\operatorname{tr}[(I-P)D_{i}(I-P)]=\sigma^{2}\operatorname{tr}[D_{i}(I-P)]=\sigma^{2}(1-h_{i}) $$ (cyclic trace + idempotence). Hence $E[e_{i}^{2}]=\eta_{i}^{2}+\sigma^{2}(1-h_{i})$ and $$ E[\text{CV}(1)]=\frac{1}{n}\sum_{i=1}^{n}\left[\frac{\sigma^{2}}{1-h_{i}}+\frac{\eta_{i}^{2}}{(1-h_{i})^{2}}\right] \tag{12.25} $$ Meanwhile from (12.9) and $\sum_{i}h_{i}=\operatorname{tr}(P)=p$ (10.13): $$ E[\text{PE}]=(n+p)\sigma^{2}+|\eta|^{2}=\sum_{i=1}^{n}\left[\sigma^{2}(1+h_{i})+\eta_{i}^{2}\right] \tag{12.26} $$ Subtracting term by term: $$ E[n,\text{CV}(1)-\text{PE}]=\sum_{i=1}^{n}\left[\sigma^{2}\frac{h_{i}^{2}}{1-h_{i}}+\eta_{i}^{2}\frac{h_{i}(2-h_{i})}{(1-h_{i})^{2}}\right]\ge0 $$ since $0\le h_{i}<1$. So $n,\text{CV}(1)$ is biased **upward** for PE (worse for high-leverage points and for biased models).
+
+**Leave-$d$-out, CV($d$).** For a deleted set $D$, let $Y_{D}$, $X_{D}$ be the corresponding rows and $H_{D}=X_{D}(X^{T}X)^{-1}X_{D}^{T}$ (the $d\times d$ block of the hat matrix). Generalizing (12.22) (Exercises 10e.2): $$ Y_{D}-X_{D}\hat{\beta}_{(D)}=(I_{d}-H_{D})^{-1}(Y_{D}-X_{D}\hat{\beta}) $$ $$ \text{CV}(d)=\binom{n}{d}^{-1}\sum_{D}(Y_{D}-X_{D}\hat{\beta})^{T}(I_{d}-H_{D})^{-2}(Y_{D}-X_{D}\hat{\beta}) $$ summing over all $d$-subsets. Infeasible for $d$ beyond 2–3 $\Rightarrow$ use random subsets or balanced incomplete block designs. **Shao (1993), Zhang (1993): CV($d$) with $d$ an appreciable fraction of $n$ gives better selection and prediction than CV(1).** (Contrast with ESL, where $K$-fold with $K=5,10$ is the practical version of this.)
+
+##### The key caveat: selection bias
+
+(12.19) and (12.25) hold **only if the model is specified in advance**. If you pick the model _because_ it minimizes $C_{p}$ or CV, the minimized value is optimistic.
+
+**Example 12.1.** Known $\sigma^{2}$, no intercept, $K$ orthonormal columns ($X^{T}X=I_{K}$). Then $\hat{\beta}=X^{T}Y$ and the coefficients don't change as variables are added/dropped (S+L 3.10). For a submodel $S$ with $p$ variables, $$ \text{RSS}_{p}=Y^{T}Y-\hat{\beta}_{p}^{T}X_{p}^{T}X_{p}\hat{\beta}_{p}=Y^{T}Y-\sum_{j\in S}\hat{\beta}_{j}^{2} $$ $$ C_{p}=\frac{Y^{T}Y}{\sigma^{2}}-\sum_{j\in S}\left(\frac{\hat{\beta}_{j}^{2}}{\sigma^{2}}-2\right)-n \tag{12.28} $$ Each variable contributes independently, so **min $C_{p}$ = include exactly the $j$ with $\hat{\beta}_{j}^{2}/\sigma^{2}>2$**, i.e. $|\hat{\beta}_{j}|>\sqrt{2},\sigma$ (a hard threshold). Order $\hat{\beta}_{(1)}^{2}\ge\hat{\beta}_{(2)}^{2}\ge\dots$ and let $\hat{p}$ = number passing.
+
+Now suppose the truth is $E[Y]=0$, so $\hat{\beta}_{j}\overset{iid}{\sim}N(0,\sigma^{2})$. For any fixed model, $E[C_{p}]=p\ge0$ (here bias is 0 for every model). But for the selected one, $$ C_{\hat{p}}=\frac{Y^{T}Y}{\sigma^{2}}-\sum_{j=1}^{\hat{p}}\left(\frac{\hat{\beta}_{(j)}^{2}}{\sigma^{2}}-2\right)-n,\qquad E\left[\frac{Y^{T}Y}{\sigma^{2}}\right]=n $$ $$ \Rightarrow\quad E[C_{\hat{p}}]=-E\left[\sum_{j=1}^{\hat{p}}\left(\frac{\hat{\beta}_{(j)}^{2}}{\sigma^{2}}-2\right)\right]\le0 $$ because every included term is positive by construction. The true scaled ME of the selected model is $\sum_{j\le\hat{p}}\hat{\beta}_{(j)}^{2}/\sigma^{2}\ge0$, so **$C_{p}$ of the chosen model underestimates its model error.** (Winner's curse: you selected the models that got lucky on this data.)
+
+##### The Little Bootstrap (preview)
+
+Breiman's residual-resampling method gives a nearly unbiased estimate of the PE of a _data-selected_ model (and of shrinkage predictors). Deferred to 12.5.
+
+#### 12.3.3 Estimating Distributional Discrepancies (AIC)
+
+**Definition (Kullback–Leibler discrepancy)**: true density $f$, model density $g$: $$ KL(f,g)=\int\log\left(\frac{f(y)}{g(y)}\right)f(y),dy $$
+
+- Not a metric: $KL(f,g)\neq KL(g,f)$ in general. Think of it as "how far is each candidate $g$ from the fixed truth $f$".
+- $KL(f,g)\ge KL(f,f)=0$ (Exercise 12b.3). Quick proof via Jensen ($\log$ concave): $-KL=E_{f}[\log(g/f)]\le\log E_{f}[g/f]=\log\int g=0$.
+
+For a parametric family $g(y;\theta)$, write $KL(f,g;\theta)$. Since $KL=\int f\log f-\int f\log g$ and the first piece doesn't involve $g$, minimizing KL $\iff$ minimizing $$ -\int\log g(y;\theta)f(y),dy=-E_{f}[\log g(Y;\theta)] \tag{12.29} $$ Two unknowns: $\theta$ and $f$. Plug in the MLE $\hat{\theta}(Y)$ from the sample, and evaluate on an independent copy: $$ \Delta=-\int\log g(x;\hat{\theta}(Y))f(x),dx \tag{12.30} $$ $$ E[\Delta]=-\iint\log g(x;\hat{\theta}(y))f(x)f(y),dx,dy $$ $\Delta$ = (up to a constant depending only on $f$) the discrepancy between truth and the _fitted_ model. Still depends on $f$, so estimate it:
+
+**Definition (AIC)** — estimates $2\Delta$ (more precisely $E[2\Delta]$): $$ \text{AIC}=-2\log g(Y;\hat{\theta}(Y))+2r \tag{12.31} $$ where $r=\dim(\theta)$. Applies to any likelihood model. Intuition: $-2\log g(Y;\hat{\theta})$ evaluates the fit on the same data used to fit it (optimistic); $+2r$ corrects the optimism — same spirit as the $+2p$ in $C_{p}$.
+
+##### AIC for the normal linear model
+
+Truth: $f=N_{n}(\mu,\sigma_{0}^{2}I_{n})$. Candidate: $g=N_{n}(X\beta,\sigma^{2}I_{n})$, $X\in\mathbb{R}^{n\times p}$ rank $p$, $\theta=(\beta^{T},\sigma^{2})^{T}$, so $r=p+1$. $$ -\log g(y;\theta)=\frac{n}{2}\log(2\pi\sigma^{2})+\frac{1}{2\sigma^{2}}(y-X\beta)^{T}(y-X\beta) $$ MLEs: $\hat{\beta}=(X^{T}X)^{-1}X^{T}Y$, $\hat{\sigma}^{2}=\text{RSS}/n$ (note: divide by $n$, not $n-p$).
+
+Let $Y_{0}$ be an independent copy of $Y$. By Thm 1.5, $E_{Y_{0}}|Y_{0}-X\hat{\beta}|^{2}=n\sigma_{0}^{2}+|\mu-X\hat{\beta}|^{2}$ (same as (12.5)), so $$ \Delta=E_{Y_{0}}[-\log g(Y_{0};\hat{\theta}(Y))]=\frac{n}{2}\log(2\pi\hat{\sigma}^{2})+\frac{1}{2\hat{\sigma}^{2}}\left(n\sigma_{0}^{2}+|\mu-X\hat{\beta}|^{2}\right) $$ Use $\hat{\beta}\perp!!!\perp\hat{\sigma}^{2}$ (S+L Thm 3.5(iii)) to split the expectation of the product, and (12.8) for $E|\mu-X\hat{\beta}|^{2}=\sigma_{0}^{2}(p+\lambda)$ where $\lambda=\mu^{T}(I_{n}-P)\mu/\sigma_{0}^{2}$: $$ E[2\Delta]=n,E[\log(2\pi\hat{\sigma}^{2})]+(n+p+\lambda),E\left[\frac{\sigma_{0}^{2}}{\hat{\sigma}^{2}}\right] $$ And AIC simplifies because $(Y-X\hat{\beta})^{T}(Y-X\hat{\beta})/\hat{\sigma}^{2}=n$: $$ \text{AIC}=n\log(2\pi\hat{\sigma}^{2})+n+2(p+1) $$ Using $E[\sigma_{0}^{2}/\hat{\sigma}^{2}]=1+O(n^{-1})$, both $E[\text{AIC}]$ and $E[2\Delta]$ equal $nE[\log(2\pi\hat{\sigma}^{2})]+n+O(1)$. They agree up to $O(1)$, so AIC is a reasonable estimate of $E[2\Delta]$.
+
+##### Exact bias when the model is correct ($\lambda=0$) and AIC$_{c}$
+
+$\lambda=0\iff\mu\in\text{Col}(X)\iff f$ is in the model family. Then $n\hat{\sigma}^{2}/\sigma_{0}^{2}\sim\chi_{n-p}^{2}$, and for $W\sim\chi_{\nu}^{2}$, $E[1/W]=1/(\nu-2)$, giving $$ E\left[\frac{\sigma_{0}^{2}}{\hat{\sigma}^{2}}\right]=\frac{n}{n-p-2} \tag{12.32} $$ $$ E[2\Delta]=n,E[\log(2\pi\hat{\sigma}^{2})]+\frac{n(n+p)}{n-p-2} $$ Bias of AIC: $$ E[\text{AIC}-2\Delta]=n+2(p+1)-\frac{n(n+p)}{n-p-2}=2(p+1)-\frac{2n(p+1)}{n-p-2}=-\frac{2(p+1)(p+2)}{n-p-2} $$ $O(1)$, negative (AIC is too optimistic, worse when $p$ is large relative to $n$). Fix it exactly:
+
+**Definition (Corrected AIC, Hurvich & Tsai 1991)**: $$ \text{AIC}_{c}=n\log(2\pi\hat{\sigma}^{2})+\frac{n(n+p)}{n-p-2} $$ which is exactly unbiased for $E[2\Delta]$ when $\lambda=0$. Equivalent common form: $\text{AIC}_{c}=\text{AIC}+\dfrac{2(p+1)(p+2)}{n-p-2}$.
+
+##### Bias when the model is wrong ($\lambda>0$)
+
+From (12.17), $nE[\hat{\sigma}^{2}]=\sigma_{0}^{2}(\lambda+n-p)$, so approximate $E[\sigma_{0}^{2}/\hat{\sigma}^{2}]\approx n/(\lambda+n-p)$: $$ E[\text{AIC}-2\Delta]\approx n+2(p+1)-\frac{(n+p+\lambda),n}{\lambda+n-p}=2\left(p+1-\frac{pn}{\lambda+n-p}\right) $$ which is $\approx2$ for large $n$ (the last term $\approx p$). Exact series: Hurvich & Tsai (1991).
+
+##### Known $\sigma^{2}$: AIC $\approx C_{p}$
+
+Now $r=p$ and $-2\log g(y;\hat{\theta})=n\log(2\pi\sigma^{2})+\text{RSS}_{p}/\sigma^{2}$. Dropping the model-free constant: $$ \text{AIC}=\frac{\text{RSS}_{p}}{\sigma^{2}}+2p \tag{12.33} $$ Compare $C_{p}=\text{RSS}_{p}/\sigma^{2}+2p-n$: **they differ only by the constant $n$, so they pick the same model.**
+
+General penalty family: $$ \frac{\text{RSS}_{p}}{\sigma^{2}}+a_{n}p \tag{12.34} $$
+
+- $a_{n}=2$: AIC / $C_{p}$.
+- $a_{n}=\log n$: **BIC** (motivated in 12.3.4).
+- Others: Hannan & Quinn (1979), Zhang (1992).
+
+In the orthonormal, known-$\sigma^{2}$ setting of Example 12.1, minimizing (12.34) $\iff$ include variable $j$ iff $\hat{\beta}_{j}^{2}/\sigma^{2}>a_{n}$. So the penalty is literally a threshold on each coefficient's squared $z$-score.
+
+**$a_{n}=2$ over-includes.** If all $\beta_{j}=0$, then $\hat{\beta}_{j}^{2}/\sigma^{2}\overset{iid}{\sim}\chi_{1}^{2}$ and $$ \mathbb{P}(\text{choose correct (empty) model})=\left(\mathbb{P}(\chi_{1}^{2}<2)\right)^{K}=0.8427^{K} $$ $K=10$: $0.181$. $K=20$: $0.033$. Fix: raise $a_{n}$ (choosing $a_{n}$ optimally: 12.9).
+
+> My own comparison (not in the book): with BIC, $a_{n}=\log n$. For $n=100$, $\mathbb{P}(\chi_{1}^{2}<\log 100)\approx0.968$, so $\mathbb{P}(\text{correct})\approx0.72$ for $K=10$ and $\approx0.52$ for $K=20$. BIC is far more conservative, which is the classic AIC (prediction-oriented) vs. BIC (consistent selection) trade-off.
+
+---
+
+### Big Picture Summary (12.1–12.3.3)
+
+|Criterion|Formula|Choose|What it targets|
+|---|---|---|---|
+|$S_{p}^{2}$ / $\bar{R}_{p}^{2}$|$\frac{\text{RSS}_{p}}{n-p}$ / $1-(1-R_{p}^{2})\frac{n-1}{n-p}$|min / max|Goodness of fit; prefers bigger model iff $F_{p}>1$|
+|Mallows $C_{p}$|$\frac{\text{RSS}_{p}}{\hat{\sigma}^{2}}+2p-n$|near $p$ (plot)|$E[\text{ME}]/\sigma^{2}$|
+|CV(1)|$\frac{1}{n}\sum\left(\frac{e_{i}}{1-h_{i}}\right)^{2}$|min|PE (biased upward)|
+|CV($d$)|leave-$d$-out average|min|PE; better with $d$ a sizable fraction of $n$|
+|AIC|$n\log(2\pi\hat{\sigma}^{2})+n+2(p+1)$|min|$E[2\Delta]$ (KL to truth)|
+|AIC$_{c}$|$n\log(2\pi\hat{\sigma}^{2})+\frac{n(n+p)}{n-p-2}$|min|$E[2\Delta]$, exactly unbiased if model correct|
+|$\frac{\text{RSS}_{p}}{\sigma^{2}}+a_{n}p$|$a_{n}=2$ (AIC), $\log n$ (BIC)|min|penalty $\leftrightarrow$ threshold on $\hat{\beta}_{j}^{2}/\sigma^{2}$|
+
+Recurring themes:
+
+1. Every criterion = (fit on training data) + (penalty for optimism). The penalty is $\approx 2p\sigma^{2}$ because $E[\text{RSS}]$ undershoots $E[\text{PE}]$ by $2p\sigma^{2}$ (compare (12.9) and (12.17)).
+2. Bias–variance: $E[\text{ME}]=|(I-P)\mu|^{2}+p\sigma^{2}$.
+3. All the "unbiasedness" results are for a model fixed in advance. After selecting by minimizing the criterion, the minimized value is optimistic (Example 12.1).
+
+### Self-Check Questions
+
+> [!question]- Why can't we just pick the model with the smallest RSS? 
+> Nested models: the bigger column space always gives a projection at least as close to $Y$, so RSS always picks the full model (same issue as max $R^{2}$ from 11/4 lecture).
+
+> [!question]- In (12.8), what happens to each term when you add a column that's already in $\text{Col}(X)$? 
+> Nothing: $P$ is unchanged (same column space), so the bias is unchanged, and $\operatorname{tr}(P)=\operatorname{rank}$ doesn't increase either. (Strictly, $X^{T}X$ becomes singular, but the projection is the same.)
+
+> [!question]- Show $(\text{TOTAL BIAS})^{2}=\mu^{T}(I-P)\mu$ (Exercise 12a.1).
+>  $E[X\hat{\beta}]=PE[Y]=P\mu$, so $|\mu-P\mu|^{2}=\mu^{T}(I-P)^{T}(I-P)\mu=\mu^{T}(I-P)\mu$ using symmetry and idempotence.
+
+> [!question]- Why is the CV(1) overestimate worst at high-leverage points? 
+> Both bias terms carry factors that blow up as $h_{i}\to1$: $h_{i}^{2}/(1-h_{i})$ and $h_{i}(2-h_{i})/(1-h_{i})^{2}$.
+
+> [!question]- Exercise 12a.2 (hint only) Model $Y_{i}=\alpha+\gamma_{1}x_{i}+\gamma_{2}z_{i}+\varepsilon_{i}$ with centered, unit-length $x,z$ and $r=\sum x_{i}z_{i}$. 
+> Predictor $\bar{Y}+\hat{\gamma}_{1}x$ ignores $z$. Use $E[\hat{\gamma}_{1}]=\gamma_{1}+r\gamma_{2}$ (that's $L$ from 12.2) and $\mathrm{var}(\bar{Y}+\hat{\gamma}_{1}x)=\sigma^{2}(n^{-1}+x^{2})$. For part (b), compare with (12.12): the answer should look like a condition on $\gamma_{2}^{2}(1-r^{2})$ vs. $\sigma^{2}$.
+
+
+11/11
+### Bias-Variance Tradeoff
+Parameter estimation: can decompose into bias/variance
+Prediction (of new data):
+- Correctness of predictors
+- Variability of predictors
+
+Following ESL (Elements of Statistical Learning 7.3)
+Suppose we observe $y_{1},\dots,y_{n}$ along with $x_{1},\dots,x_{n}$ (i.e. training data with responses and predictors). Lets assume that each $y_{i}=f(x_{i})+\epsilon_{i}$ (can be represented as some function of $x_{i}$ + error term). Assume $\epsilon_{i}$ iid and $\mathbb{E}[\epsilon_{i}]=0,\mathrm{Var}(\epsilon_{i})=\sigma^{2}$ (more general than normal because not assuming normality of errors or linearity of predictors).
+Consider some new observation at $x_{*}$ associated (but also unknown) response $y_{*}$. $y_{*}=f(x_{*})+\epsilon_{*}$.
+We fit a model $\hat{f}$ using our training data, but our model class isn't necessarily correct (i.e. it may be cubic or log and we could be fitting linear model; we will see where we pay this price).
+We want to reason about our **Mean Squared Prediction Error (MSPE)** (at particular $x_{*}$).
+We will show that $MSPE=(Bias)^{2}+\mathrm{Var}+\text{Irreducible Error}$.
+So to start $MSPE=\mathbb{E}[(y_{*}-\hat{f}(x_{*}))^{2}]=\mathbb{E}[(f(x_{*})+\epsilon_{*}-\hat{f}(x_{*}))^{2}]=\mathbb{E}[f(x_{*})^{2}+\epsilon_{*}^{2}+\hat{f}(x_{*})^{2}+2f(x_{*})\epsilon_{*}-2f(x_{*})\hat{f}(x_{*})-2\epsilon_{*}\hat{f}(x_{*})]=\mathbb{E}[f(x_{*})^{2}+\sigma^{2}+\hat{f}(x_{*})^{2}-2f(x_{*})\hat{f}(x_{*})]$ (drop the cross terms involving $\epsilon_{*}$ due to $\mathbb{E}[\epsilon_{*}]=0$ and $f(x_{*})$; also can turn $\epsilon_{*}^{2}=\sigma^{2}$ since $E[\epsilon]=0$) is constant for first term and $\epsilon_{*}\perp\!\!\!\perp \hat{f}(x_{*})$ for second term) = $\sigma^{2}+f(x_{*})^{2}]+\mathbb{E}[\hat{f}(x_{*})^{2}]-2f(x_{*})\mathbb{E}[\hat{f}(x_{*})]=\sigma^{2}+f(x_{*})^{2}]+\mathbb{E}[\hat{f}(x_{*})^{2}]-2f(x_{*})\mathbb{E}[\hat{f}(x_{*})]+\mathbb{E}[\hat{f}(x_{*})]^{2}-\mathbb{E}[\hat{f}(x_{*})]^{2}=\sigma^{2}+[f(x_{*})-\mathbb{E}[\hat{f}(x_{*})]]^{2}+[\mathbb{E}(\hat{f}(x_{*})^{2}-\mathbb{E}[\hat{f}(x_{*})]^{2})]=\sigma^{2}+Bias^{2}+\mathrm{Var}(\hat{f}(x_{*}))$
+
+For linear models, suppose we have $p$ candidate predictors, but only those with indices $M\subset \{ 1,2,\dots,p \}$ matter. Our true model is $y=X_{M}\beta_{M}+\epsilon$ (select the $M$ relevant predictors).
+Lets compare three scenarios.
+1. Fit full model $y=X\beta+\epsilon$
+	1. Bias: 0 because our true model is nested within 
+	2. Variance: Highest variance
+2. Oracle version (couldn't do in practice): Fit true model $y=X_{M}\beta_{M}+\epsilon$
+	1. Bias also 0 because our true model is nested within itself
+	2. Variance: Medium variance
+3. Fit wrong model (in particular too small): $M'\subset M$ and we fit $y=X_{M'}\beta_{M'}+\epsilon$
+	1. Bias: Nonzero because there are relevant predictors that aren't being considered
+	2. Variance: Generally lowest variance (but depends) because smaller numbers of predictors
+
+Departure from Assumptions and Remedies (See Seeber and Lee Chapters 9+10)
+Diagnostics for Influential Observations
+- "Unusual" $y$'s (large $\epsilon$'s) <- Outliers
+- Extreme $X'$s <- High-leverage
+Look at picture on phone, 11/11 12:28 (figure 9.7? in S+L) which shows that points can be both outliers and high-leverage. Will continue more on Monday.
+Recall: Hat matrix $H:=P_{X}=X(X^{T}X)^{-1}X^{T}$
+
+

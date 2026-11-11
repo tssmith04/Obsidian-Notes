@@ -1280,7 +1280,7 @@ $R_{\pi}(\delta|x)=\mathbb{E}[L(\theta,\delta(x))|X]$ (posterior risk; condition
 
 What happens if loss function is squared loss?
 I.e. consider $L(\theta,a)=(\tau(\theta)-a)^{2}$.
-Bayes rule is the minimizer of the posterior risk $\arg\min_{a}\mathbb{E}[(\tau(\theta)-a)^{2}|X]=\arg\min_{\alpha}\mathbb{E}[\tau(\theta)^{2}|X]-2a\mathbb{E}[\tau(\theta)|X]+a^{2}\implies a=\mathbb{E}[\tau(\theta)|X]$. The posterior mean is the bayes rule of square loss.
+Bayes rule/Bayes estimator is the minimizer of the posterior risk $\arg\min_{a}\mathbb{E}[(\tau(\theta)-a)^{2}|X]=\arg\min_{\alpha}\mathbb{E}[\tau(\theta)^{2}|X]-2a\mathbb{E}[\tau(\theta)|X]+a^{2}\implies a=\mathbb{E}[\tau(\theta)|X]$. The posterior mean is the bayes rule of square loss.
 
 11/3
 ### Point Estimation Via Decision Theory
@@ -1380,3 +1380,50 @@ $\mathbb{E}X=\frac{1}{\lambda}$. Method of moments rule says set $\bar{X}_{n}=\f
 $X_{1},\dots,X_{n}\overset{\text{iid}}{\sim}\Gamma(\alpha,\lambda)$
 $\mathbb{E}X=\frac{\alpha}{\lambda}, \mathrm{Var}(X)=\frac{\alpha}{\lambda^{2}}\implies \mathbb{E}X^{2}=\frac{\alpha}{\lambda^{2}}+\frac{\alpha^{2}}{\lambda^{2}}=\frac{\alpha(\alpha+1)}{\lambda^{2}}$.
 So $\bar{X}_{n}=\frac{\hat{\alpha}}{\hat{\lambda}},\bar{X}^{2}=\frac{\hat{\alpha}(\hat{\alpha}+1)}{\hat{\lambda}^{2}}$. Thus, $\hat{\alpha}=\bar{X}_{n}\hat{\lambda}\implies \frac{\bar{X}_{n}\hat{\lambda}(\bar{X}_{n}\hat{\lambda}+1)}{\hat{\lambda}^{2}}=\bar{X}^{2}\implies \hat{\lambda}^{2}(\bar{X}_{n})^{2}+\hat{\lambda}\bar{X}_{n}-\hat{\lambda}^{2}\bar{X}^{2}=0$. One solution is $\hat{\lambda}=0$, but we don't like that so we divide by $\hat{\lambda}$ and get $\hat{\lambda}=\frac{\bar{X}_{n}}{\bar{X}^{2}-(\bar{X}_{n})^{2}}\implies\hat{\alpha}=\frac{(\bar{X}_{n})^{2}}{\bar{X}^{2}-(\bar{X}_{n})^{2}}$.
+
+11/10
+Example (of when MoM fails):
+$X_{1},\dots,X_{n}\overset{\text{iid}}{\sim}U(0,\theta)$
+MoM estimator of $\theta$: $\mathbb{E}X=\frac{\theta}{2}\implies \bar{X}_{n}=\frac{\theta}{2}\implies\hat{\theta}_{MoM}=2\bar{X}_{n}$.
+$\mathrm{Var}(\hat{\theta}_{MoM})=4\mathrm{Var}(\bar{X}_{n})=\frac{4\mathrm{Var}(X)}{n}=\frac{\theta^{2}}{3n}$.
+It turns out this estimator isn't very good because we know that we can improve our estimator by conditioning on minimal sufficient statistic (Rao-Blackwell). Recall $X_{(n)}$ is minimal sufficient (complete). Hence $\mathbb{E}[\hat{\theta}_{MoM}|X_{(n)}=m]=\mathbb{E}[2\bar{X}_{n}|X_{(n)}=m]=\frac{2}{n}\sum_{i=1}^{n}\mathbb{E}[X_{i}|X_{(n)}=m]=\frac{2}{n}\left[ m+\frac{(n-1)m}{2} \right]=\frac{n+1}{n}m$ since only one can be the maximum ($m$) and the other $(n-1)$ are not equal to maximum, hence are $U(0,m)$. Thus, $\mathbb{E}[\hat{\theta}_{MoM}|X_{(n)}]=\frac{n+1}{n}X_{(n)}$. So $\mathbb{E}[\hat{\theta}_{MoM}|X_{(n)}]$ is UMVUE of $\theta$. $\mathrm{Var}\left( \frac{n+1}{n}X_{(n)} \right)=\left( \frac{n+1}{n} \right)^{2}\mathrm{Var}(X_{(n)})=\left( \frac{n+1}{n} \right)^{2}\left( \frac{n}{n+2}\theta^{2}-\left( \frac{n}{n+1}\theta \right)^{2} \right)=\frac{(n+1)^{2}}{n^{2}} \frac{\theta^{2}n}{(n+2)(n+1)^{2}}=\frac{\theta^{2}}{(n+2)n}$.
+$\mathbb{E}X_{(n)}^{2}=\int_{0}^{\theta}\frac{s^{2}ns^{n-1}}{\theta^{n}}=\frac{n}{n+2} \frac{s^{n+2}}{\theta^{n}}=\frac{n}{n+2}\theta^{2}$ which gives our result for variance above.
+In conclusion, our Method of Moments estimator is not very good from a variance perspective because its denominator is only linear in $n$, but UMVUE is quadratic in $n$.
+
+### Maximum Likelihood Estimator
+$X\sim f(x|\theta),\theta\in\Theta$ density with respect to some measure $\mu$
+**Definition (Likelihood)**: $L(\theta)=f(x|\theta)$ where $x$ is fixed and $\theta$ is variable i.e. we view our density as a function of $\theta$.
+Log-likelihood is commonly used: $\ell(\theta)=\log L(\theta)$.
+Likelihood as a measure of evidence: $L_{x}(\theta_{1})>L_{x}(\theta_{2})$ for some $x$ then we think that $\theta_{1}$ is favored over $\theta_{2}$ i.e. there is more evidence that $\theta_{1}$ generated our data $x$ than $\theta_{2}$.
+If $X$ is discrete then $L_{x}(\theta)=P_{\theta}(X=x)$.
+**Definition (MLE)**: Define my estimator as $\hat{\theta}_{MLE}=\arg\max_{\theta}\ell_{x}(\theta)=\arg\max_{\theta}L_{x}(\theta)$.
+How to find MLE:
+1. $\nabla_{\theta}\ell(\theta)=0$
+2. Show this is a maximum
+
+Example:
+$X_{1},\dots,X_{n}\overset{\text{iid}}{\sim}Bernoulli(p),p\in(0,1)$
+What is MLE of $p$?
+$L_{x}(x|p)=\prod_{i=1}^{n}p^{x_{i}}(1-p)^{1-x_{i}}=p^{\sum x_{i}}(1-p)^{n-\sum x_{i}}\implies\ell(p)=\sum x_{i}\log p+\left( n-\sum x_{i} \right)\log (1-p)\implies \frac{\partial}{\partial p}\ell(p)=\frac{\left( \sum x_{i} \right)}{p}- \frac{n-\sum x_{i}}{1-p}=0\implies \hat{p}=\frac{1}{n}\sum x_{i}$. Notice there is only one $p$ where $\frac{\partial}{\partial p}\ell(p)=0$ hence $\ell(p)\to -\infty$ if $p\to0$ or 1.
+What if $p\in\left[ \frac{1}{2},1 \right)$? Now $$\hat{p}=\begin{cases}
+\bar{X}_{n} & \text{if }\bar{X}>\frac{1}{2} \\
+\frac{1}{2} & \text{if } \bar{X}\leq\frac{1}{2}
+\end{cases}$$
+Example:
+$X_{1},\dots,X_{n}\overset{\text{iid}}{\sim}U(0,\theta)$
+$f(x|\theta)=\prod_{i=1}^{n} \frac{1}{\theta}\mathbb{I}_{(0,\theta)}(x_{i})=\frac{1}{\theta^{n}}\mathbb{I}_{(0,\theta)}(x_{(n)})\mathbb{I}_{(0,\infty)}(x_{(1)})$.
+$\hat{\theta}_{MLE}=x_{(n)}$. Note sure why, there is graph on pic on phone 11/10 10:28.
+Basically if $\theta<x_{(n)}$ then $f(x|\theta)=L(\theta)=0$ but if $\theta>x_{(n)}$ then $L(\theta)$ is decreasing in $\theta$ hence the maximum is at $x_{(n)}=\theta$.
+
+Example:
+$X_{1},\dots,X_{n}\overset{\text{iid}}{\sim}N(\mu,\eta)$ what is MLE for $(\mu,\eta)$?
+$f(x|\theta)=\frac{1}{\sqrt{2\pi \eta}} \exp\left(-\frac{(x-\mu)^2}{2\eta}\right)$ so our $\frac{\partial}{\partial \mu}\ell(\mu,\eta)=\frac{\sum_{i=1}^{n}(x_{i}-\mu)}{\eta}$ and $\frac{\partial}{\partial \eta}\ell(\mu,\eta)=-\frac{n}{2} \frac{1}{\eta}+ \frac{\sum(x_{i}-\mu)^{2}}{2\eta^{2}}$. We immediately see from first equation that $\hat{\mu}=\frac{1}{n}\sum x_{i}$ and plug this into second equation to get $\hat{\eta}= \frac{\sum(x_{i}-\bar{x}_{n})^{2}}{n}$.
+
+Example:
+$X_{1},\dots,X_{n}\overset{\text{iid}}{\sim}\theta+Beta(a,1)$ for $\theta\in \mathbb{R},a>0$ (location shifted beta).
+$f(x|\theta,a)=a(x-\theta)^{a-1}\mathbb{I}_{(\theta,\theta+1)}(x)$ hence our log likelihood is $\ell(\theta,a)=n\log a+(a-1)\sum_{i=1}^{n}\log(x_{i}-\theta)+\log \mathbb{I}_{(\theta,\theta+1)}(x_{(1)})+\log \mathbb{I}_{(\theta,\theta+1)}(x_{(n)})$.
+Maximize:
+1. For each $\theta$ such that $\theta\leq x_{(1)}<x_{(n)}\leq\theta+1$ we maximize for $a$.
+	$\frac{\partial}{\partial a}\ell(\theta,a)=\frac{n}{a}+\sum_{i=1}^{n}\log(x_{i}-\theta)=0\implies \hat{a}=-\frac{n}{\sum_{i=1}^{n}\log(x_{i}-\theta)}$.
+2. Now we need to maximize $L(\theta,\hat{a})=\hat{a}^{n}\prod_{i=1}^{n}(x_{i}-\theta)^{\hat{a}-1}\mathbb{I}_{(\theta,\theta+1)}(x_{(n)})\mathbb{I}_{(\theta,\theta+1)}(x_{(1)})$. This beast is actually monotone (increasing) in $\theta$ which you can see by plugging in $\hat{a}$ and analytically looking at what happens as $\theta$ increases. Hence our maximum is $\hat{\theta}=x_{(1)}$. However, this would imply that one of the $\log(x_{i}-\theta)=\log0=-\infty$. I.e. $\hat{\theta}=x_{(1)}\implies \hat{a}=\infty\implies$ there is no MLE.
+
