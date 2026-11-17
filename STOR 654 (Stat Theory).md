@@ -1427,3 +1427,217 @@ Maximize:
 	$\frac{\partial}{\partial a}\ell(\theta,a)=\frac{n}{a}+\sum_{i=1}^{n}\log(x_{i}-\theta)=0\implies \hat{a}=-\frac{n}{\sum_{i=1}^{n}\log(x_{i}-\theta)}$.
 2. Now we need to maximize $L(\theta,\hat{a})=\hat{a}^{n}\prod_{i=1}^{n}(x_{i}-\theta)^{\hat{a}-1}\mathbb{I}_{(\theta,\theta+1)}(x_{(n)})\mathbb{I}_{(\theta,\theta+1)}(x_{(1)})$. This beast is actually monotone (increasing) in $\theta$ which you can see by plugging in $\hat{a}$ and analytically looking at what happens as $\theta$ increases. Hence our maximum is $\hat{\theta}=x_{(1)}$. However, this would imply that one of the $\log(x_{i}-\theta)=\log0=-\infty$. I.e. $\hat{\theta}=x_{(1)}\implies \hat{a}=\infty\implies$ there is no MLE.
 
+11/12
+Example:
+$X_{1},\dots,X_{n}\overset{\text{iid}}{\sim}\theta+Beta(a,1)$ with $\theta\in \mathbb{R},\;a>0$.
+$f(x|\theta,a)=a(x-\theta)^{a-1}\mathbb{I}_{(\theta,\theta+1)}(x)$
+$\ell(\theta,a)=n\log a+(a-1)\sum_{i=1}^{n}\log(x_{i}-\theta)+\sum_{i=1}^{n}\log\mathbb{I}_{(\theta,\theta+1)}(x_{i})$ where the last term is $\log 1=0$ when $x_{(n)}-1<\theta<x_{(1)}$ (and $-\infty$ otherwise).
+
+11/12
+#### Neyman-Scott Problem
+$X_{ij}\sim N(\mu_{i},\sigma^{2})$ for $i=1,\dots,n$ and $j=1,2$, all independent. Let $\eta=\sigma^{2}$.
+Find the MLE:
+$L(\mu_{1},\dots,\mu_{n},\eta)=\prod_{i=1}^{n}\frac{1}{2\pi\eta}\exp\left( -\frac{(x_{i1}-\mu_{i})^{2}}{2\eta}-\frac{(x_{i2}-\mu_{i})^{2}}{2\eta} \right)$
+$\ell(\mu_{1},\dots,\mu_{n},\eta)=-n\log(2\pi)-n\log\eta-\sum_{i=1}^{n}\frac{(x_{i1}-\mu_{i})^{2}}{2\eta}-\sum_{i=1}^{n}\frac{(x_{i2}-\mu_{i})^{2}}{2\eta}$
+$\frac{\partial}{\partial\mu_{j}}\ell(\mu_{1},\dots,\mu_{n},\eta)=\frac{x_{j1}-\mu_{j}}{\eta}+\frac{x_{j2}-\mu_{j}}{\eta}=0\implies\hat{\mu}_{j}=\frac{x_{j1}+x_{j2}}{2}$
+$\frac{\partial}{\partial\eta}\ell(\mu_{1},\dots,\mu_{n},\eta)=-\frac{n}{\eta}+\sum_{i=1}^{n}\left[ \frac{(x_{i1}-\mu_{i})^{2}}{2\eta^{2}}+\frac{(x_{i2}-\mu_{i})^{2}}{2\eta^{2}} \right]=0\implies\hat{\eta}=\frac{1}{n}\sum_{i=1}^{n}\frac{\left( x_{i1}-\frac{x_{i1}+x_{i2}}{2} \right)^{2}+\left( x_{i2}-\frac{x_{i1}+x_{i2}}{2} \right)^{2}}{2}$
+Since $x_{i1}-\frac{x_{i1}+x_{i2}}{2}=\frac{x_{i1}-x_{i2}}{2}=-\left( x_{i2}-\frac{x_{i1}+x_{i2}}{2} \right)$, this simplifies to
+$\hat{\eta}=\frac{1}{4n}\sum_{i=1}^{n}(x_{i1}-x_{i2})^{2}$ ← this estimator is **bad**
+$\mathbb{E}\hat{\eta}=\frac{1}{4n}\sum_{i=1}^{n}\mathbb{E}(X_{i1}-X_{i2})^{2}=\frac{1}{4n}\cdot n\cdot 2\sigma^{2}=\frac{\sigma^{2}}{2}$ since $X_{i1}-X_{i2}\sim N(0,2\sigma^{2})$.
+$\mathrm{Var}\,\hat{\eta}=\frac{1}{16n^{2}}\cdot n\cdot 2(2\sigma^{2})^{2}=\frac{\sigma^{4}}{2n}$ since $(X_{i1}-X_{i2})^{2}=2\sigma^{2}Z^{2}$ with $Z^{2}\sim\chi^{2}_{1}$ and $\mathrm{Var}(\chi^{2}_{1})=2$.
+
+>So $\hat{\eta}$ concentrates around $\frac{\sigma^{2}}{2}$, not $\sigma^{2}$. Since $\mathrm{Var}\,\hat{\eta}\to 0$, we get $\hat{\eta}\to\frac{\sigma^{2}}{2}$ in probability, i.e. the MLE is inconsistent. The number of nuisance parameters $\mu_{i}$ grows with $n$, so we never have more than 2 observations per $\mu_{i}$.
+
+#### Estimating Equations
+Consider $\Psi:\mathcal{X}\times\Theta\to\mathbb{R}^{d}$ where $\Theta\subseteq\mathbb{R}^{d}$.
+Define $V(\theta_{0},\theta)=\mathbb{E}_{\theta_{0}}\Psi(X,\theta)$.
+Assume $V(\theta_{0},\theta)=0$ iff $\theta_{0}=\theta$.
+Define the estimator $\hat{\theta}$ by solving $\Psi(x,\hat{\theta})=0$.
+Notice this generalizes MoM by setting
+$$
+\Psi(x,\theta)=\begin{pmatrix}
+\frac{1}{n}\sum x_{i} \\ \vdots \\ \frac{1}{n}\sum x_{i}^{d}
+\end{pmatrix}-\begin{pmatrix}
+\mathbb{E}_{\theta}X_{1} \\ \vdots \\ \mathbb{E}_{\theta}X_{1}^{d}
+\end{pmatrix}
+$$
+$\boxed{\Psi(x,\theta)=\varphi(x)-\mathbb{E}_{\theta}\varphi(X)}$ ← a more general MoM
+
+Example (MLE as an estimating equation):
+$\Psi(x,\theta)=\nabla_{\theta}\log f(x|\theta)$ (the score)
+Recall KL divergence: $KL(P\|Q)=\int\log\frac{p}{q}\,dP\geq 0$, and we've shown that $KL(P\|Q)=0$ iff $P=Q$.
+Consider $\log\frac{f(x|\theta)}{f(x|\theta_{0})}$. Then
+$-KL(P_{\theta_{0}}\|P_{\theta})=\int\log\frac{f(x|\theta)}{f(x|\theta_{0})}f(x|\theta_{0})\,dx\leq 0$, which is maximized (equal to 0) iff $\theta=\theta_{0}$ (assuming identifiability).
+Hence
+$0=\nabla_{\theta}\left[ -KL(P_{\theta_{0}}\|P_{\theta}) \right]\Big|_{\theta=\theta_{0}}=\nabla_{\theta}\int\log\frac{f(x|\theta)}{f(x|\theta_{0})}f(x|\theta_{0})\,dx\,\Big|_{\theta=\theta_{0}}=\int\Psi(x,\theta_{0})f(x|\theta_{0})\,dx=\mathbb{E}_{\theta_{0}}\Psi(X,\theta_{0})$
+where swapping $\nabla_{\theta}$ and $\int$ uses regularity assumptions. So $V(\theta_{0},\theta_{0})=0$, i.e. the score has mean zero at the true parameter.
+
+**Recipe**:
+In practice $\Psi$ is usually built as an average of a per-observation function $\psi$:
+$$
+\Psi(x,\theta)=\frac{1}{n}\sum_{i=1}^{n}\psi(x_{i},\theta)
+$$
+>Note $x=(x_{1},\dots,x_{n})$ is the *whole sample*, so $\Psi(x,\hat{\theta})=0$ is $d$ equations in $d$ unknowns (one per entry of $\Psi$), **not** one equation per observation. We do not need $\psi(x_{i},\hat{\theta})=0$ for each $i$ (e.g. $x_{i}-\frac{1}{\hat{\lambda}}=0\;\forall i$ would force all $x_{i}$ to be equal). Positive and negative terms cancel in the average.
+
+1. Choose $\psi$.
+2. Check: $V(\theta_{0},\theta)=\mathbb{E}_{\theta_{0}}\psi(X,\theta)=0$ iff $\theta=\theta_{0}$.
+3. Solve: $\frac{1}{n}\sum_{i=1}^{n}\psi(x_{i},\hat{\theta})=0$.
+
+There are two different "$=0$" statements and they play different roles:
+- $V(\theta_{0},\theta)=0$ iff $\theta=\theta_{0}$: an *assumption/property* we check when designing $\Psi$ (population level; involves the unknown $\theta_{0}$ so we can't compute it). It guarantees $\Psi$ targets the right parameter.
+- $\Psi(x,\hat{\theta})=0$: the *estimator*. This is the equation we actually solve using the observed data.
+
+Why it works: by SLLN, $\frac{1}{n}\sum_{i=1}^{n}\psi(X_{i},\theta)\to \mathbb{E}_{\theta_{0}}\psi(X,\theta)=V(\theta_{0},\theta)$ a.s. for each $\theta$. So the data equation is a noisy version of $V(\theta_{0},\cdot)=0$, whose only root is $\theta_{0}$. Hence the root $\hat{\theta}$ of the data equation should land near $\theta_{0}$.
+
+Example (MoM as EE):
+$X_{1},\dots,X_{n}\overset{\text{iid}}{\sim}Exp(\lambda)$.
+1. $\psi(x,\lambda)=x-\frac{1}{\lambda}$ (boxed form with $\varphi(x)=x$)
+2. $V(\lambda_{0},\lambda)=\mathbb{E}_{\lambda_{0}}X-\frac{1}{\lambda}=\frac{1}{\lambda_{0}}-\frac{1}{\lambda}=0$ iff $\lambda=\lambda_{0}$ ✓
+3. $\frac{1}{n}\sum_{i=1}^{n}\left( x_{i}-\frac{1}{\hat{\lambda}} \right)=0\implies \hat{\lambda}=\frac{1}{\bar{X}_{n}}$
+This is exactly the MoM estimator. In general MoM is this recipe with $\psi(x,\theta)=x^{j}-\mathbb{E}_{\theta}X^{j}$.
+
+Example (same model, two choices of $\psi$: MoM vs MLE):
+$X_{1},\dots,X_{n}\overset{\text{iid}}{\sim}Beta(\theta,1)$, i.e. $f(x|\theta)=\theta x^{\theta-1}\mathbb{I}_{(0,1)}(x)$.
+Choice A ($\varphi(x)=x$, MoM):
+1. $\mathbb{E}_{\theta}X=\frac{\theta}{\theta+1}$ so $\psi(x,\theta)=x-\frac{\theta}{\theta+1}$
+2. $V(\theta_{0},\theta)=\frac{\theta_{0}}{\theta_{0}+1}-\frac{\theta}{\theta+1}=0$ iff $\theta=\theta_{0}$ since $\frac{\theta}{\theta+1}$ is strictly increasing ✓
+3. $\bar{X}_{n}=\frac{\hat{\theta}}{\hat{\theta}+1}\implies \hat{\theta}_{MM}=\frac{\bar{X}_{n}}{1-\bar{X}_{n}}$
+
+Choice B (score, MLE):
+1. $\log f(x|\theta)=\log\theta+(\theta-1)\log x$ so $\psi(x,\theta)=\nabla_{\theta}\log f(x|\theta)=\frac{1}{\theta}+\log x$
+2. $-\log X\sim Exp(\theta)$ since $\mathbb{P}(-\log X>t)=\mathbb{P}(X<e^{-t})=e^{-\theta t}$, so $\mathbb{E}_{\theta_{0}}\log X=-\frac{1}{\theta_{0}}$ and $V(\theta_{0},\theta)=\frac{1}{\theta}-\frac{1}{\theta_{0}}=0$ iff $\theta=\theta_{0}$ ✓
+3. $\frac{1}{\hat{\theta}}+\frac{1}{n}\sum_{i=1}^{n}\log x_{i}=0\implies \hat{\theta}_{MLE}=\frac{-n}{\sum_{i=1}^{n}\log x_{i}}$
+>Both are valid EEs for the same $\theta$ but give different estimators. Choice B is the boxed form with $\varphi(x)=\log x$, i.e. here the MLE *is* a method of moments on $\log X$. This is because $Beta(\theta,1)$ is an exponential family with $T(x)=\log x$. For full rank exponential families the score equation is always $\frac{1}{n}\sum T(x_{i})=\mathbb{E}_{\theta}T(X)$.
+
+Example (vector valued $\psi$):
+$X_{1},\dots,X_{n}\overset{\text{iid}}{\sim}N(\mu,\sigma^{2})$ with $\theta=(\mu,\sigma^{2})$, so $d=2$.
+1. 
+$$
+\psi(x,\theta)=\begin{pmatrix}
+x-\mu \\
+(x-\mu)^{2}-\sigma^{2}
+\end{pmatrix}
+$$
+2. Writing $(X-\mu)^{2}=((X-\mu_{0})+(\mu_{0}-\mu))^{2}$,
+$$
+V(\theta_{0},\theta)=\begin{pmatrix}
+\mu_{0}-\mu \\
+\sigma_{0}^{2}+(\mu_{0}-\mu)^{2}-\sigma^{2}
+\end{pmatrix}
+$$
+The first entry is $0$ iff $\mu=\mu_{0}$, and then the second is $0$ iff $\sigma^{2}=\sigma_{0}^{2}$ ✓
+3. The first equation gives $\hat{\mu}=\bar{X}_{n}$. Plugging into the second gives $\hat{\sigma}^{2}=\frac{1}{n}\sum_{i=1}^{n}(x_{i}-\bar{X}_{n})^{2}$.
+>Need $d$ equations for $d$ unknowns, which is why $\Psi:\mathcal{X}\times\Theta\to \mathbb{R}^{d}$.
+
+Example (neither MoM nor MLE: the median):
+Let $\theta$ be the median of a continuous distribution with strictly increasing CDF $F_{\theta_{0}}$.
+1. $\psi(x,\theta)=\mathbb{I}(x\leq\theta)-\frac{1}{2}$
+2. $V(\theta_{0},\theta)=\mathbb{P}_{\theta_{0}}(X\leq\theta)-\frac{1}{2}=0$ iff $\theta$ is the true median ✓
+3. $\frac{1}{n}\sum_{i=1}^{n}\mathbb{I}(x_{i}\leq\hat{\theta})=\frac{1}{2}\implies\hat{\theta}=$ sample median (since $\psi$ jumps, we may not hit $0$ exactly, so we take where it crosses $0$)
+>For $N(\theta,1)$, both $\psi=x-\theta$ (giving $\bar{X}_{n}$) and $\psi=\mathbb{I}(x\leq\theta)-\frac{1}{2}$ (giving the median) are valid EEs for $\theta$. There are many valid $\psi$'s and we choose based on efficiency, robustness, convenience, etc.
+
+Example (Neyman-Scott revisited: why the condition matters):
+Plugging $\hat{\mu}_{i}=\frac{x_{i1}+x_{i2}}{2}$ into the $\eta$ score gives $\Psi(\eta)=-\frac{n}{\eta}+\sum_{i=1}^{n}\frac{(x_{i1}-x_{i2})^{2}}{4\eta^{2}}$.
+Check at the true value $\eta=\sigma^{2}$ using $\mathbb{E}(X_{i1}-X_{i2})^{2}=2\sigma^{2}$:
+$\mathbb{E}\Psi(\sigma^{2})=-\frac{n}{\sigma^{2}}+\frac{n\cdot 2\sigma^{2}}{4\sigma^{4}}=-\frac{n}{2\sigma^{2}}\neq 0$ ✗
+The condition fails! Solving $\mathbb{E}\Psi(\eta)=-\frac{n}{\eta}+\frac{n\sigma^{2}}{2\eta^{2}}=0$ gives $\eta=\frac{\sigma^{2}}{2}$, exactly where $\hat{\eta}$ concentrates. The MLE converges to the root of the wrong expected equation.
+Fix: choose a $\psi$ that satisfies the condition.
+1. $\psi_{i}(\eta)=\frac{(x_{i1}-x_{i2})^{2}}{2}-\eta$
+2. $\mathbb{E}\psi_{i}(\eta)=\sigma^{2}-\eta=0$ iff $\eta=\sigma^{2}$ ✓
+3. $\hat{\eta}=\frac{1}{2n}\sum_{i=1}^{n}(x_{i1}-x_{i2})^{2}$, which is unbiased and consistent (twice the MLE)
+>An EE is only as good as its "mean zero only at the truth" property. When it holds we get a sensible (consistent) estimator; when it breaks, the estimator converges to the wrong thing.
+
+Exercise: $X_{1},\dots,X_{n}\overset{\text{iid}}{\sim}Poisson(\lambda)$. Use $\varphi(x)=\mathbb{I}(x=0)$ in $\psi(x,\lambda)=\varphi(x)-\mathbb{E}_{\lambda}\varphi(X)$ to find an estimator of $\lambda$. When does it break?
+
+### James-Stein Estimator
+$X=(X_{1},\dots,X_{d})^{T}\sim N(\mu,I_{d})$, i.e. $X_{i}\sim N(\mu_{i},1)$, all independent.
+MLE: $\hat{\mu}=X$ (exercise: check this)
+
+Tangent (ignore for this problem): if the parameter of interest is $\theta=\|\mu\|^{2}=\sum_{i=1}^{d}\mu_{i}^{2}$, the MLE has the plug-in property $\hat{\theta}_{MLE}=\|X\|^{2}$.
+>Note: $\|X\|^{2}$ is *not* admissible for $\|\mu\|^{2}$. Since $\mathbb{E}_{\mu}\|X\|^{2}=\|\mu\|^{2}+d$, the estimator $\|X\|^{2}-d$ has the same variance with no bias, so it has strictly smaller risk.
+
+Is $X$ good? Admissible?
+Charles Stein proved: if $d\leq 2$, then $X$ is admissible for $\mu$ under the loss below.
+
+Consider $L(\mu,a)=\|\mu-a\|^{2}=\sum_{i=1}^{d}(\mu_{i}-a_{i})^{2}$.
+Q: What happens for $d\geq 3$?
+$R(\mu,X)=\mathbb{E}_{\mu}\|X-\mu\|^{2}=\sum_{i=1}^{d}\mathbb{E}_{\mu}(X_{i}-\mu_{i})^{2}=d$
+Q: Can we do better? Consider
+$\delta_{a}(x)=\left( 1-\frac{a}{\|x\|^{2}} \right)x$ and its risk $R(\mu,\delta_{a})$ $(\star)$
+
+**Stein's Identity**: $\mathbb{E}\left[ (Z-\theta)g(Z)-g'(Z) \right]=0$ (for all absolutely continuous $g$ with $\mathbb{E}|g'(Z)|<\infty$) iff $Z\sim N(\theta,1)$.
+Proof:
+($\Leftarrow$): Notice $\frac{d}{dz}\frac{1}{\sqrt{2\pi}}e^{-\frac{(z-\theta)^{2}}{2}}=-(z-\theta)\frac{1}{\sqrt{2\pi}}e^{-\frac{(z-\theta)^{2}}{2}}$. So integrating by parts,
+$\int_{-\infty}^{\infty}g(z)(z-\theta)\frac{1}{\sqrt{2\pi}}e^{-\frac{(z-\theta)^{2}}{2}}dz=\int_{-\infty}^{\infty}g'(z)\frac{1}{\sqrt{2\pi}}e^{-\frac{(z-\theta)^{2}}{2}}dz-\underbrace{\left[ g(z)\frac{1}{\sqrt{2\pi}}e^{-\frac{(z-\theta)^{2}}{2}} \right]_{-\infty}^{\infty}}_{=0}$
+i.e. $\mathbb{E}[(Z-\theta)g(Z)]=\mathbb{E}[g'(Z)]$.
+($\Rightarrow$): not going to prove.
+
+Back to $(\star)$:
+$$
+R(\mu,\delta_{a})=\mathbb{E}_{\mu}\left\| \left( 1-\frac{a}{\|X\|^{2}} \right)X-\mu \right\|^{2}=\mathbb{E}_{\mu}\|X-\mu\|^{2}+\underbrace{\mathbb{E}_{\mu}\left\| \frac{a}{\|X\|^{2}}X \right\|^{2}}_{=a^{2}\mathbb{E}_{\mu}\frac{1}{\|X\|^{2}}}-2a\sum_{i=1}^{d}\mathbb{E}_{\mu}(X_{i}-\mu_{i})\frac{X_{i}}{\|X\|^{2}}
+$$
+Using Stein's identity on each coordinate ($g(x_{i})=\frac{x_{i}}{\|x\|^{2}}$ with the other coordinates held fixed, i.e. condition on $X_{-i}$):
+$R(\mu,\delta_{a})=d+a^{2}\mathbb{E}_{\mu}\frac{1}{\|X\|^{2}}-2a\sum_{i=1}^{d}\mathbb{E}_{\mu}\left[ \frac{\partial}{\partial x_{i}}\frac{x_{i}}{\|x\|^{2}}\Big|_{x=X} \right]$
+where $\frac{\partial}{\partial x_{i}}\frac{x_{i}}{\|x\|^{2}}=\frac{\partial}{\partial x_{i}}\frac{x_{i}}{\sum_{j}x_{j}^{2}}=\frac{1}{\|x\|^{2}}-\frac{2x_{i}^{2}}{\|x\|^{4}}$. Plugging back in, $\sum_{i=1}^{d}\left( \frac{1}{\|x\|^{2}}-\frac{2x_{i}^{2}}{\|x\|^{4}} \right)=\frac{d}{\|x\|^{2}}-\frac{2\|x\|^{2}}{\|x\|^{4}}=\frac{d-2}{\|x\|^{2}}$, so
+$R(\mu,\delta_{a})=d+a^{2}\mathbb{E}_{\mu}\frac{1}{\|X\|^{2}}-2a(d-2)\mathbb{E}_{\mu}\frac{1}{\|X\|^{2}}=d+\left( a^{2}-2(d-2)a \right)\mathbb{E}_{\mu}\frac{1}{\|X\|^{2}}$
+
+Notice: as long as $\mathbb{E}_{\mu}\frac{1}{\|X\|^{2}}<\infty$, this is minimized at $a=d-2$.
+Also, $\mathbb{E}_{\mu}\frac{1}{\|X\|^{2}}\leq\mathbb{E}_{0}\frac{1}{\|X\|^{2}}$ (since $\|X\|^{2}$ is stochastically smallest at $\mu=0$ and $\frac{1}{s}$ is decreasing). Under $\mu=0$, $\|X\|^{2}\sim\chi^{2}_{d}=\Gamma\left( \frac{d}{2},\frac{1}{2} \right)$ (shape, rate), so
+$\mathbb{E}_{0}\frac{1}{\|X\|^{2}}=\int_{0}^{\infty}\frac{1}{s}\frac{s^{d/2-1}e^{-s/2}}{2^{d/2}\Gamma(d/2)}ds=\frac{2^{d/2-1}\Gamma\left( \frac{d}{2}-1 \right)}{2^{d/2}\Gamma\left( \frac{d}{2} \right)}=\frac{1}{2\left( \frac{d}{2}-1 \right)}=\frac{1}{d-2}$
+↳ finite when $d\geq 3$.
+
+$R(0,\delta_{d-2})=d-\frac{(d-2)^{2}}{d-2}=2$
+
+>The risk depends on $\mu$ only through $\|\mu\|$, and $R(\mu,\delta_{d-2})=d-(d-2)^{2}\mathbb{E}_{\mu}\frac{1}{\|X\|^{2}}<d$ for every $\mu$. So $\delta_{d-2}$ dominates $X$, which means $X$ is inadmissible for $d\geq 3$. The risk goes to $d$ as $\|\mu\|\to\infty$, but at $\mu=0$ the risk is only $2$.
+
+11/17
+### James-Stein Estimator
+$X\sim N(\mu,I_{a})$, $X_{i}\sim N(\mu, 1)$ independent
+Estimate of $\mu$ under loss function $L(\mu,a)=||\mu-a||^{2}=\sum(\mu_{i}-a_{i})^{2}$ and $\delta_{a}=X\left( 1-\frac{a}{||X||^{2}} \right)$. If $d\geq3$ then $R(\mu,\delta_{a})$ is minimized for $a=d-2$.
+$d=R(\mu,X)>R\left( \mu,\left( 1-\frac{d-2}{||X||^{2}} \right)X \right)$.
+The MLE $X$ is not admissible.
+Comment: $\left( 1-\frac{d-2}{||X||^{2}} \right)_{+}X$ is better but Berger (1978) showed this is also not admissible.
+
+#### Bayesian Point of View
+Set $\mu_{1},\dots,\mu_{d}\overset{\text{iid}}{\sim}N(0,\tau^{2})$ (prior)
+Posterior distribution: $\mu_{i}|X\sim N\left( \frac{\tau^{2}}{\tau^{2}+1}X_{i}, \frac{\tau^{2}}{\tau^{2}+1} \right)$ hence $\mu|X\sim N\left( \frac{\tau^{2}}{\tau^{2}+1}X, \frac{\tau^{2}}{\tau^{2}+1}I \right)$
+Since we are under squared loss our Bayes rule is posterior mean: $\frac{\tau^{2}}{\tau^{2}+1}X=\left( 1- \frac{1}{\tau^{2}+1} \right)X$
+Natural question is how to pick $\tau^{2}$? Before looking at this, lets look at risk function if Bayes rule.
+$R\left( \mu, \frac{\tau^{2}}{\tau^{2}+1}X \right)=\mathbb{E}_{\mu}||\mu- \frac{\tau^{2}}{\tau^{2}+1}X ||^{2}=\mathbb{E}_{\mu}|| \frac{\tau^{2}}{\tau^{2}+1}(X-\mu)+\frac{1}{\tau^{2}+1}\mu||^{2}=\left( \frac{\tau^{2}}{\tau^{2}+1} \right)^{2}d+||\mu||^{2}\left( \frac{1}{\tau^{2}+1} \right)^{2}$
+From here Bayes risk $r_{N(0,\tau^{2})}\left( \frac{\tau^{2}}{\tau^{2}+1}X \right)=\left( \frac{\tau^{2}}{\tau^{2}+1} \right)^{2}d+\frac{1}{(\tau^{2}+1)^{2}}\mathbb{E}_{N(0,\tau^{2})}||\mu||^{2}=d \frac{\tau^{4}+\tau^{2}}{(\tau^{2}+1)^{2}}=\frac{d\tau^{2}}{\tau^{2}+1}$. Note this goes to $d$ as $\tau\to \infty$. Recall $R(\mu,X)=d$ hence $X$ is minimax (since we have sequence of priors that converge; sequence of priors theorem).
+>Note: the fact something is minimax does not imply it is admissible
+
+Back to how to pick $\tau^{2}$. Concept very useful for applied, not necessarily for stat theory: empirical bayes. Pick some $\tau^{2}$ estimated from the data. Complete no no from Bayesian point of view, but at the same time you get good answers from it. 
+
+#### Empirical Bayes
+$X\sim f(x|\theta)$ and $\theta \sim \pi(\theta|\eta)$ where $\eta$ are some hyperparameters
+>Note: Suppose $\theta=(\mu,\zeta)$ and the target of interest is $\mu$, but $\zeta$ is still part of what governs the data hence $\zeta$ is a **nuisance parameter**. A hyperparameter is a fixed external parameter that governs the parameter. Hence nuisance and hyperparameters are different.
+
+Two ways to approach hyperparameter: have a prior on it, "hyperprior" or empirical bayes which is pick $\eta$ based on the data.
+We can integrate out theta to get a marginal of $x|\eta$: $\int f(x|\theta)\pi(\theta|\eta)d\theta=m(x|\eta)$ and then take some estimator of $\hat{\eta}$ (MLE, MoM, etc.).
+
+Recalling our example with $X_{i}\sim N(\mu_{i},1)$ independent and $\mu_{i}\overset{\text{iid}}{\sim}N(0,\tau^{2})$. Then $f(x|\mu)\pi(\mu|\tau^{2})=\prod_{i=1}^{d} \frac{1}{\sqrt{ 2\pi }}\exp\left( -\frac{(x_{i}-\mu_{i})^{2}}{2} \right) \frac{1}{\sqrt{ 2\pi \tau^{2} }}\exp\left( -\frac{\mu^{2}}{2\tau^{2}} \right)$. 
+Note that $X_{i}=\mu_{i}+Z_{i}$ where $Z_{i}\overset{\text{iid}}{\sim} N(0,1)$. Similarly $\mu_{i}\sim \tau U_{i}$ where $U_{i}\overset{\text{iid}}{\sim}N(0,1)$. Hence $X_{i}=\tau U_{i}+Z_{i}\sim N(0,\tau^{2}+1)$ from adding two normals (we integrated $\mu$ out; conditional on $\tau^{2}$ now). So call $\sigma^{2}:=\tau^{2}+1$ then we know the MLE $\hat{\sigma}^{2}=\frac{1}{d}\sum x_{i}^{2}$. There are other estimators: $\widehat{\tau^{2}+1}=\frac{1}{d-2}||X||^{2}$.
+Recall $\frac{\tau^{2}}{\tau^{2}+1}X=\left( 1-\frac{1}{\tau^{2}+1} \right)X$. My empirical bayes estimator: $\left( 1-\frac{d-2}{||X||^{2}} \right)X$.
+
+## Hypothesis Testing
+The idea is we have some subset $\Theta_{0}\subset\Theta$ of our parameter space and we have $H_{0}:\theta\in\Theta_{0}$ and $H_{1}:\theta\in\Theta_{1}$. Very often $\Theta_{1}=\Theta_{0}^{c}$,but not always.
+We look at it differently than pure decision theory (i.e. $\mathcal{A=\{ 0,1 \}}$ as this results in a classification type test). We have if $H_{0}$ is true and $\delta=0$ or $H_{1}$ true and $\delta=1$ then correct decision and if $H_{0}$ true, $\delta=1$ then type 1 error and if  $H_{1}$ true, $\delta=0$ then type 2. For decision theory these errors would all be treated equally.
+For classical hypothesis testing, there is an asymmetry: the goal is guaranteed control over Type 1 error.
+Remember $\delta(X)$ is my decision rule:
+$$
+\delta(X)=\begin{cases}
+1 & \text{reject }H_{0} \\
+0 & \text{do not reject }H_{0}
+\end{cases}
+$$
+$\beta(\theta)=\mathbb{E}_{\theta}\delta(X)=\mathbb{P}_{\theta}(\delta(X)=1)$ is called the power function (i.e. probability that we reject the null if $\theta$ is the true parameter). We desire $\beta(\theta)$ small if $\theta\in\Theta_{0}$ and we want $\beta(\theta)$ large if $\theta\in\Theta_{1}$.
+
+**Definition (Level)**: $\delta(X)$ is level $\alpha$ test for $H_{0}:\theta\in\Theta_{0}$ if $\beta(\theta)\leq\alpha,\forall\theta\in\Theta_{0}$
+**Definition (Size)**: $\delta(X)$ is a size $\alpha$ test for $H_{0}:\theta\in\Theta_{0}$ if $\alpha=\sup\limits_{\Theta_{0}}\beta(\theta)$.
+>[!tip] Hence any size $\alpha$ test is level $\alpha$, but not every level $\alpha$ test is size $\alpha$.
+
+### Unbiased Test
+**Definition**: A test is unbiased if $\sup\limits_{\Theta_{0}}\beta(\theta)\leq \inf\limits_{\Theta_{1}}\beta(\theta)$
+Nothing changes if $\delta(X)\in[0,1]$, just the interpretation changes. If $\delta(X)\in(0,1)$ then we reject with that probability, sometimes called a randomized test. Very useless for practical reasons, useful for theoretical reasons.
+

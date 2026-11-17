@@ -1211,9 +1211,10 @@ So both too few and too many variables hurt. Now the theory.
 
 #### Prediction Error and Model Error
 
-Training set $(x_{i},Y_{i})$, $i=1,\dots,n$, $X\in\mathbb{R}^{n\times p}$. New design points $X_{0}\in\mathbb{R}^{m\times p}$ with new responses $Y_{0}$, $\mu_{0}=E[Y_{0}]$. Assume $\mathrm{Var}(Y)=\sigma^{2}I_{n}$, $\mathrm{Var}(Y_{0})=\sigma^{2}I_{m}$, $Y\perp!!!\perp Y_{0}$, same mean structure. Predictor: $X_{0}\hat{\beta}$ with $\hat{\beta}=(X^{T}X)^{-1}X^{T}Y$ from the training set.
+Training set $(x_{i},Y_{i})$, $i=1,\dots,n$, $X\in\mathbb{R}^{n\times p}$. New design points $X_{0}\in\mathbb{R}^{m\times p}$ with new responses $Y_{0}$, $\mu_{0}=E[Y_{0}]$. Assume $\mathrm{Var}(Y)=\sigma^{2}I_{n}$, $\mathrm{Var}(Y_{0})=\sigma^{2}I_{m}$, $Y\perp\!\!\!\perp Y_{0}$, same mean structure. Predictor: $X_{0}\hat{\beta}$ with $\hat{\beta}=(X^{T}X)^{-1}X^{T}Y$ from the training set.
 
-Add and subtract $\mu_{0}$: $$ |Y_{0}-X_{0}\hat{\beta}|_{2}^{2}=|Y_{0}-\mu_{0}|_{2}^{2}+|\mu_{0}-X_{0}\hat{\beta}|_{2}^{2}+2(Y_{0}-\mu_{0})^{T}(\mu_{0}-X_{0}\hat{\beta}) \tag{12.4} $$ **Definition (Prediction Error)**: take expectation over the _new_ data only (so $\hat{\beta}$ is held fixed): $$ \text{PE}=E_{Y_{0}}\left[|Y_{0}-X_{0}\hat{\beta}|_{2}^{2}\right]=m\sigma^{2}+|\mu_{0}-X_{0}\hat{\beta}|_{2}^{2} \tag{12.5} $$ The cross term dies because $Y_{0}\perp!!!\perp\hat{\beta}$ and $E_{Y_{0}}[Y_{0}-\mu_{0}]=0$.
+Add and subtract $\mu_{0}$: $$ |Y_{0}-X_{0}\hat{\beta}|_{2}^{2}=|Y_{0}-\mu_{0}|_{2}^{2}+|\mu_{0}-X_{0}\hat{\beta}|_{2}^{2}+2(Y_{0}-\mu_{0})^{T}(\mu_{0}-X_{0}\hat{\beta}) \tag{12.4} $$ **Definition (Prediction Error)**: take expectation over the _new_ data only (so $\hat{\beta}$ is held fixed): $$ \text{PE}=E_{Y_{0}}\left[|Y_{0}-X_{0}\hat{\beta}|_{2}^{2}\right]=m\sigma^{2}+|\mu_{0}-X_{0}\hat{\beta}|_{2}^{2} \tag{12.5} $$ The cross term dies because $Y_{0}\perp\!\!\!\perp\hat{\beta}$ and $E_{Y_{0}}[Y_{0}-\mu_{0}]=0$.
+Can think about PE as we get a fitted model ($\hat{\beta}$) from train data and then get expected sum of squares on test data.
 
 **Definition (Model Error)**: $$ \text{ME}=|\mu_{0}-X_{0}\hat{\beta}|_{2}^{2},\qquad \text{PE}=m\sigma^{2}+\text{ME} \tag{12.6–12.7} $$ $m\sigma^{2}$ is irreducible noise; ME is the only part the model controls. Minimizing PE $\iff$ minimizing ME. Note PE and ME are still random (functions of the training $Y$ through $\hat{\beta}$).
 
@@ -1267,6 +1268,7 @@ Strategy: least squares on a chosen subset; pick the subset by optimizing a crit
 4. Approximations to posterior probabilities (12.3.4 — not in this reading)
 
 #### 12.3.1 Goodness-of-Fit Criteria
+Summary after reading chapter: Adjusted $R^{2}$ denoted as $\bar{R}^{2}$ evaluates the goodness of fit of a model while also penalizing for selecting too many variables. Note that choosing subset based on $\bar{R}^{2}$ also agrees with choosing large values of $F$ ($F\geq1$) and with choosing the model (with $p$ chosen variables out of $K$) with the minimal observed sample variance $S_{p}^{2}=\frac{RSS_{p}}{n-p}$.
 
 RSS alone is useless for comparing models of different size: if $S_{1}\subset S_{2}$ then $\text{RSS}(S_{2})\le\text{RSS}(S_{1})$ (adding even pure-noise columns lowers RSS, since you project onto a bigger subspace). It _is_ fine for comparing models with the same number of variables. Need a size correction.
 
@@ -1407,7 +1409,7 @@ Prediction (of new data):
 - Variability of predictors
 
 Following ESL (Elements of Statistical Learning 7.3)
-Suppose we observe $y_{1},\dots,y_{n}$ along with $x_{1},\dots,x_{n}$ (i.e. training data with responses and predictors). Lets assume that each $y_{i}=f(x_{i})+\epsilon_{i}$ (can be represented as some function of $x_{i}$ + error term). Assume $\epsilon_{i}$ iid and $\mathbb{E}[\epsilon_{i}]=0,\mathrm{Var}(\epsilon_{i})=\sigma^{2}$ (more general than normal because not assuming normality of errors or linearity of predictors).
+Suppose we observe $y_{1},\dots,y_{n}$ along with $x_{1},\dots,x_{n}$ (i.e. training data with responses and predictors). Lets assume that each $y_{i}=f(x_{i})+\epsilon_{i}$ (can be represented as some function of $x_{i}$ + error term). Assume $\epsilon_{i}$ iid and $\mathbb{E}[\epsilon_{i}]=0,\mathrm{Var}(\epsilon_{i})=\sigma^{2}$ (more general than normal because not assuming normality of errors or $f$ is linear).
 Consider some new observation at $x_{*}$ associated (but also unknown) response $y_{*}$. $y_{*}=f(x_{*})+\epsilon_{*}$.
 We fit a model $\hat{f}$ using our training data, but our model class isn't necessarily correct (i.e. it may be cubic or log and we could be fitting linear model; we will see where we pay this price).
 We want to reason about our **Mean Squared Prediction Error (MSPE)** (at particular $x_{*}$).
@@ -1433,4 +1435,52 @@ Diagnostics for Influential Observations
 Look at picture on phone, 11/11 12:28 (figure 9.7? in S+L) which shows that points can be both outliers and high-leverage. Will continue more on Monday.
 Recall: Hat matrix $H:=P_{X}=X(X^{T}X)^{-1}X^{T}$
 
+11/16
+### Leverage
+Hat Matrix: $H=P_{X}=X(X^{T}X)^{-1}X^{T}$
+$\mathrm{Var}(\hat{y})=\mathrm{Var}(Hy)=H\mathrm{Var}(y)H^{T}=\sigma^{2}HH^{T}=\sigma^{2}H$ since $H$ is projection matrix
+$\mathrm{Var}(\hat{y}_{i})=\mathrm{Var}(e_{i}^{T}\hat{y})=e_{i}^{T}\mathrm{Var}(\hat{y})e_{i}=\sigma^{2}e_{i}^{T}He_{i}=\sigma^{2}h_{ii}$
+Similar argument gives $\mathrm{Var}(\hat{\epsilon}_{i})=(1-h_{ii})\sigma^{2}$. So $h_{ii}\in[0,1]$ otherwise one of the variances would be negative.
+What happens as $h_{ii}\to1$?
+$\mathrm{Var}(\hat{y}_{i})\to\sigma^{2}$ and $\mathrm{Var}(\hat{\epsilon}_{i})\to0$
+The intuition from this is that the regression line is pulled towards $y_{i}$.
 
+Exercise: show that as $h_{ii}\to1,\hat{y}_{i}\to y_{i}$.
+Let $h_{i}=e_{i}^{T}H$. Then $h_{ii}=e_{i}^{T}He_{i}=e_{i}^{T}H^{T}He_{i}=||h_{i}||_{2}^{2}$. Then observe that $||h_{i}-e_{i}||_{2}^{2}=(h_{i}-e_{i})^{T}(h_{i}-e_{i})=h_{i}^{T}h_{i}-2e_{i}^{T}h_{i}+1=h_{ii}-2h_{ii}+1=1-h_{ii}$. Finally look at $|\hat{y}_{i}-y_{i}|=|e_{i}^{T}Hy-e_{i}^{T}y|=|(h_{i}-e_{i})^{T}y|\leq||h_{i}-e_{i}||_{2}||y||_{2}$ (Cauchy-Schwarz) $\to0$ as $h_{ii}\to1$ since $||h_{i}-e_{i}||_{2}\to0$.
+
+Conversely, as $h_{ii}\to0$, $\mathrm{Var}(\hat{y}_{i})\to0,\mathrm{Var}(\hat{\epsilon}_{i})\to\sigma^{2}$. Regression line is insensitive to $y_{i}$.
+
+Ultimately, what this is getting at is that points with high $h_{ii}$ are high leverage points and $h_{ii}$ close to 0 are low leverage points.
+
+What are the "balanced" values of $h_{ii}$?
+Recall $rank(X)=p,rank(H)=p$ and $Tr(H)=\sum_{i=1}^{n}h_{ii}=p$. Hence if $h_{ii}\approx \frac{p}{n}$ $\forall i$ then leverage is well-balanced.
+
+### Outliers
+$\hat{\epsilon}_{i}=y_{i}-\hat{y}_{i}$ and $\mathrm{Var}(\hat{\epsilon}_{i})=(1-h_{ii})\sigma^{2}$. We can standardize this: $\frac{\hat{\epsilon}_{i}}{s\sqrt{ 1-h_{ii} }}$ and look for big values. Points of high leverage ($h_{ii}$ close to 1) will have low residuals ($\hat{\epsilon}_{i}$) even if the point is an outlier; standardizing helps correct for this. 
+
+Task: with $p=2$, construct a design matrix with an intercept such that $h_{jj}=1$ for some fixed j. We take $X=[1_{n}\;e_{j}]$.
+
+Problem: Residuals can "mask" themselves by inflating $s^{2}$
+(Partial) Remedy: External standardization: $\frac{\hat{\epsilon}_{i}}{s_{(i)}\sqrt{ 1-h_{ii} }}$ where $s_{(i)}$ is like $s$, but with ith observation removed. Note if you have multiple really large outliers then this won't fix it.
+
+### Influence
+We talked about
+- Leverage (based on $X$, how much the ith observation could affect the fit)
+- Outliers (Funky values of y)
+Influence we are asking how much each observation actually affects the fit.
+Our key ingredient is **deletion residuals** (very closely related to leave-one-out cross validation) i.e. remove the ith point and see how much model changes.
+Define $d_{i}:=y_{i}-\hat{y}_{i(i)}$ where $\hat{y}_{i(i)}=e_{i}^{T}X\hat{\beta}_{(i)}$ where $\hat{\beta}_{(i)}$ is from regression that excluded the ith observation.
+>Useful trick: $d_{i}=\frac{\hat{\epsilon}_{i}}{1-h_{ii}}$.
+
+Hence $\mathrm{Var}(d_{i})=\mathrm{Var}\left( \frac{\hat{\epsilon}_{i}}{1-h_{ii}} \right)=\frac{\mathrm{Var}(\hat{\epsilon}_{i})}{(1-h_{ii})^{2}}=\frac{(1-h_{ii})\sigma^{2}}{(1-h_{ii})^{2}}=\frac{\sigma^{2}}{1-h_{ii}}$. We can estimate this variance by $s^{2}(d_{i})=\frac{s_{(i)}^{2}}{1-h_{ii}}$. Then $d_{i}^{*}:=\frac{d_{i}}{\sqrt{ s^{2}(d_{i}) }}\sim t_{n-p}$ which gives rise to many metrics, a few of which are listed below.
+
+Metrics using $d_{i}^{*}$:
+1. (DFFITS)$_{i}:=d_{i}^{*}\sqrt{ \frac{h_{ii}}{1-h_{ii}} }$ essentially combines leverage with externally studentized/standardized residual
+2. (DFBETAS)$_{k(i)}:= \frac{\hat{\beta}_{k}-\hat{\beta}_{k(i)}}{s_{(i)}\sqrt{ (X^{T}X)^{-1}_{ii} }}$ (kth beta minus kth beta if we were to remove ith observation) and this quantifies how much deletion of ith observation affects kth entry of $\beta$.
+3. Cook's $D$ (or distance): Looks at overall influence of ith observation on all the entries of $\beta$. $D_{i}:=\frac{(\hat{\beta}-\hat{\beta}_{(i)})X^{T}X(\hat{\beta}-\hat{\beta}_{(i)})}{ps^{2}}$.
+
+### (Multi) Collinearity
+We know exact collinearity is problematic. For example, if $X=\left[ X_{1}\;X_{2}\; \frac{1}{2}X_{1}+\frac{1}{2}X_{2} \right]$. What if there is almost linear dependence though? 
+Continuing the example instead of $X_{3}=\frac{1}{2}X_{1}+\frac{1}{2}X_{2}$ we have $X_{3}=\frac{1}{2}X_{1}+\frac{1}{2}X_{2}+\delta$ with $||\delta||_{2}$ small. Least squares will still "work" in this setting, but
+1. $(X^{T}X)^{-1}$ may be numerically instable
+2. Inference can become vacuous, $\sigma^{2}\gamma^{T}(X^{T}X)^{-1}\gamma$ can be very large for some $\gamma$. So you could still get CIs but they may be super big (hence vacuous).
