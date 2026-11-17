@@ -1641,3 +1641,39 @@ $\beta(\theta)=\mathbb{E}_{\theta}\delta(X)=\mathbb{P}_{\theta}(\delta(X)=1)$ is
 **Definition**: A test is unbiased if $\sup\limits_{\Theta_{0}}\beta(\theta)\leq \inf\limits_{\Theta_{1}}\beta(\theta)$
 Nothing changes if $\delta(X)\in[0,1]$, just the interpretation changes. If $\delta(X)\in(0,1)$ then we reject with that probability, sometimes called a randomized test. Very useless for practical reasons, useful for theoretical reasons.
 
+# STOR 654 — HW10 Takeaways
+
+## 1. Averaging out auxiliary randomness (Rao–Blackwell)
+- If $T$ uses extra randomness $U$ independent of the data and $\delta(\mathbf{X}) = E(T \mid \mathbf{X})$, then for any constant target $\mu$:
+$$E\big[(T-\mu)^2\big] = E\big[\operatorname{Var}(T \mid \mathbf{X})\big] + E\big[(\delta(\mathbf{X})-\mu)^2\big]$$
+- Proof: $W = T - \mu$, then $E[W^2] = E[\operatorname{Var}(W\mid\mathbf{X})] + E[(E[W\mid\mathbf{X}])^2]$. Or: write $T-\mu = (T-\delta)+(\delta-\mu)$; the cross term vanishes because $E[T-\delta \mid \mathbf{X}] = 0$.
+- Works even when $T$ is **biased**, since bias never enters.
+- **Equal means $\not\Rightarrow$ equal risk.** MSE $= \operatorname{Var} + \text{bias}^2$ is not linear in the estimator. $E[T] = E[\delta]$ only says the biases match; the risk gap is $\operatorname{Var}(T) - \operatorname{Var}(\delta) = E[\operatorname{Var}(T\mid\mathbf{X})] \ge 0$.
+- Adding a constant never changes variance: $\operatorname{Var}(aZ+b) = a^2\operatorname{Var}(Z)$.
+- HW10 1(b): $\delta(\mathbf{X}) = \dfrac{\sum X_i + \sqrt{n}/2}{n+\sqrt{n}}$ and
+$$R(P,\delta) = \frac{(\mu-\tfrac12)^2 + \sigma^2}{(\sqrt{n}+1)^2}, \qquad \text{risk gap} = \frac{\mu(1-\mu) - \sigma^2}{(\sqrt{n}+1)^2}.$$
+
+## 2. Minimax: what it means and how to prove it
+- Rank estimators by their **worst case** $\sup_\theta R(\theta,d)$ only. The minimax value is $M = \inf_d \sup_\theta R(\theta,d)$.
+- Minimax does **not** mean the risk is $\ge M$ at every $\theta$ for other rules. Other rules (even silly ones like $d \equiv \tfrac12$) can beat it at individual $\theta$s.
+- **Two-step recipe:**
+  1. **Lower bound (everyone):** $\sup_\theta R(\theta,d) \ge M$ for all $d$. On its own this only shows $M$ is a lower bound.
+  2. **Achievability (your rule):** $R(\theta,d^*) \le M$ for all $\theta$.
+  - Together:
+$$M \le \inf_d \sup_\theta R(\theta,d) \le \sup_\theta R(\theta,d^*) \le M$$
+- **Lower-bound tricks:** (i) Bayes risk: $\sup \ge$ average $\ge r(\pi)$; (ii) a sequence of priors; (iii) **restrict to a submodel**: $\sup_{\mathcal{P}} \ge \sup_{\mathcal{P}_0} \ge M$, using a known minimax result on $\mathcal{P}_0$.
+- HW10 1(c): $\mathcal{P}_0$ = Bernoulli distributions $\subset \mathcal{P}$. Under Bernoulli $P$, any $d(\mathbf{X})$ is an estimator from a Bernoulli sample, so the class result gives $\sup \ge r_n$.
+- The minimax rule's sup must **equal** $M$, but it need not be attained at any point; it can be approached only in a limit.
+- **Minimax $\ne$ equalizer.** $\delta$ is minimax with non-constant risk: $r_n$ at Bernoulli $P$, $0$ at a point mass at $\tfrac12$.
+
+## 6. MLE vs method of moments
+- **The MLE always respects the parameter space** (it maximizes over it). **MoM can produce impossible values** when the moment equations have no solution in the space.
+- HW10 2(a): $\hat a_{MM} = \frac{M_2}{2M_1}$ and $\hat p_{MM} = \frac{2M_1^2}{M_2}$, valid iff $M_2 \ge 2M_1^2$ (sample variance $\ge \bar X^2$).
+- HW10 2(c), sample $0,1,1,1$: $\hat p_{MM} = 3/2 > 1$. Truncating to $p=1$ does **not** solve the moment equations, since the MoM solution is unique, so no point in the space solves them. MLE $= (3/4,\ 1)$.
+
+## 7. Estimating functions
+- An estimating function $U(\mathbf{X},t)$ is **unbiased** if $E_\theta U(\mathbf{X},\theta) = 0$. The estimator is the root $T$ of $U(\mathbf{X},t)=0$.
+- The score equation and MoM equations are both unbiased estimating functions. A root equals the MLE iff $U$ is the score up to a positive factor (HW10: $\ell'(\theta) = U_1/\theta^2$, so $T_1 = \bar X$ is the MLE).
+- **An unbiased estimating function need not have an unbiased root.** Unbiasedness of $U$ at the true $\theta$ doesn't carry over to its root, which is typically a nonlinear function of the data.
+- HW10 3: $T_2 = \frac{\sum X_i^2}{2S}$, $E(T_2\mid S) = \frac{S}{n+1}$, $E_\theta T_2 = \frac{n\theta}{n+1}$, so $b_n = \frac{n+1}{n}$ makes $b_nT_2$ unbiased.
+
